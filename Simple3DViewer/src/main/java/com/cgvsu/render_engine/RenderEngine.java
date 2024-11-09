@@ -3,9 +3,12 @@ package com.cgvsu.render_engine;
 import java.util.ArrayList;
 
 import com.cgvsu.math.Vector3f;
+import com.cgvsu.rasterization.TriangleRasterization;
 import javafx.scene.canvas.GraphicsContext;
 import javax.vecmath.*;
 import com.cgvsu.model.Model;
+import javafx.scene.paint.Color;
+
 import static com.cgvsu.render_engine.GraphicConveyor.*;
 
 public class RenderEngine {
@@ -38,6 +41,11 @@ public class RenderEngine {
                 Point2f resultPoint = vertexToPoint(multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertexVecmath), width, height); //преобразуем координаты в систему координат монитора
                 resultPoints.add(resultPoint);
             }
+
+            TriangleRasterization.draw(graphicsContext,
+                    new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x},
+                    new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
+                    new Color[]{Color.GREEN, Color.RED, Color.BLUE});
 
             for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
                 graphicsContext.strokeLine( //соединяем линией две точки полигона

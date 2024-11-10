@@ -10,6 +10,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -62,13 +63,14 @@ public class GuiController {
 
     private Model mesh = null;
 
+    //кнопки добавления камер
     private List<Button> addedButtonsCamera = new ArrayList<>();
+    //кнопки удаления камер
     private List<Button> deletedButtonsCamera = new ArrayList<>();
+    //кнопки выбора камер
+    private List<RadioButton> choiceButtonsCamera = new ArrayList<>();
 
-    private Camera camera = new Camera(
-            new Vector3f(0, 0, 100),
-            new Vector3f(0, 0, 0),
-            1.0F, 1, 0.01F, 100);
+    private List<Camera> cameras = new ArrayList<>();
 
     private Timeline timeline;
 
@@ -83,17 +85,32 @@ public class GuiController {
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
+        //кнока "Добавить камеру"
         addedButtonsCamera.add(addCamera2);
+
+        // начальная камера
+//        Camera camera = new Camera(
+//                new Vector3f(0, 0, 100),
+//                new Vector3f(0, 0, 0),
+//                1.0F, 1, 0.01F, 100);
+        // добавляем начальную камеру
+        cameras.add(new Camera(
+                new Vector3f(0, 0, 100),
+                new Vector3f(0, 0, 0),
+                1.0F, 1, 0.01F, 100));
+        addCamera();
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
             double height = canvas.getHeight();
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
-            camera.setAspectRatio((float) (height / width)); // задаем AspectRatio
+            for (Camera c : cameras) {
+                c.setAspectRatio((float) (height / width)); // задаем AspectRatio
+            }
 
             if (mesh != null) {
-                RenderEngine.render(canvas.getGraphicsContext2D(), camera, mesh, (int) width, (int) height); //создаем отрисовку модели
+                RenderEngine.render(canvas.getGraphicsContext2D(), choiceCamera(), mesh, (int) width, (int) height); //создаем отрисовку модели
             }
         });
 
@@ -101,25 +118,31 @@ public class GuiController {
         timeline.play();
     }
 
+    //проверяем какая камера сейчас активна
+    private Camera choiceCamera() {
+        //проверять radiobutton какой включён, находить его камеру и возвращать её
+        return cameras.get(0);
+    }
+
     @FXML
-    public void moveModel(KeyEvent keyEvent) {
+    public void moveCamera(KeyEvent keyEvent) {
         if (Objects.equals(keyEvent.getText(), "w")) {
-            camera.movePosition(new Vector3f(0, 0, -TRANSLATION));
+            choiceCamera().movePosition(new Vector3f(0, 0, -TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "s")) {
-            camera.movePosition(new Vector3f(0, 0, TRANSLATION));
+            choiceCamera().movePosition(new Vector3f(0, 0, TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "a")) {
-            camera.movePosition(new Vector3f(TRANSLATION, 0, 0));
+            choiceCamera().movePosition(new Vector3f(TRANSLATION, 0, 0));
         }
         if (Objects.equals(keyEvent.getText(), "d")) {
-            camera.movePosition(new Vector3f(-TRANSLATION, 0, 0));
+            choiceCamera().movePosition(new Vector3f(-TRANSLATION, 0, 0));
         }
         if (Objects.equals(keyEvent.getText(), "r")) {
-            camera.movePosition(new Vector3f(0, TRANSLATION, 0));
+            choiceCamera().movePosition(new Vector3f(0, TRANSLATION, 0));
         }
         if (Objects.equals(keyEvent.getText(), "f")) {
-            camera.movePosition(new Vector3f(0, -TRANSLATION, 0));
+            choiceCamera().movePosition(new Vector3f(0, -TRANSLATION, 0));
         }
     }
 
@@ -172,33 +195,70 @@ public class GuiController {
         }
     }
 
-        // обработка кнопок для добавления и удаления камер
-    public void addCamera(MouseEvent mouseEvent) {
+    // обработка кнопок для добавления, удаления и выбора камер
+    public void addCamera() {
+        //кнопка добавления камеры
         Button addButton = new Button("Камера " + addedButtonsCamera.size());
-        Button deleteButton = new Button("Удалить");
-        addButton.setLayoutY(addedButtonsCamera.get(addedButtonsCamera.size()-1).getLayoutY() + 40);
+        addButton.setLayoutY(addedButtonsCamera.get(addedButtonsCamera.size() - 1).getLayoutY() + 40);
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 function(addButton.getText());
-            }});
+            }
+        });
         addedButtonsCamera.add(addButton);
-        deleteButton.setLayoutY(addedButtonsCamera.get(addedButtonsCamera.size()-1).getLayoutY());
-        deleteButton.setLayoutX(addedButtonsCamera.get(addedButtonsCamera.size()-1).getLayoutX() + 85);
+        //кнопка удаления камеры
+        Button deleteButton = new Button("Удалить");
+        deleteButton.setLayoutY(addedButtonsCamera.get(addedButtonsCamera.size() - 1).getLayoutY());
+        deleteButton.setLayoutX(addedButtonsCamera.get(addedButtonsCamera.size() - 1).getLayoutX() + 85);
         deleteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 functionDelete(addButton.getText());
-            }});
+            }
+        });
         deletedButtonsCamera.add(deleteButton);
+        //radio button выбора камеры
+        for (RadioButton r : choiceButtonsCamera) { // обнуляю предыдущую камеру
+            r.setSelected(false);
+        }
+        RadioButton radioButton = new RadioButton();
+        radioButton.setLayoutY(deletedButtonsCamera.get(deletedButtonsCamera.size() - 1).getLayoutY() + 3);
+        radioButton.setLayoutX(deletedButtonsCamera.get(deletedButtonsCamera.size() - 1).getLayoutX() + 80);
+        radioButton.setText(String.valueOf(choiceButtonsCamera.size()));
+        radioButton.setSelected(true);
+        radioButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                functionChoice(radioButton.getText(), radioButton);
+            }
+        });
+        choiceButtonsCamera.add(radioButton);
         addCameraPane.getChildren().add(addButton);
         addCameraPane.getChildren().add(deleteButton);
+        addCameraPane.getChildren().add(radioButton);
     }
-    public void function(String text){
+
+
+    // чтоб можно было вызвать из меня
+    public void addCamera(MouseEvent mouseEvent) {
+        addCamera();
+    }
+
+    public void function(String text) {
         System.out.println(text);
     }
-    public void functionDelete(String text){
+
+    public void functionDelete(String text) {
         System.out.println(text + "delete");
+    }
+
+    public void functionChoice(String text, RadioButton radioButton) {
+        for (RadioButton r : choiceButtonsCamera) { // обнуляю предыдущую камеру
+            r.setSelected(false);
+        }
+        radioButton.setSelected(true);
+        System.out.println(text + "choice");
     }
 
 }

@@ -54,6 +54,12 @@ public class GuiController {
     public Button addCamera2;
     @FXML
     public AnchorPane addCameraPane;
+    public TextField eyeX;
+    public TextField targetX;
+    public TextField eyeY;
+    public TextField targetY;
+    public TextField eyeZ;
+    public TextField targetZ;
 
     @FXML
     AnchorPane anchorPane;
@@ -67,8 +73,6 @@ public class GuiController {
     private List<Button> addedButtonsCamera = new ArrayList<>();
     //кнопки удаления камер
     private List<Button> deletedButtonsCamera = new ArrayList<>();
-    //кнопки выбора камер
-    private List<RadioButton> choiceButtonsCamera = new ArrayList<>();
 
     private List<Camera> cameras = new ArrayList<>();
 
@@ -86,7 +90,7 @@ public class GuiController {
         timeline.setCycleCount(Animation.INDEFINITE);
 
         //кнока "Добавить камеру"
-        addedButtonsCamera.add(addCamera2);
+        //addedButtonsCamera.add(addCamera2);
 
         // начальная камера
 //        Camera camera = new Camera(
@@ -97,8 +101,8 @@ public class GuiController {
         cameras.add(new Camera(
                 new Vector3f(0, 0, 100),
                 new Vector3f(0, 0, 0),
-                1.0F, 1, 0.01F, 100));
-        addCamera();
+                1.0F, 1, 0.01F, 100, true));
+        addCameraWithoutParams();
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
@@ -118,9 +122,14 @@ public class GuiController {
         timeline.play();
     }
 
-    //проверяем какая камера сейчас активна
+    //проверяем какая камера сейчас активна /*** обработчик выключенной камеры ***/
     private Camera choiceCamera() {
-        //проверять radiobutton какой включён, находить его камеру и возвращать её
+        for (Camera camera : cameras) {
+            if (camera.isActive()) {
+                return camera;
+            }
+        }
+        System.out.println("камера не выбрана");
         return cameras.get(0);
     }
 
@@ -196,14 +205,18 @@ public class GuiController {
     }
 
     // обработка кнопок для добавления, удаления и выбора камер
-    public void addCamera() {
+    public void addCameraWithoutParams() {
+        createCamera();
         //кнопка добавления камеры
-        Button addButton = new Button("Камера " + addedButtonsCamera.size());
-        addButton.setLayoutY(addedButtonsCamera.get(addedButtonsCamera.size() - 1).getLayoutY() + 40);
+        Button addButton = new Button("Камера " + (addedButtonsCamera.size() + 1));
+        addButton.setLayoutY((addedButtonsCamera.size() > 0) ?
+                addedButtonsCamera.get(addedButtonsCamera.size() - 1).getLayoutY() + 40 :
+                185);
+        addButton.setLayoutX(33);
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                function(addButton.getText());
+                showCamera(addButton.getText());
             }
         });
         addedButtonsCamera.add(addButton);
@@ -214,51 +227,54 @@ public class GuiController {
         deleteButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                functionDelete(addButton.getText());
+                deleteCamera(addButton.getText());
             }
         });
         deletedButtonsCamera.add(deleteButton);
-        //radio button выбора камеры
-        for (RadioButton r : choiceButtonsCamera) { // обнуляю предыдущую камеру
-            r.setSelected(false);
-        }
-        RadioButton radioButton = new RadioButton();
-        radioButton.setLayoutY(deletedButtonsCamera.get(deletedButtonsCamera.size() - 1).getLayoutY() + 3);
-        radioButton.setLayoutX(deletedButtonsCamera.get(deletedButtonsCamera.size() - 1).getLayoutX() + 80);
-        radioButton.setText(String.valueOf(choiceButtonsCamera.size()));
-        radioButton.setSelected(true);
-        radioButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                functionChoice(radioButton.getText(), radioButton);
-            }
-        });
-        choiceButtonsCamera.add(radioButton);
+
         addCameraPane.getChildren().add(addButton);
         addCameraPane.getChildren().add(deleteButton);
-        addCameraPane.getChildren().add(radioButton);
     }
 
+    //проверить, что таких координат камеры ещё нет
+    private void createCamera() {
+        if (!Objects.equals(eyeX.getText(), "") && !Objects.equals(eyeY.getText(), "") && !Objects.equals(eyeZ.getText(), "")
+                && !Objects.equals(targetX.getText(), "") && !Objects.equals(targetY.getText(), "") && !Objects.equals(targetZ.getText(), "")) {
+            for (Camera camera : cameras) {
+                camera.setActive(false);
+            }
+            cameras.add(new Camera(
+                    new Vector3f(Float.parseFloat(eyeX.getText()), Float.parseFloat(eyeY.getText()), Float.parseFloat(eyeZ.getText())),
+                    new Vector3f(Float.parseFloat(targetX.getText()), Float.parseFloat(targetY.getText()), Float.parseFloat(targetZ.getText())),
+                    1.0F, 1, 0.01F, 100, true));
+        }
+        else {
+            System.out.println("введите нужные значения");
+        }
+        System.out.println();
+    }
 
     // чтоб можно было вызвать из меня
     public void addCamera(MouseEvent mouseEvent) {
-        addCamera();
+        addCameraWithoutParams();
     }
 
-    public void function(String text) {
+    //
+    public void showCamera(String text) {
+        int numOfCamera = Integer.parseInt(text.substring(text.length()-1));
+        for (int i = 0; i < cameras.size(); i++){
+            if (cameras.get(i).isActive()){
+                cameras.get(i).setActive(false);
+            }
+            if (i+1 == numOfCamera){
+                cameras.get(i).setActive(true);
+            }
+        }
         System.out.println(text);
     }
 
-    public void functionDelete(String text) {
+    public void deleteCamera(String text) {
         System.out.println(text + "delete");
-    }
-
-    public void functionChoice(String text, RadioButton radioButton) {
-        for (RadioButton r : choiceButtonsCamera) { // обнуляю предыдущую камеру
-            r.setSelected(false);
-        }
-        radioButton.setSelected(true);
-        System.out.println(text + "choice");
     }
 
 }

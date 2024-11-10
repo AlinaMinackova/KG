@@ -4,8 +4,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
+import javax.vecmath.Point2f;
+import java.util.ArrayList;
+import java.util.List;
+
 public class TriangleRasterization {
-    public static void draw(final GraphicsContext graphicsContext, final int[] coordX, final int[] coordY, final Color[] color) {
+    public static void draw(final GraphicsContext graphicsContext,
+                                 final int[] coordX, final int[] coordY, final Color[] color,
+                                 final float[][] zBuff, final float[] deepZ) {
         final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
 
         //сортируем вершины
@@ -19,6 +25,9 @@ public class TriangleRasterization {
             Color colorTerm = color[0];
             color[0] = color[1];
             color[1] = colorTerm;
+            float zBuf = deepZ[0];
+            deepZ[0] = deepZ[1];
+            deepZ[1] = zBuf;
         }
         if (coordY[0] > coordY[2]) {
             int term = coordY[0];
@@ -30,6 +39,9 @@ public class TriangleRasterization {
             Color colorTerm = color[0];
             color[0] = color[2];
             color[2] = colorTerm;
+            float zBuf = deepZ[0];
+            deepZ[0] = deepZ[2];
+            deepZ[2] = zBuf;
         }
         if (coordY[1] > coordY[2]) {
             int term = coordY[1];
@@ -41,6 +53,9 @@ public class TriangleRasterization {
             Color colorTerm = color[1];
             color[1] = color[2];
             color[2] = colorTerm;
+            float zBuf = deepZ[1];
+            deepZ[1] = deepZ[2];
+            deepZ[2] = zBuf;
         }
 
         if (coordY[0] == coordY[1] && coordY[1] == coordY[2]) {
@@ -60,8 +75,15 @@ public class TriangleRasterization {
                     xr = tempX;
                 }
                 for (int x = xl; x <= xr; x++) {
-                    int[] rgb = getGradientCoordinatesRGB(coordX, coordY, x, y, color);
-                    pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
+                    if (x >= 0 && y >= 0  && x < zBuff.length && y < zBuff[0].length) {
+                        float xy = interpolateCoordinatesZBuffer(coordX, coordY, x, y, deepZ);
+                        if(zBuff[x][y] <= xy) {
+                            continue;
+                        }
+                        int[] rgb = getGradientCoordinatesRGB(coordX, coordY, x, y, color);
+                        zBuff[x][y] = (long) xy;
+                        pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
+                    }
                 }
             }
         }
@@ -76,15 +98,29 @@ public class TriangleRasterization {
                     xr = tempX;
                 }
                 for (int x = xl; x <= xr; x++) {
-                    int[] rgb = getGradientCoordinatesRGB(coordX, coordY, x, y, color);
-                    pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
+                    if (x >= 0 && y >= 0  && x < zBuff.length && y < zBuff[0].length) {
+                        float xy = interpolateCoordinatesZBuffer(coordX, coordY, x, y, deepZ);
+                        if(zBuff[x][y] <= xy) {
+                            continue;
+                        }
+                        int[] rgb = getGradientCoordinatesRGB(coordX, coordY, x, y, color);
+                        zBuff[x][y] = (long) xy;
+                        pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
+                    }
                 }
             }
         }
     }
 
+
+    public static float interpolateCoordinatesZBuffer(final int[] coordX, final int[] coordY, final int x, final int y, final float[] deepZ) {
+        final float[] baristicCoords = barycentricCoordinates(coordX, coordY, x, y);
+        return baristicCoords[0] * deepZ[0] + baristicCoords[1] * deepZ[1] + baristicCoords[2] * deepZ[2];
+    }
+
+
     public static int[] getGradientCoordinatesRGB(final int[] coordX, final int[] coordY, final int x, final int y, final Color[] color) {
-        final double[] baristicCoords = barycentricCoordinates(coordX, coordY, x, y);
+        final float[] baristicCoords = barycentricCoordinates(coordX, coordY, x, y);
         int r = Math.min(255, (int) Math.abs(color[0].getRed() * 255 * baristicCoords[0] + color[1].getRed()
                 * 255 * baristicCoords[1] + color[2].getRed() * 255 * baristicCoords[2]));
         int g = Math.min(255, (int) Math.abs(color[0].getGreen() * 255 * baristicCoords[0] + color[1].getGreen()
@@ -94,16 +130,17 @@ public class TriangleRasterization {
         return new int[]{r, g, b};
     }
 
-    public static double[] barycentricCoordinates(final int[] coordX, final int[] coordY, final int x, final int y) {
+    public static float[] barycentricCoordinates(final int[] coordX, final int[] coordY, final int x, final int y) {
 
-        double alfa = (double) ((coordY[1] - coordY[2]) * (x - coordX[2]) + (coordX[2] - coordX[1]) * (y - coordY[2])) /
-                (double) ((coordY[1] - coordY[2]) * (coordX[0] - coordX[2]) + (coordX[2] - coordX[1]) * (coordY[0] - coordY[2]));
+        float alfa = (float) ((coordY[1] - coordY[2]) * (x - coordX[2]) + (coordX[2] - coordX[1]) * (y - coordY[2])) /
+                (float) ((coordY[1] - coordY[2]) * (coordX[0] - coordX[2]) + (coordX[2] - coordX[1]) * (coordY[0] - coordY[2]));
 
-        double betta = (double) ((coordY[2] - coordY[0]) * (x - coordX[2]) + (coordX[0] - coordX[2]) * (y - coordY[2])) /
-                (double) ((coordY[1] - coordY[2]) * (coordX[0] - coordX[2]) + (coordX[2] - coordX[1]) * (coordY[0] - coordY[2]));
+        float betta = (float) ((coordY[2] - coordY[0]) * (x - coordX[2]) + (coordX[0] - coordX[2]) * (y - coordY[2])) /
+                (float) ((coordY[1] - coordY[2]) * (coordX[0] - coordX[2]) + (coordX[2] - coordX[1]) * (coordY[0] - coordY[2]));
 
-        double gamma = 1 - alfa - betta;
+        float gamma = 1 - alfa - betta;
 
-        return new double[]{alfa, betta, gamma};
+        return new float[]{alfa, betta, gamma};
     }
+
 }

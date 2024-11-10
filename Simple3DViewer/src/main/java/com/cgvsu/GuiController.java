@@ -76,6 +76,7 @@ public class GuiController {
 
     private List<Camera> cameras = new ArrayList<>();
 
+
     private Timeline timeline;
 
     @FXML
@@ -89,20 +90,12 @@ public class GuiController {
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
-        //кнока "Добавить камеру"
-        //addedButtonsCamera.add(addCamera2);
-
-        // начальная камера
-//        Camera camera = new Camera(
-//                new Vector3f(0, 0, 100),
-//                new Vector3f(0, 0, 0),
-//                1.0F, 1, 0.01F, 100);
-        // добавляем начальную камеру
         cameras.add(new Camera(
                 new Vector3f(0, 0, 100),
                 new Vector3f(0, 0, 0),
                 1.0F, 1, 0.01F, 100, true));
         addCameraWithoutParams();
+
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
@@ -206,7 +199,6 @@ public class GuiController {
 
     // обработка кнопок для добавления, удаления и выбора камер
     public void addCameraWithoutParams() {
-        createCamera();
         //кнопка добавления камеры
         Button addButton = new Button("Камера " + (addedButtonsCamera.size()+1));
         addButton.setLayoutY((addedButtonsCamera.size() > 0) ?
@@ -237,6 +229,7 @@ public class GuiController {
     }
 
     //проверить, что таких координат камеры ещё нет
+    @FXML
     private void createCamera() {
         if (!Objects.equals(eyeX.getText(), "") && !Objects.equals(eyeY.getText(), "") && !Objects.equals(eyeZ.getText(), "")
                 && !Objects.equals(targetX.getText(), "") && !Objects.equals(targetY.getText(), "") && !Objects.equals(targetZ.getText(), "")) {
@@ -247,16 +240,12 @@ public class GuiController {
                     new Vector3f(Float.parseFloat(eyeX.getText()), Float.parseFloat(eyeY.getText()), Float.parseFloat(eyeZ.getText())),
                     new Vector3f(Float.parseFloat(targetX.getText()), Float.parseFloat(targetY.getText()), Float.parseFloat(targetZ.getText())),
                     1.0F, 1, 0.01F, 100, true));
+            addCameraWithoutParams();
         }
         else {
             System.out.println("введите нужные значения");
         }
         System.out.println();
-    }
-
-    // чтоб можно было вызвать из меня
-    public void addCamera(MouseEvent mouseEvent) {
-        addCameraWithoutParams();
     }
 
     //

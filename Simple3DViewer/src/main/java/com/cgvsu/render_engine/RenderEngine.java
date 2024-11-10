@@ -48,13 +48,13 @@ public class RenderEngine {
 
                 javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.x, vertex.y, vertex.z); //делаем вектор строку
                 v = multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertexVecmath);
-                vz[vertexInPolygonInd] = v[1].z;
+                vz[vertexInPolygonInd] = v[1].z; // спросить про z штрих
                 Point2f resultPoint = vertexToPoint(v[0], width, height); //преобразуем координаты в систему координат монитора
                 resultPoints.add(resultPoint);
             }
 
             List<Integer> a;
-            a = List.of(200, 201, 202, 203, 204, 205, 206, 207);
+            a = List.of(1, 201, 202, 203, 204, 205, 206, 207);
             if(a.contains(polygonInd)) {
                 TriangleRasterization.draw(
                         graphicsContext,

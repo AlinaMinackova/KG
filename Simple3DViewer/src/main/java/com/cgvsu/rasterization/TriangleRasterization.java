@@ -100,7 +100,7 @@ public class TriangleRasterization {
                 for (int x = xl; x <= xr; x++) {
                     if (x >= 0 && y >= 0  && x < zBuff.length && y < zBuff[0].length) {
                         float xy = interpolateCoordinatesZBuffer(coordX, coordY, x, y, deepZ);
-                        if(zBuff[x][y] < xy) {
+                        if(zBuff[x][y] <= xy) {
                             continue;
                         }
                         int[] rgb = getGradientCoordinatesRGB(coordX, coordY, x, y, color);

@@ -2,11 +2,12 @@ package com.cgvsu;
 
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.RenderEngine;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -22,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.vecmath.Vector3f;
 
@@ -46,6 +49,10 @@ public class GuiController {
     public Button save;
     @FXML
     public AnchorPane gadgetPane;
+    @FXML
+    public Button addCamera2;
+    @FXML
+    public AnchorPane addCameraPane;
 
     @FXML
     AnchorPane anchorPane;
@@ -54,6 +61,9 @@ public class GuiController {
     private Canvas canvas;
 
     private Model mesh = null;
+
+    private List<Button> addedButtonsCamera = new ArrayList<>();
+    private List<Button> deletedButtonsCamera = new ArrayList<>();
 
     private Camera camera = new Camera(
             new Vector3f(0, 0, 100),
@@ -72,6 +82,8 @@ public class GuiController {
 
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
+
+        addedButtonsCamera.add(addCamera2);
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
@@ -160,5 +172,33 @@ public class GuiController {
         }
     }
 
+        // обработка кнопок для добавления и удаления камер
+    public void addCamera(MouseEvent mouseEvent) {
+        Button addButton = new Button("Камера " + addedButtonsCamera.size());
+        Button deleteButton = new Button("Удалить");
+        addButton.setLayoutY(addedButtonsCamera.get(addedButtonsCamera.size()-1).getLayoutY() + 40);
+        addButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                function(addButton.getText());
+            }});
+        addedButtonsCamera.add(addButton);
+        deleteButton.setLayoutY(addedButtonsCamera.get(addedButtonsCamera.size()-1).getLayoutY());
+        deleteButton.setLayoutX(addedButtonsCamera.get(addedButtonsCamera.size()-1).getLayoutX() + 85);
+        deleteButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                functionDelete(addButton.getText());
+            }});
+        deletedButtonsCamera.add(deleteButton);
+        addCameraPane.getChildren().add(addButton);
+        addCameraPane.getChildren().add(deleteButton);
+    }
+    public void function(String text){
+        System.out.println(text);
+    }
+    public void functionDelete(String text){
+        System.out.println(text + "delete");
+    }
 
 }

@@ -4,7 +4,10 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
@@ -27,6 +30,33 @@
                                 <Text fx:id="wrongSaveText" fill="RED" layoutX="21.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Введите имя файла в формате *.obj" visible="false" wrappingWidth="250.853515625" />
                                 <Text fx:id="successSaveText" fill="#3bae24" layoutX="23.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Модель успешно сохранена!" visible="false" />
                                 <Text fx:id="fileAlreadyExist" fill="RED" layoutX="17.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Файл с таким именем уже существует" visible="false" wrappingWidth="209.13671875" />
+                        <TabPane layoutX="82.0" layoutY="577.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Untitled Tab 1">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </Tab>
+                            <Tab text="Untitled Tab 2">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                        <TitledPane animated="false" layoutX="65.0" layoutY="164.0" prefHeight="226.0" prefWidth="460.0" text="untitled">
+                           <content>
+                              <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                 <content>
+                                  <AnchorPane fx:id="addCameraPane" minHeight="0.0" minWidth="0.0" prefHeight="900.0" prefWidth="200.0">
+                                       <children>
+                                          <Button fx:id="addCamera2" mnemonicParsing="false" onMouseClicked="#addCamera" text="Добавить камеру" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </ScrollPane>
+                           </content>
+                        </TitledPane>
                             </children>
                         </AnchorPane>
                     </content>

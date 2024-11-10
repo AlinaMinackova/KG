@@ -3,6 +3,7 @@ package com.cgvsu.render_engine;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.rasterization.TriangleRasterization;
@@ -64,29 +65,29 @@ public class RenderEngine {
 //                        ZBuffer,
 //                        vz);
 //            }else {
-//                TriangleRasterization.draw(
-//                        graphicsContext,
-//                        new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x},
-//                        new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
-//                        new Color[]{Color.BLUE, Color.BLUE, Color.BLUE},
-//                        ZBuffer,
-//                        vz);
+                TriangleRasterization.draw(
+                        graphicsContext,
+                        new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x},
+                        new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
+                        new Color[]{Randomixe.mas[59*polygonInd % 1000], Randomixe.mas[2*polygonInd % 1000], Randomixe.mas[78*polygonInd % 1000]},
+                        ZBuffer,
+                        vz);
 //            }
 
-            for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
-                graphicsContext.strokeLine( //соединяем линией две точки полигона
-                        resultPoints.get(vertexInPolygonInd - 1).x,
-                        resultPoints.get(vertexInPolygonInd - 1).y,
-                        resultPoints.get(vertexInPolygonInd).x,
-                        resultPoints.get(vertexInPolygonInd).y);
-            }
-
-            if (nVerticesInPolygon > 0) //дорисовать соединение между последней и первой точкой
-                graphicsContext.strokeLine(
-                        resultPoints.get(nVerticesInPolygon - 1).x,
-                        resultPoints.get(nVerticesInPolygon - 1).y,
-                        resultPoints.get(0).x,
-                        resultPoints.get(0).y);
+//            for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {
+//                graphicsContext.strokeLine( //соединяем линией две точки полигона
+//                        resultPoints.get(vertexInPolygonInd - 1).x,
+//                        resultPoints.get(vertexInPolygonInd - 1).y,
+//                        resultPoints.get(vertexInPolygonInd).x,
+//                        resultPoints.get(vertexInPolygonInd).y);
+//            }
+//
+//            if (nVerticesInPolygon > 0) //дорисовать соединение между последней и первой точкой
+//                graphicsContext.strokeLine(
+//                        resultPoints.get(nVerticesInPolygon - 1).x,
+//                        resultPoints.get(nVerticesInPolygon - 1).y,
+//                        resultPoints.get(0).x,
+//                        resultPoints.get(0).y);
         }
     }
 }

@@ -9,12 +9,11 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
@@ -36,12 +35,27 @@ import com.cgvsu.render_engine.Camera;
 public class GuiController {
 
     final private float TRANSLATION = 0.9F; //шаг перемещения камеры
-    @FXML
-    public Text fileAlreadyExist;
-    @FXML
-    public Text successSaveText;
-    @FXML
-    public Text wrongSaveText;
+
+    public ColorPicker choiceBaseColor;
+    public CheckBox transformSave;
+
+    //для модели
+    public AnchorPane modelPane;
+    public TextField sx;
+    public TextField sy;
+    public TextField sz;
+    public TextField tx;
+    public TextField ty;
+    public TextField tz;
+    public TextField rx;
+    public TextField ry;
+    public TextField rz;
+    public Button convert;
+
+    Alert messageWarning = new Alert(Alert.AlertType.WARNING);
+    Alert messageError = new Alert(Alert.AlertType.ERROR);
+    Alert messageInformation = new Alert(Alert.AlertType.INFORMATION);
+
     @FXML
     public Button open;
     @FXML
@@ -50,8 +64,6 @@ public class GuiController {
     public Button save;
     @FXML
     public AnchorPane gadgetPane;
-    @FXML
-    public Button addCamera2;
     @FXML
     public AnchorPane addCameraPane;
     public TextField eyeX;
@@ -90,6 +102,27 @@ public class GuiController {
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
+
+        // Возможность выбора цвета модели
+
+//        Label l1 = new Label("no selected color ");
+//        // create a color picker
+//        ColorPicker cp = new ColorPicker();
+//        EventHandler<ActionEvent> event2 = new EventHandler<ActionEvent>() {
+//            public void handle(ActionEvent e)
+//            {
+//                // color
+//                Color c = cp.getValue();
+//
+//                // set text of the label to RGB value of color
+//                l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
+//                        + ", Blue = " + c.getBlue());
+//            }
+//        };
+//        // set listener
+//        cp.setOnAction(event2);
+//        gadgetPane.getChildren().add(cp);
+
         cameras.add(new Camera(
                 new Vector3f(0, 0, 100),
                 new Vector3f(0, 0, 0),
@@ -115,14 +148,20 @@ public class GuiController {
         timeline.play();
     }
 
-    //проверяем какая камера сейчас активна /*** обработчик выключенной камеры ***/
+    private void showMessage(String headText, String messageText, Alert alert){
+        alert.setHeaderText(headText);
+        alert.setContentText(messageText);
+        alert.showAndWait();
+    }
+
+    //проверяем какая камера сейчас активна
     private Camera choiceCamera() {
         for (Camera camera : cameras) {
             if (camera.isActive()) {
                 return camera;
             }
         }
-        System.out.println("камера не выбрана");
+        showMessage("Информация", "Нет активной камеры. Переключаю на: Камера 1", messageInformation);
         return cameras.get(0);
     }
 
@@ -150,9 +189,6 @@ public class GuiController {
 
     @FXML
     void open(MouseEvent event) {
-        successSaveText.setVisible(false);
-        wrongSaveText.setVisible(false);
-        fileAlreadyExist.setVisible(false);
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         fileChooser.setTitle("Load Model");
@@ -168,9 +204,10 @@ public class GuiController {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
             mesh.triangulate();
-            // todo: обработка ошибок
+            // добавить функцию, которая будет создавать кнопки:
+            // модель (для выбора), удалить, (добавить текстуру, включить сетку, освещение - checkbox)
         } catch (IOException exception) {
-
+            showMessage("Ошибка", "Неудалось найти файл!", messageError);
         }
     }
 
@@ -180,27 +217,32 @@ public class GuiController {
             if (!text.getText().equals("") && text.getText().substring(text.getText().length() - 4).equals(".obj")) {
                 File f = new File(text.getText());
                 if (f.exists()) {
-                    fileAlreadyExist.setVisible(true);
-                    successSaveText.setVisible(false);
-                    wrongSaveText.setVisible(false);
+                    showMessage("Предупреждение", "Файл с таким именем уже существует!", messageWarning);
                 } else {
+                    if (transformSave.isSelected()){ //сохранить модель с изменениями?
+                        //model.transform();
+                        // когда будут приходить значения для трансформации,
+                        // изменяй не сами вершины в модели, а создай доп поле transformationVertices которое
+                        // будет хранить изменённые вершины. Также создай метод transform(), при вызове которого
+                        // будешь менять местами згначения полей vertices и transformationVertices, чтобы
+                        // я смогла сохранить модель с изменёнными параметрами
+                    }
                     ObjWriter.write(mesh, text.getText());
-                    successSaveText.setVisible(true);
-                    wrongSaveText.setVisible(false);
-                    fileAlreadyExist.setVisible(false);
+                    showMessage("Информация", "Файл успешно сохранён!", messageInformation);
                 }
             } else {
-                successSaveText.setVisible(false);
-                wrongSaveText.setVisible(true);
-                fileAlreadyExist.setVisible(false);
+                showMessage("Предупреждение", "Введите имя файла в формате .obj", messageWarning);
             }
+        }
+        else {
+            showMessage("Предупреждение", "Откройте модель для сохранения!", messageWarning);
         }
     }
 
     // обработка кнопок для добавления, удаления и выбора камер
     public void addCameraWithoutParams() {
         //кнопка добавления камеры
-        Button addButton = new Button("Камера " + (addedButtonsCamera.size()+1));
+        Button addButton = new Button("Камера " + (addedButtonsCamera.size() + 1));
         addButton.setLayoutY((addedButtonsCamera.size() > 0) ?
                 addedButtonsCamera.get(addedButtonsCamera.size() - 1).getLayoutY() + 40 :
                 185);
@@ -228,7 +270,6 @@ public class GuiController {
         addCameraPane.getChildren().add(deleteButton);
     }
 
-    //проверить, что таких координат камеры ещё нет
     @FXML
     private void createCamera() {
         if (!Objects.equals(eyeX.getText(), "") && !Objects.equals(eyeY.getText(), "") && !Objects.equals(eyeZ.getText(), "")
@@ -241,62 +282,64 @@ public class GuiController {
                     new Vector3f(Float.parseFloat(targetX.getText()), Float.parseFloat(targetY.getText()), Float.parseFloat(targetZ.getText())),
                     1.0F, 1, 0.01F, 100, true));
             addCameraWithoutParams();
+        } else {
+            showMessage("Предупреждение", "Введите необходимые данные!", messageWarning);
         }
-        else {
-            System.out.println("введите нужные значения");
-        }
-        System.out.println();
     }
 
     //
     public void showCamera(String text) {
-        int numOfCamera = Integer.parseInt(text.substring(text.length()-1));
-        for (int i = 0; i < cameras.size(); i++){
-            if (cameras.get(i).isActive()){
+        int numOfCamera = Integer.parseInt(text.substring(text.length() - 1));
+        for (int i = 0; i < cameras.size(); i++) {
+            if (cameras.get(i).isActive()) {
                 cameras.get(i).setActive(false);
             }
-            if (i+1 == numOfCamera){
+            if (i + 1 == numOfCamera) {
                 cameras.get(i).setActive(true);
             }
         }
-        System.out.println(text);
     }
 
     public void deleteCamera(String text) {
-        int numOfCamera = Integer.parseInt(text.substring(text.length()-1));
-        for (int i = 0; i < addedButtonsCamera.size(); i++){
-            if (i+1 == numOfCamera){
-                if (cameras.get(i).isActive()){
+        int numOfCamera = Integer.parseInt(text.substring(text.length() - 1));
+        for (int i = 0; i < addedButtonsCamera.size(); i++) {
+            if (i + 1 == numOfCamera) {
+                if (cameras.get(i).isActive()) {
                     cameras.get(0).setActive(true);
                 }
                 delete(i);
                 break;
             }
         }
-        //проверить, что не выбрана текущая камера и отображать какая камера включена
-        System.out.println(text + "delete");
     }
 
-    public void delete(int cameraID){
-        //проверить если удаляю 1-ую камеру
-        cameras.remove(cameraID);
-        addCameraPane.getChildren().remove(addedButtonsCamera.get(cameraID));
-        addCameraPane.getChildren().remove(deletedButtonsCamera.get(cameraID));
-        //переименовываем кнопки
-        for (int i = 0; i < addedButtonsCamera.size(); i++){
-            if (i+1 > cameraID){
-                addedButtonsCamera.get(i).setText("Камера " + i);
+    public void delete(int cameraID) {
+        if (cameras.size() == 1) {
+            showMessage("Ошибка", "Нельзя удалить единственную камеру!", messageError);
+        } else {
+            cameras.remove(cameraID);
+            addCameraPane.getChildren().remove(addedButtonsCamera.get(cameraID));
+            addCameraPane.getChildren().remove(deletedButtonsCamera.get(cameraID));
+            //переименовываем кнопки
+            for (int i = 0; i < addedButtonsCamera.size(); i++) {
+                if (i + 1 > cameraID) {
+                    addedButtonsCamera.get(i).setText("Камера " + i);
+                }
             }
-        }
-        //смещаем координаты
-        for (int i = addedButtonsCamera.size()-1; i >= 1; i--){
-            if (i+1 > cameraID){
-                addedButtonsCamera.get(i).setLayoutY(addedButtonsCamera.get(i-1).getLayoutY());
-                deletedButtonsCamera.get(i).setLayoutY(deletedButtonsCamera.get(i-1).getLayoutY());
+            //смещаем координаты
+            for (int i = addedButtonsCamera.size() - 1; i >= 1; i--) {
+                if (i + 1 > cameraID) {
+                    addedButtonsCamera.get(i).setLayoutY(addedButtonsCamera.get(i - 1).getLayoutY());
+                    deletedButtonsCamera.get(i).setLayoutY(deletedButtonsCamera.get(i - 1).getLayoutY());
+                }
             }
+            addedButtonsCamera.remove(cameraID);
+            deletedButtonsCamera.remove(cameraID);
         }
-        addedButtonsCamera.remove(cameraID);
-        deletedButtonsCamera.remove(cameraID);
     }
 
+    // при нажатии на кнопку преобразовать - проверить какая модель мейчас активна
+    // и светануть окошко тип, выбрана модель :... или как-то так
+    public void convert(MouseEvent mouseEvent) {
+    }
 }

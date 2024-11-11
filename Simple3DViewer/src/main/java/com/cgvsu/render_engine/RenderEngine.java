@@ -23,9 +23,9 @@ public class RenderEngine {
             final int width,
             final int height)
     {
-        float[][] ZBuffer = new float[width][height];
-        for (float[] longs : ZBuffer) {
-            Arrays.fill(longs, Float.MAX_VALUE);
+        double[][] ZBuffer = new double[width][height];
+        for (double[] longs : ZBuffer) {
+            Arrays.fill(longs, Double.MAX_VALUE);
         }
         Matrix4f modelMatrix = rotateScaleTranslate(); //матрица модели (пока единичная)
         Matrix4f viewMatrix = camera.getViewMatrix(); //видовая матрица
@@ -40,8 +40,8 @@ public class RenderEngine {
         final int nPolygons = mesh.polygons.size(); //количество полигонов
         for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
             final int nVerticesInPolygon = mesh.polygons.get(polygonInd).getVertexIndices().size(); //количество вершин в полигоне
-            javax.vecmath.Vector3f[] v;
-            float[] vz = new float[nVerticesInPolygon];//вектор z
+            javax.vecmath.Vector3f v;
+            double[] vz = new double[nVerticesInPolygon];//вектор z
 
             ArrayList<Point2f> resultPoints = new ArrayList<>(); //список преобразованных вершин полигона в системе XY
             for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) { //идем по вершинам в полигоне
@@ -49,8 +49,8 @@ public class RenderEngine {
 
                 javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.x, vertex.y, vertex.z); //делаем вектор строку
                 v = multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertexVecmath);
-                vz[vertexInPolygonInd] = v[1].z; // спросить про z штрих
-                Point2f resultPoint = vertexToPoint(v[0], width, height); //преобразуем координаты в систему координат монитора
+                vz[vertexInPolygonInd] = v.z; // спросить про z штрих
+                Point2f resultPoint = vertexToPoint(v, width, height); //преобразуем координаты в систему координат монитора
                 resultPoints.add(resultPoint);
             }
 

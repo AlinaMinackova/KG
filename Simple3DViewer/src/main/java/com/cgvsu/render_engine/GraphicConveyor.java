@@ -45,20 +45,20 @@ public class GraphicConveyor {
             final float farPlane) {
         Matrix4f result = new Matrix4f();
         float tangentMinusOnDegree = (float) (1.0F / (Math.tan(fov * 0.5F)));
-        result.m00 = tangentMinusOnDegree; //спросить почему
-        result.m11 = tangentMinusOnDegree / aspectRatio; // деление было у m00 (не по формуле), т.к. aspectRatio задавался как отношение wight/hight, а нужно наоборот наверное
+        result.m00 = tangentMinusOnDegree / aspectRatio;
+        result.m11 = tangentMinusOnDegree;
         result.m22 = (farPlane + nearPlane) / (farPlane - nearPlane);
         result.m23 = 1.0F;
         result.m32 = 2 * (nearPlane * farPlane) / (nearPlane - farPlane);
         return result;
     }
 
-    public static Vector3f[] multiplyMatrix4ByVector3(final Matrix4f matrix, final Vector3f vertex) {
+    public static Vector3f multiplyMatrix4ByVector3(final Matrix4f matrix, final Vector3f vertex) {
         final float x = (vertex.x * matrix.m00) + (vertex.y * matrix.m10) + (vertex.z * matrix.m20) + matrix.m30;
         final float y = (vertex.x * matrix.m01) + (vertex.y * matrix.m11) + (vertex.z * matrix.m21) + matrix.m31;
         final float z = (vertex.x * matrix.m02) + (vertex.y * matrix.m12) + (vertex.z * matrix.m22) + matrix.m32;
         final float w = (vertex.x * matrix.m03) + (vertex.y * matrix.m13) + (vertex.z * matrix.m23) + matrix.m33;
-        return new Vector3f[]{new Vector3f(x / w, y / w, z / w), new Vector3f(x, y, z)};
+        return new Vector3f(x / w, y / w, z / w);
     }
 
 

@@ -93,7 +93,7 @@ public class GuiController {
         cameras.add(new Camera(
                 new Vector3f(0, 0, 100),
                 new Vector3f(0, 0, 0),
-                1.0F, 1, 0.01F, 100, true));
+                1.0F, 1, 0.001F, 1000, true));
         addCameraWithoutParams();
 
 
@@ -103,7 +103,7 @@ public class GuiController {
 
             canvas.getGraphicsContext2D().clearRect(0, 0, width, height);
             for (Camera c : cameras) {
-                c.setAspectRatio((float) (height / width)); // задаем AspectRatio
+                c.setAspectRatio((float) (width / height)); // задаем AspectRatio
             }
 
             if (mesh != null) {

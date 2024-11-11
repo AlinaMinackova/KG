@@ -37,6 +37,7 @@ public class GuiController {
     final private float TRANSLATION = 0.9F; //шаг перемещения камеры
 
     public ColorPicker choiceBaseColor;
+    public CheckBox transformSave;
 
     Alert messageWarning = new Alert(Alert.AlertType.WARNING);
     Alert messageError = new Alert(Alert.AlertType.ERROR);
@@ -205,6 +206,14 @@ public class GuiController {
                 if (f.exists()) {
                     showMessage("Предупреждение", "Файл с таким именем уже существует!", messageWarning);
                 } else {
+                    if (transformSave.isSelected()){ //сохранить модель с изменениями?
+                        //model.transform();
+                        // когда будут приходить значения для трансформации,
+                        // изменяй не сами вершины в модели, а создай доп поле transformationVertices которое
+                        // будет хранить изменённые вершины. Также создай метод transform(), при вызове которого
+                        // будешь менять местами згначения полей vertices и transformationVertices, чтобы
+                        // я смогла сохранить модель с изменёнными параметрами
+                    }
                     ObjWriter.write(mesh, text.getText());
                     showMessage("Информация", "Файл успешно сохранён!", messageInformation);
                 }
@@ -314,8 +323,5 @@ public class GuiController {
             addedButtonsCamera.remove(cameraID);
             deletedButtonsCamera.remove(cameraID);
         }
-    }
-
-    public void choiceBaseColor(MouseEvent mouseEvent) {
     }
 }

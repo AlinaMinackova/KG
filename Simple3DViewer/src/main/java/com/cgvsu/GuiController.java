@@ -39,6 +39,19 @@ public class GuiController {
     public ColorPicker choiceBaseColor;
     public CheckBox transformSave;
 
+    //для модели
+    public AnchorPane modelPane;
+    public TextField sx;
+    public TextField sy;
+    public TextField sz;
+    public TextField tx;
+    public TextField ty;
+    public TextField tz;
+    public TextField rx;
+    public TextField ry;
+    public TextField rz;
+    public Button convert;
+
     Alert messageWarning = new Alert(Alert.AlertType.WARNING);
     Alert messageError = new Alert(Alert.AlertType.ERROR);
     Alert messageInformation = new Alert(Alert.AlertType.INFORMATION);
@@ -51,8 +64,6 @@ public class GuiController {
     public Button save;
     @FXML
     public AnchorPane gadgetPane;
-    @FXML
-    public Button addCamera2;
     @FXML
     public AnchorPane addCameraPane;
     public TextField eyeX;
@@ -193,6 +204,8 @@ public class GuiController {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
             mesh.triangulate();
+            // добавить функцию, которая будет создавать кнопки:
+            // модель (для выбора), удалить, (добавить текстуру, включить сетку, освещение - checkbox)
         } catch (IOException exception) {
             showMessage("Ошибка", "Неудалось найти файл!", messageError);
         }
@@ -323,5 +336,10 @@ public class GuiController {
             addedButtonsCamera.remove(cameraID);
             deletedButtonsCamera.remove(cameraID);
         }
+    }
+
+    // при нажатии на кнопку преобразовать - проверить какая модель мейчас активна
+    // и светануть окошко тип, выбрана модель :... или как-то так
+    public void convert(MouseEvent mouseEvent) {
     }
 }

@@ -204,6 +204,7 @@ public class GuiController {
             String fileContent = Files.readString(fileName);
             mesh = ObjReader.read(fileContent);
             mesh.triangulate();
+            mesh.normalize();
             // добавить функцию, которая будет создавать кнопки:
             // модель (для выбора), удалить, (добавить текстуру, включить сетку, освещение - checkbox)
         } catch (IOException exception) {

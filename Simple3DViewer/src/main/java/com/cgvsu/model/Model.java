@@ -1,6 +1,7 @@
 package com.cgvsu.model;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
+import com.cgvsu.normalize.Normalize;
 import com.cgvsu.triangulation.Triangulation;
 
 
@@ -18,5 +19,9 @@ public class Model {
     public void triangulate(){
         polygonsWithoutTriangulation = polygons;
         polygons = (ArrayList<Polygon>) Triangulation.triangulate(polygons);
+    }
+
+    public void normalize(){
+        normals = (ArrayList<Vector3f>) Normalize.normale(vertices, polygons);
     }
 }

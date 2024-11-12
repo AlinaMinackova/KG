@@ -42,10 +42,12 @@ public class RenderEngine {
             final int nVerticesInPolygon = mesh.polygons.get(polygonInd).getVertexIndices().size(); //количество вершин в полигоне
             javax.vecmath.Vector3f v;
             double[] vz = new double[nVerticesInPolygon];//вектор z
+            Vector3f[] normals = new Vector3f[3]; //список нормалей полигона
 
             ArrayList<Point2f> resultPoints = new ArrayList<>(); //список преобразованных вершин полигона в системе XY
             for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) { //идем по вершинам в полигоне
                 Vector3f vertex = mesh.vertices.get(mesh.polygons.get(polygonInd).getVertexIndices().get(vertexInPolygonInd)); //получаю координату вершины
+                normals[vertexInPolygonInd] = (mesh.normals.get(mesh.polygons.get(polygonInd).getVertexIndices().get(vertexInPolygonInd))); //получаю нормаль вершины
 
                 javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.x, vertex.y, vertex.z); //делаем вектор строку
                 v = multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertexVecmath);
@@ -71,7 +73,7 @@ public class RenderEngine {
                         new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
                         new Color[]{Randomixe.mas[59*polygonInd % 1000], Randomixe.mas[2*polygonInd % 1000], Randomixe.mas[78*polygonInd % 1000]},
                         ZBuffer,
-                        vz);
+                        vz, normals, new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22});
 //            }
 
 //            for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {

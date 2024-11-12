@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.vecmath.Matrix4f;
@@ -80,12 +81,17 @@ public class GuiController {
     @FXML
     private Canvas canvas;
 
-    private Model mesh = null;
+    private List<Model> meshes = new ArrayList<>();
 
-    //кнопки добавления камер
+    //кнопки  камер
     private List<Button> addedButtonsCamera = new ArrayList<>();
     //кнопки удаления камер
     private List<Button> deletedButtonsCamera = new ArrayList<>();
+
+    //кнопки моделей
+    private List<Button> addedButtonsModel = new ArrayList<>();
+    //кнопки удаления мделей
+    private List<Button> deletedButtonsModel = new ArrayList<>();
 
     private List<Camera> cameras = new ArrayList<>();
 
@@ -128,7 +134,7 @@ public class GuiController {
                 new Vector3f(0, 0, 100),
                 new Vector3f(0, 0, 0),
                 1.0F, 1, 0.001F, 1000, true));
-        addCameraWithoutParams();
+        addCameraButtons();
 
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
@@ -140,8 +146,11 @@ public class GuiController {
                 c.setAspectRatio((float) (width / height)); // задаем AspectRatio
             }
 
-            if (mesh != null) {
-                RenderEngine.render(canvas.getGraphicsContext2D(), choiceCamera(), mesh, (int) width, (int) height); //создаем отрисовку модели
+            if (meshes.size() != 0) {
+                for (Model model : meshes){
+                    RenderEngine.render(canvas.getGraphicsContext2D(), choiceCamera(), model, (int) width, (int) height); //создаем отрисовку модели
+                }
+
             }
         });
 
@@ -149,7 +158,7 @@ public class GuiController {
         timeline.play();
     }
 
-    private void showMessage(String headText, String messageText, Alert alert){
+    private void showMessage(String headText, String messageText, Alert alert) {
         alert.setHeaderText(headText);
         alert.setContentText(messageText);
         alert.showAndWait();
@@ -202,9 +211,16 @@ public class GuiController {
         Path fileName = Path.of(file.getAbsolutePath());
 
         try {
+            if (meshes.size() != 0) {
+                for (Model model : meshes) {
+                    model.isActive = false;
+                }
+            }
             String fileContent = Files.readString(fileName);
-            mesh = ObjReader.read(fileContent);
+            Model mesh = ObjReader.read(fileContent);
             mesh.triangulate();
+            meshes.add(mesh);
+            addModelButtons();
             // добавить функцию, которая будет создавать кнопки:
             // модель (для выбора), удалить, (добавить текстуру, включить сетку, освещение - checkbox)
         } catch (IOException exception) {
@@ -214,13 +230,13 @@ public class GuiController {
 
     @FXML
     void save(MouseEvent event) {
-        if (mesh != null) {
+        if (meshes.size() != 0) {
             if (!text.getText().equals("") && text.getText().substring(text.getText().length() - 4).equals(".obj")) {
                 File f = new File(text.getText());
                 if (f.exists()) {
                     showMessage("Предупреждение", "Файл с таким именем уже существует!", messageWarning);
                 } else {
-                    if (transformSave.isSelected()){ //сохранить модель с изменениями?
+                    if (transformSave.isSelected()) { //сохранить модель с изменениями?
                         //model.transform();
                         // когда будут приходить значения для трансформации,
                         // изменяй не сами вершины в модели, а создай доп поле transformationVertices которое
@@ -228,20 +244,19 @@ public class GuiController {
                         // будешь менять местами згначения полей vertices и transformationVertices, чтобы
                         // я смогла сохранить модель с изменёнными параметрами
                     }
-                    ObjWriter.write(mesh, text.getText());
+                    ObjWriter.write(checkMesh(), text.getText());
                     showMessage("Информация", "Файл успешно сохранён!", messageInformation);
                 }
             } else {
                 showMessage("Предупреждение", "Введите имя файла в формате .obj", messageWarning);
             }
-        }
-        else {
+        } else {
             showMessage("Предупреждение", "Откройте модель для сохранения!", messageWarning);
         }
     }
 
     // обработка кнопок для добавления, удаления и выбора камер
-    public void addCameraWithoutParams() {
+    public void addCameraButtons() {
         //кнопка добавления камеры
         Button addButton = new Button("Камера " + (addedButtonsCamera.size() + 1));
         addButton.setLayoutY((addedButtonsCamera.size() > 0) ?
@@ -271,6 +286,37 @@ public class GuiController {
         addCameraPane.getChildren().add(deleteButton);
     }
 
+    public void addModelButtons() {
+        //кнопка добавления камеры
+        Button addButton = new Button("Модель " + (addedButtonsModel.size() + 1));
+        addButton.setLayoutY((addedButtonsModel.size() > 0) ?
+                addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutY() + 40 :
+                230);
+        addButton.setLayoutX(33);
+        addButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showModel(addButton.getText());
+            }
+        });
+        addedButtonsModel.add(addButton);
+        //кнопка удаления камеры
+        Button deleteButton = new Button("Удалить");
+        deleteButton.setLayoutY(addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutY());
+        deleteButton.setLayoutX(addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutX() + 85);
+        deleteButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                deleteModel(addButton.getText());
+            }
+        });
+        deletedButtonsCamera.add(deleteButton);
+
+        modelPane.getChildren().add(addButton);
+        modelPane.getChildren().add(deleteButton);
+        System.out.println();
+    }
+
     @FXML
     private void createCamera() {
         if (!Objects.equals(eyeX.getText(), "") && !Objects.equals(eyeY.getText(), "") && !Objects.equals(eyeZ.getText(), "")
@@ -282,7 +328,7 @@ public class GuiController {
                     new Vector3f(Float.parseFloat(eyeX.getText()), Float.parseFloat(eyeY.getText()), Float.parseFloat(eyeZ.getText())),
                     new Vector3f(Float.parseFloat(targetX.getText()), Float.parseFloat(targetY.getText()), Float.parseFloat(targetZ.getText())),
                     1.0F, 1, 0.01F, 100, true));
-            addCameraWithoutParams();
+            addCameraButtons();
         } else {
             showMessage("Предупреждение", "Введите необходимые данные!", messageWarning);
         }
@@ -339,10 +385,6 @@ public class GuiController {
         }
     }
 
-    public static void main(String[] args) {
-        Double i = Double.parseDouble("2");
-    }
-
     // при нажатии на кнопку преобразовать - проверить какая модель мейчас активна
     // и светануть окошко тип, выбрана модель :... или как-то так
     public void convert(MouseEvent mouseEvent) {
@@ -351,7 +393,32 @@ public class GuiController {
         // проверить, что все поля заполенны
         Matrix4f transposeMatrix = AffineTransformations.translationMatrix(
                 Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
-        TranslationModel.move(transposeMatrix, mesh);
+        TranslationModel.move(transposeMatrix, checkMesh());
+    }
 
+    private Model checkMesh() {
+        for (Model model : meshes) {
+            if (model.isActive) {
+                return model;
+            }
+        }
+        //оповестить
+        return meshes.get(0);
+    }
+
+    public void showModel(String text) {
+        int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
+        for (int i = 0; i < meshes.size(); i++) {
+            if (meshes.get(i).isActive) {
+                meshes.get(i).isActive = false;
+            }
+            if (i + 1 == numOfModel) {
+                meshes.get(i).isActive = true;
+            }
+        }
+    }
+
+    public void deleteModel(String text) {
+        int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
     }
 }

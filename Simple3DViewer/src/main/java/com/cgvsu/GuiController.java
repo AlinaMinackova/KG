@@ -147,7 +147,7 @@ public class GuiController {
             }
 
             if (meshes.size() != 0) {
-                for (Model model : meshes){
+                for (Model model : meshes) {
                     RenderEngine.render(canvas.getGraphicsContext2D(), choiceCamera(), model, (int) width, (int) height); //создаем отрисовку модели
                 }
 
@@ -310,11 +310,10 @@ public class GuiController {
                 deleteModel(addButton.getText());
             }
         });
-        deletedButtonsCamera.add(deleteButton);
+        deletedButtonsModel.add(deleteButton);
 
         modelPane.getChildren().add(addButton);
         modelPane.getChildren().add(deleteButton);
-        System.out.println();
     }
 
     @FXML
@@ -420,5 +419,24 @@ public class GuiController {
 
     public void deleteModel(String text) {
         int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
+        meshes.remove(numOfModel - 1);
+        modelPane.getChildren().remove(addedButtonsModel.get(numOfModel - 1));
+        modelPane.getChildren().remove(deletedButtonsModel.get(numOfModel - 1));
+        //переименовываем кнопки
+        for (int i = 0; i < addedButtonsModel.size(); i++) {
+            if (i + 1 > numOfModel) {
+                addedButtonsModel.get(i).setText("Модель " + i);
+            }
+        }
+        //смещаем координаты
+        for (int i = addedButtonsModel.size() - 1; i >= 1; i--) {
+            if (i + 1 > numOfModel) {
+                addedButtonsModel.get(i).setLayoutY(addedButtonsModel.get(i - 1).getLayoutY());
+                deletedButtonsModel.get(i).setLayoutY(deletedButtonsModel.get(i - 1).getLayoutY());
+            }
+        }
+        addedButtonsModel.remove(numOfModel - 1);
+        deletedButtonsModel.remove(numOfModel - 1);
+
     }
 }

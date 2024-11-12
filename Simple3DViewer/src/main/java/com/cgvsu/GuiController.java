@@ -1,5 +1,7 @@
 package com.cgvsu;
 
+import com.cgvsu.math.AffineTransformations;
+import com.cgvsu.math.TranslationModel;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.RenderEngine;
 import javafx.event.ActionEvent;
@@ -13,8 +15,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
 import com.cgvsu.model.Model;
@@ -338,8 +339,19 @@ public class GuiController {
         }
     }
 
+    public static void main(String[] args) {
+        Double i = Double.parseDouble("2");
+    }
+
     // при нажатии на кнопку преобразовать - проверить какая модель мейчас активна
     // и светануть окошко тип, выбрана модель :... или как-то так
     public void convert(MouseEvent mouseEvent) {
+        //реализовываю только для смещения
+
+        // проверить, что все поля заполенны
+        Matrix4f transposeMatrix = AffineTransformations.translationMatrix(
+                Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
+        TranslationModel.move(transposeMatrix, mesh);
+
     }
 }

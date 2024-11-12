@@ -27,14 +27,13 @@ public class TriangleRasterization {
             }
             for (int x = xl; x <= xr; x++) {
                 if (x >= 0 && y >= 0 && x < zBuff.length && y < zBuff[0].length) {
-                    double[] barizentric = barizentricCoordinates(x, y, coordX, coordY);
-                    double xy = interpolateCoordinatesZBuffer(barizentric, deepZ);
+                    double xy = interpolateCoordinatesZBuffer(coordX, coordY, x, y, deepZ);
                     if (zBuff[x][y] <= xy) {
                         continue;
                     }
-                    int[] rgb = getGradientCoordinatesRGB(barizentric, color);
-                    Vector3f smooth = smoothingNormal(barizentric, normals);
-                    Light.calculateLight(rgb, light, smooth, barizentric);
+                    int[] rgb = getGradientCoordinatesRGB(coordX, coordY, x, y, color);
+                    Vector3f smooth = smoothingNormal(coordX, coordY, x, y, normals);
+                    Light.calculateLight(rgb, light, smooth);
                     zBuff[x][y] = xy;
                     pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
                 }
@@ -54,12 +53,13 @@ public class TriangleRasterization {
             }
             for (int x = xl; x <= xr; x++) {
                 if (x >= 0 && y >= 0 && x < zBuff.length && y < zBuff[0].length) {
-                    double[] barizentric = barizentricCoordinates(x, y, coordX, coordY);
-                    double xy = interpolateCoordinatesZBuffer(barizentric, deepZ);
+                    double xy = interpolateCoordinatesZBuffer(coordX, coordY, x, y, deepZ);
                     if (zBuff[x][y] <= xy) {
                         continue;
                     }
-                    int[] rgb = getGradientCoordinatesRGB(barizentric, color);
+                    int[] rgb = getGradientCoordinatesRGB(coordX, coordY, x, y, color);
+                    Vector3f smooth = smoothingNormal(coordX, coordY, x, y, normals);
+                    Light.calculateLight(rgb, light, smooth);
                     zBuff[x][y] = xy;
                     pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
                 }
@@ -118,18 +118,23 @@ public class TriangleRasterization {
         normals[j] = normal;
     }
 
-    public static double interpolateCoordinatesZBuffer(final double[] baristicCoords, final double[] deepZ) {
-        return baristicCoords[0] * deepZ[0] + baristicCoords[1] * deepZ[1] + baristicCoords[2] * deepZ[2];
-    }
 
-    public static Vector3f smoothingNormal(final double[] baristicCoords, final Vector3f[] normals) {
+    public static Vector3f smoothingNormal(final int[] coordX, final int[] coordY, final int x, final int y, final Vector3f[] normals) {
+        final double[] baristicCoords = barizentricCoordinates(x, y, coordX, coordY);
         return new Vector3f((float) (baristicCoords[0] * normals[0].x + baristicCoords[1] * normals[1].x + baristicCoords[2] * normals[2].x),
                 (float) (baristicCoords[0] * normals[0].y + baristicCoords[1] * normals[1].y + baristicCoords[2] * normals[2].y),
                 (float) (baristicCoords[0] * normals[0].z + baristicCoords[1] * normals[1].z + baristicCoords[2] * normals[2].z));
     }
 
 
-    public static int[] getGradientCoordinatesRGB(final double[] baristicCoords, final Color[] color) {
+    public static double interpolateCoordinatesZBuffer(final int[] coordX, final int[] coordY, final int x, final int y, final double[] deepZ) {
+        final double[] baristicCoords = barizentricCoordinates(x, y, coordX, coordY);
+        return baristicCoords[0] * deepZ[0] + baristicCoords[1] * deepZ[1] + baristicCoords[2] * deepZ[2];
+    }
+
+
+    public static int[] getGradientCoordinatesRGB(final int[] coordX, final int[] coordY, final int x, final int y, final Color[] color) {
+        final double[] baristicCoords = barizentricCoordinates(x, y, coordX, coordY);
         int r = Math.min(255, (int) Math.abs(color[0].getRed() * 255 * baristicCoords[0] + color[1].getRed()
                 * 255 * baristicCoords[1] + color[2].getRed() * 255 * baristicCoords[2]));
         int g = Math.min(255, (int) Math.abs(color[0].getGreen() * 255 * baristicCoords[0] + color[1].getGreen()

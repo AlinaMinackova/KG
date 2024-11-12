@@ -45,8 +45,8 @@ public class GraphicConveyor {
             final float farPlane) {
         Matrix4f result = new Matrix4f();
         float tangentMinusOnDegree = (float) (1.0F / (Math.tan(fov * 0.5F)));
-        result.m00 = tangentMinusOnDegree; //спросить почему
-        result.m11 = tangentMinusOnDegree / aspectRatio; // деление было у m00 (не по формуле), т.к. aspectRatio задавался как отношение wight/hight, а нужно наоборот наверное
+        result.m00 = tangentMinusOnDegree / aspectRatio;
+        result.m11 = tangentMinusOnDegree;
         result.m22 = (farPlane + nearPlane) / (farPlane - nearPlane);
         result.m23 = 1.0F;
         result.m32 = 2 * (nearPlane * farPlane) / (nearPlane - farPlane);
@@ -60,6 +60,7 @@ public class GraphicConveyor {
         final float w = (vertex.x * matrix.m03) + (vertex.y * matrix.m13) + (vertex.z * matrix.m23) + matrix.m33;
         return new Vector3f(x / w, y / w, z / w);
     }
+
 
     public static Point2f vertexToPoint(final Vector3f vertex, final int width, final int height) {
         return new Point2f(vertex.x * width + width / 2.0F, -vertex.y * height + height / 2.0F);

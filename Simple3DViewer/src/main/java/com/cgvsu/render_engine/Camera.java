@@ -10,13 +10,15 @@ public class Camera {
             final float fov,
             final float aspectRatio,
             final float nearPlane,
-            final float farPlane) {
+            final float farPlane,
+            final boolean isActive) {
         this.position = position;
         this.target = target;
         this.fov = fov;
         this.aspectRatio = aspectRatio;
         this.nearPlane = nearPlane;
         this.farPlane = farPlane;
+        this.isActive = isActive;
     }
 
     public void setPosition(final Vector3f position) {
@@ -39,6 +41,14 @@ public class Camera {
         return target;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public void movePosition(final Vector3f translation) {
         this.position.add(translation);
     }
@@ -55,10 +65,12 @@ public class Camera {
         return GraphicConveyor.perspective(fov, aspectRatio, nearPlane, farPlane);
     }
 
+
     private Vector3f position;
     private Vector3f target;
     private float fov;
     private float aspectRatio;
     private float nearPlane;
     private float farPlane;
+    private boolean isActive;
 }

@@ -153,9 +153,7 @@ public class GuiController {
             }
 
             if (meshes.size() != 0) {
-                for (Model model : meshes) {
-                    RenderEngine.render(canvas.getGraphicsContext2D(), choiceCamera(), model, (int) width, (int) height); //создаем отрисовку модели
-                }
+                RenderEngine.render(canvas.getGraphicsContext2D(), choiceCamera(), meshes, (int) width, (int) height); //создаем отрисовку модели
 
             }
         });
@@ -220,6 +218,7 @@ public class GuiController {
             String fileContent = Files.readString(fileName);
             Model mesh = ObjReader.read(fileContent);
             mesh.triangulate();
+            mesh.normalize();
             meshes.add(mesh);
             addModelButtons();
             // добавить функцию, которая будет создавать кнопки:

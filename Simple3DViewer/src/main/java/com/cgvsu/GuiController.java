@@ -1,5 +1,7 @@
 package com.cgvsu;
 
+import com.cgvsu.math.AffineTransformations;
+import com.cgvsu.math.TranslationModel;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.RenderEngine;
 import javafx.event.ActionEvent;
@@ -13,8 +15,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -24,8 +24,10 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
 import com.cgvsu.model.Model;
@@ -79,12 +81,21 @@ public class GuiController {
     @FXML
     private Canvas canvas;
 
-    private Model mesh = null;
+    private List<Model> meshes = new ArrayList<>();
 
-    //кнопки добавления камер
+    //кнопки  камер
     private List<Button> addedButtonsCamera = new ArrayList<>();
     //кнопки удаления камер
     private List<Button> deletedButtonsCamera = new ArrayList<>();
+
+    //кнопки моделей
+    private List<Button> addedButtonsModel = new ArrayList<>();
+    //кнопки удаления моделей
+    private List<Button> deletedButtonsModel = new ArrayList<>();
+    private List<CheckBox> checkBoxesTexture = new ArrayList<>();
+    private List<CheckBox> checkBoxesLighting = new ArrayList<>();
+    private List<CheckBox> checkBoxesGrid = new ArrayList<>();
+    private List<RadioButton> choiceModelRadioButtons = new ArrayList<>();
 
     private List<Camera> cameras = new ArrayList<>();
 
@@ -127,7 +138,7 @@ public class GuiController {
                 new Vector3f(0, 0, 100),
                 new Vector3f(0, 0, 0),
                 1.0F, 1, 0.001F, 1000, true));
-        addCameraWithoutParams();
+        addCameraButtons();
 
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
@@ -139,8 +150,11 @@ public class GuiController {
                 c.setAspectRatio((float) (width / height)); // задаем AspectRatio
             }
 
-            if (mesh != null) {
-                RenderEngine.render(canvas.getGraphicsContext2D(), choiceCamera(), mesh, (int) width, (int) height); //создаем отрисовку модели
+            if (meshes.size() != 0) {
+                for (Model model : meshes) {
+                    RenderEngine.render(canvas.getGraphicsContext2D(), choiceCamera(), model, (int) width, (int) height); //создаем отрисовку модели
+                }
+
             }
         });
 
@@ -148,7 +162,7 @@ public class GuiController {
         timeline.play();
     }
 
-    private void showMessage(String headText, String messageText, Alert alert){
+    private void showMessage(String headText, String messageText, Alert alert) {
         alert.setHeaderText(headText);
         alert.setContentText(messageText);
         alert.showAndWait();
@@ -202,8 +216,10 @@ public class GuiController {
 
         try {
             String fileContent = Files.readString(fileName);
-            mesh = ObjReader.read(fileContent);
+            Model mesh = ObjReader.read(fileContent);
             mesh.triangulate();
+            meshes.add(mesh);
+            addModelButtons();
             // добавить функцию, которая будет создавать кнопки:
             // модель (для выбора), удалить, (добавить текстуру, включить сетку, освещение - checkbox)
         } catch (IOException exception) {
@@ -213,13 +229,13 @@ public class GuiController {
 
     @FXML
     void save(MouseEvent event) {
-        if (mesh != null) {
+        if (meshes.size() != 0) {
             if (!text.getText().equals("") && text.getText().substring(text.getText().length() - 4).equals(".obj")) {
                 File f = new File(text.getText());
                 if (f.exists()) {
                     showMessage("Предупреждение", "Файл с таким именем уже существует!", messageWarning);
                 } else {
-                    if (transformSave.isSelected()){ //сохранить модель с изменениями?
+                    if (transformSave.isSelected()) { //сохранить модель с изменениями?
                         //model.transform();
                         // когда будут приходить значения для трансформации,
                         // изменяй не сами вершины в модели, а создай доп поле transformationVertices которое
@@ -227,20 +243,20 @@ public class GuiController {
                         // будешь менять местами згначения полей vertices и transformationVertices, чтобы
                         // я смогла сохранить модель с изменёнными параметрами
                     }
-                    ObjWriter.write(mesh, text.getText());
-                    showMessage("Информация", "Файл успешно сохранён!", messageInformation);
+                    ObjWriter.write(meshes.get(checkMesh()), text.getText());
+
+                    showMessage("Информация", "Модель " + (checkMesh()+1) + " успешно сохранёна!", messageInformation);
                 }
             } else {
                 showMessage("Предупреждение", "Введите имя файла в формате .obj", messageWarning);
             }
-        }
-        else {
+        } else {
             showMessage("Предупреждение", "Откройте модель для сохранения!", messageWarning);
         }
     }
 
     // обработка кнопок для добавления, удаления и выбора камер
-    public void addCameraWithoutParams() {
+    public void addCameraButtons() {
         //кнопка добавления камеры
         Button addButton = new Button("Камера " + (addedButtonsCamera.size() + 1));
         addButton.setLayoutY((addedButtonsCamera.size() > 0) ?
@@ -270,6 +286,50 @@ public class GuiController {
         addCameraPane.getChildren().add(deleteButton);
     }
 
+    public void addModelButtons() {
+        //кнопка добавления камеры
+        Button addButton = new Button("Модель " + (addedButtonsModel.size() + 1));
+        addButton.setLayoutY((addedButtonsModel.size() > 0) ?
+                addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutY() + 40 :
+                240);
+        addButton.setLayoutX(45);
+        addButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showModel(addButton.getText());
+            }
+        });
+        addedButtonsModel.add(addButton);
+        //кнопка удаления камеры
+        Button deleteButton = new Button("Удалить");
+        deleteButton.setLayoutY(addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutY());
+        deleteButton.setLayoutX(addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutX() + 85);
+        deleteButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                deleteModel(addButton.getText());
+            }
+        });
+        deletedButtonsModel.add(deleteButton);
+
+        RadioButton radioButton = new RadioButton();
+        radioButton.setLayoutY(deletedButtonsModel.get(deletedButtonsModel.size() - 1).getLayoutY() + 4);
+        radioButton.setLayoutX(deletedButtonsModel.get(deletedButtonsModel.size() - 1).getLayoutX() + 75);
+        radioButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showModel(addButton.getText());
+            }
+        });
+        choiceModelRadioButtons.add(radioButton);
+
+        showModel(addButton.getText());
+
+        modelPane.getChildren().add(addButton);
+        modelPane.getChildren().add(deleteButton);
+        modelPane.getChildren().add(radioButton);
+    }
+
     @FXML
     private void createCamera() {
         if (!Objects.equals(eyeX.getText(), "") && !Objects.equals(eyeY.getText(), "") && !Objects.equals(eyeZ.getText(), "")
@@ -281,7 +341,7 @@ public class GuiController {
                     new Vector3f(Float.parseFloat(eyeX.getText()), Float.parseFloat(eyeY.getText()), Float.parseFloat(eyeZ.getText())),
                     new Vector3f(Float.parseFloat(targetX.getText()), Float.parseFloat(targetY.getText()), Float.parseFloat(targetZ.getText())),
                     1.0F, 1, 0.01F, 100, true));
-            addCameraWithoutParams();
+            addCameraButtons();
         } else {
             showMessage("Предупреждение", "Введите необходимые данные!", messageWarning);
         }
@@ -341,5 +401,61 @@ public class GuiController {
     // при нажатии на кнопку преобразовать - проверить какая модель мейчас активна
     // и светануть окошко тип, выбрана модель :... или как-то так
     public void convert(MouseEvent mouseEvent) {
+        //реализовываю только для смещения
+
+        // проверить, что все поля заполенны
+        Matrix4f transposeMatrix = AffineTransformations.translationMatrix(
+                Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
+        TranslationModel.move(transposeMatrix, meshes.get(checkMesh()));
+    }
+
+    private Integer checkMesh() {
+        for (int i = 0; i < meshes.size(); i++){
+            if (meshes.get(i).isActive) {
+                return i;
+            }
+        }
+        //оповестить
+        return 0;
+    }
+
+    public void showModel(String text) {
+        int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
+        for (int i = 0; i < meshes.size(); i++) {
+            if (meshes.get(i).isActive) {
+                meshes.get(i).isActive = false;
+                choiceModelRadioButtons.get(i).setSelected(false);
+            }
+            if (i + 1 == numOfModel) {
+                meshes.get(i).isActive = true;
+                choiceModelRadioButtons.get(i).setSelected(true);
+            }
+        }
+        System.out.println();
+    }
+
+    public void deleteModel(String text) {
+        int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
+        meshes.remove(numOfModel - 1);
+        modelPane.getChildren().remove(addedButtonsModel.get(numOfModel - 1));
+        modelPane.getChildren().remove(deletedButtonsModel.get(numOfModel - 1));
+        modelPane.getChildren().remove(choiceModelRadioButtons.get(numOfModel - 1));
+        //переименовываем кнопки
+        for (int i = 0; i < addedButtonsModel.size(); i++) {
+            if (i + 1 > numOfModel) {
+                addedButtonsModel.get(i).setText("Модель " + i);
+            }
+        }
+        //смещаем координаты
+        for (int i = addedButtonsModel.size() - 1; i >= 1; i--) {
+            if (i + 1 > numOfModel) {
+                addedButtonsModel.get(i).setLayoutY(addedButtonsModel.get(i - 1).getLayoutY());
+                deletedButtonsModel.get(i).setLayoutY(deletedButtonsModel.get(i - 1).getLayoutY());
+                choiceModelRadioButtons.get(i).setLayoutY(choiceModelRadioButtons.get(i - 1).getLayoutY());
+            }
+        }
+        addedButtonsModel.remove(numOfModel - 1);
+        deletedButtonsModel.remove(numOfModel - 1);
+        choiceModelRadioButtons.remove(numOfModel - 1);
     }
 }

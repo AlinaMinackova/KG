@@ -30,7 +30,7 @@
                                     <content>
                                         <ScrollPane prefHeight="367.0" prefWidth="491.0">
                                             <content>
-                                                <AnchorPane fx:id="addCameraPane" minHeight="0.0" minWidth="0.0" prefHeight="369.0" prefWidth="482.0">
+                                                <AnchorPane fx:id="addCameraPane" minHeight="0.0" minWidth="0.0" prefHeight="700.0" prefWidth="482.0">
                                                     <children>
                                                         <Button mnemonicParsing="false" onMouseClicked="#createCamera" text="Добавить камеру" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="10.0" />
                                                         <TextField fx:id="eyeX" layoutX="63.0" layoutY="69.0" />
@@ -59,7 +59,7 @@
                            <content>
                               <ScrollPane prefHeight="287.0" prefWidth="497.0">
                                 <content>
-                                  <AnchorPane fx:id="modelPane" minHeight="0.0" minWidth="0.0" prefHeight="324.0" prefWidth="494.0">
+                                  <AnchorPane fx:id="modelPane" minHeight="0.0" minWidth="0.0" prefHeight="700.0" prefWidth="494.0">
                                        <children>
                                                   <Button fx:id="open" layoutX="43.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#open" text="Добавить модель" />
                                           <Text layoutX="43.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Масштабировать" />

@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 public class TriangleRasterization {
     public static void draw(final GraphicsContext graphicsContext,
                             final int[] coordX, final int[] coordY, final Color[] color,
-                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals) {
+                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals, double[] light) {
         final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
 
         sort(coordX, coordY, deepZ, normals, color);
@@ -34,8 +34,8 @@ public class TriangleRasterization {
                             continue;
                         }
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
-//                        Vector3f smooth = smoothingNormal(barizentric, normals);
-//                        Light.calculateLight(rgb, light, smooth);
+                        Vector3f smooth = smoothingNormal(barizentric, normals);
+                        Light.calculateLight(rgb, light, smooth);
                         zBuff[x][y] = xy;
                         pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
                     }
@@ -63,8 +63,8 @@ public class TriangleRasterization {
                             continue;
                         }
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
-//                        Vector3f smooth = smoothingNormal(barizentric, normals);
-//                        Light.calculateLight(rgb, light, smooth);
+                        Vector3f smooth = smoothingNormal(barizentric, normals);
+                        Light.calculateLight(rgb, light, smooth);
                         zBuff[x][y] = xy;
                         pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
                     }

@@ -12,6 +12,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -21,6 +23,7 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
@@ -40,7 +43,7 @@ public class GuiController {
 
     final private float TRANSLATION = 0.9F; //шаг перемещения камеры
 
-    public ColorPicker choiceBaseColor;
+    public ColorPicker choiceBaseColor = new ColorPicker();
     public CheckBox transformSave;
 
     //для модели
@@ -115,26 +118,7 @@ public class GuiController {
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
-
-        // Возможность выбора цвета модели
-
-//        Label l1 = new Label("no selected color ");
-//        // create a color picker
-//        ColorPicker cp = new ColorPicker();
-//        EventHandler<ActionEvent> event2 = new EventHandler<ActionEvent>() {
-//            public void handle(ActionEvent e)
-//            {
-//                // color
-//                Color c = cp.getValue();
-//
-//                // set text of the label to RGB value of color
-//                l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
-//                        + ", Blue = " + c.getBlue());
-//            }
-//        };
-//        // set listener
-//        cp.setOnAction(event2);
-//        gadgetPane.getChildren().add(cp);
+        choiceBaseColor.setValue(Color.GRAY);
 
         cameras.add(new Camera(
                 new Vector3f(0, 0, 100),
@@ -328,7 +312,7 @@ public class GuiController {
 
         //Сетка
         CheckBox checkBoxGrid = new CheckBox("Сетка");
-        checkBoxGrid.setLayoutY(choiceModelRadioButtons.get(choiceModelRadioButtons.size() - 1).getLayoutY() -20);
+        checkBoxGrid.setLayoutY(choiceModelRadioButtons.get(choiceModelRadioButtons.size() - 1).getLayoutY() - 20);
         checkBoxGrid.setLayoutX(choiceModelRadioButtons.get(choiceModelRadioButtons.size() - 1).getLayoutX() + 35);
         checkBoxGrid.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -340,7 +324,7 @@ public class GuiController {
 
         //Тексутры
         CheckBox checkBoxTexture = new CheckBox("Текстура");
-        checkBoxTexture.setLayoutY(checkBoxesGrid.get(checkBoxesGrid.size() - 1).getLayoutY()  + 20);
+        checkBoxTexture.setLayoutY(checkBoxesGrid.get(checkBoxesGrid.size() - 1).getLayoutY() + 20);
         checkBoxTexture.setLayoutX(checkBoxesGrid.get(checkBoxesGrid.size() - 1).getLayoutX());
         checkBoxTexture.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -520,7 +504,6 @@ public class GuiController {
                 }
             }
         }
-        System.out.println();
     }
 
     public void showTexture(String text) {
@@ -536,7 +519,6 @@ public class GuiController {
                 }
             }
         }
-        System.out.println();
     }
 
     public void showLighting(String text) {
@@ -552,6 +534,19 @@ public class GuiController {
                 }
             }
         }
-        System.out.println();
+    }
+
+    public void choiceDefaultColor(MouseEvent mouseEvent) {
+        choiceBaseColor.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Color c = choiceBaseColor.getValue();
+                for (Model model : meshes) {
+                    if (model.isActive) {
+                        model.color = c;
+                    }
+                }
+            }
+        });
     }
 }

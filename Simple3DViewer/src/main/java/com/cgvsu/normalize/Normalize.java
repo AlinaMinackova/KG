@@ -28,15 +28,14 @@ public class Normalize {
                 if (vertices.get(polygon.getVertexIndices().get(2)).equals(vertex)) {
                     countP++;
                     normal.add(getV(vertices.get(polygon.getVertexIndices().get(2)),
-                            vertices.get(polygon.getVertexIndices().get(1)),
-                            vertices.get(polygon.getVertexIndices().get(0))));
+                            vertices.get(polygon.getVertexIndices().get(0)),
+                            vertices.get(polygon.getVertexIndices().get(1))));
                 }
             }
             normal.div(countP);
             normal.div(Math.sqrt(normal.x * normal.x + normal.y * normal.y+ normal.z * normal.z));
             result.add(normal);
         }
-
         return result;
     }
 

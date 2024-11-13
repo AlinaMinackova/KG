@@ -29,14 +29,14 @@ public class TriangleRasterization {
                 if (x >= 0 && y >= 0 && x < zBuff.length && y < zBuff[0].length) {
                     double[] barizentric = barizentricCoordinates(x, y, coordX, coordY);
                     if (!Double.isNaN(barizentric[0]) && !Double.isNaN(barizentric[1]) && !Double.isNaN(barizentric[2])) {
-                        double xy = interpolateCoordinatesZBuffer(barizentric, deepZ);
-                        if (zBuff[x][y] <= xy) {
+                        double zNew = interpolateCoordinatesZBuffer(barizentric, deepZ);
+                        if (zBuff[x][y] <= zNew) {
                             continue;
                         }
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
                         Vector3f smooth = smoothingNormal(barizentric, normals);
                         Light.calculateLight(rgb, light, smooth);
-                        zBuff[x][y] = xy;
+                        zBuff[x][y] = zNew;
                         pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
                     }
                 }
@@ -58,14 +58,14 @@ public class TriangleRasterization {
                 if (x >= 0 && y >= 0 && x < zBuff.length && y < zBuff[0].length) {
                     double[] barizentric = barizentricCoordinates(x, y, coordX, coordY);
                     if (!Double.isNaN(barizentric[0]) && !Double.isNaN(barizentric[1]) && !Double.isNaN(barizentric[2])) {
-                        double xy = interpolateCoordinatesZBuffer(barizentric, deepZ);
-                        if (zBuff[x][y] <= xy) {
+                        double zNew = interpolateCoordinatesZBuffer(barizentric, deepZ);
+                        if (zBuff[x][y] <= zNew) {
                             continue;
                         }
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
                         Vector3f smooth = smoothingNormal(barizentric, normals);
                         Light.calculateLight(rgb, light, smooth);
-                        zBuff[x][y] = xy;
+                        zBuff[x][y] = zNew;
                         pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
                     }
                 }

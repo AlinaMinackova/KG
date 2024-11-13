@@ -3,7 +3,7 @@ package com.cgvsu.light;
 import com.cgvsu.math.Vector3f;
 
 public class Light {
-    final static double k = 0.25;
+    final static double k = 0.55;
 
     public static void calculateLight(int[] rgb, double[] light, Vector3f normal){
         double l = -(light[0] * normal.x + light[1] * normal.y + light[2] * normal.z) < 0 ? 0 :

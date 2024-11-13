@@ -73,7 +73,7 @@ public class RenderEngine {
                         new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
                         new Color[]{Randomixe.mas[59*polygonInd % 1000], Randomixe.mas[2*polygonInd % 1000], Randomixe.mas[78*polygonInd % 1000]},
                         ZBuffer,
-                        vz, normals, new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22});
+                        vz, normals); //new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22}
 //            }
 
 //            for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {

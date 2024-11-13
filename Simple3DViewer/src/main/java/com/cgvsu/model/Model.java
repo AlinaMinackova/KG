@@ -15,6 +15,9 @@ public class Model {
     public ArrayList<Polygon> polygons = new ArrayList<Polygon>();
     public ArrayList<Polygon> polygonsWithoutTriangulation = new ArrayList<Polygon>();
     public boolean isActive = true;
+    public boolean isActiveGrid = false;
+    public boolean isActiveTexture = false;
+    public boolean isActiveLighting = false;
 
 
     public void triangulate(){

@@ -200,8 +200,6 @@ public class GuiController {
             mesh.normalize();
             meshes.add(mesh);
             addModelButtons();
-            // добавить функцию, которая будет создавать кнопки:
-            // модель (для выбора), удалить, (добавить текстуру, включить сетку, освещение - checkbox)
         } catch (IOException exception) {
             showMessage("Ошибка", "Неудалось найти файл!", messageError);
         }
@@ -366,7 +364,6 @@ public class GuiController {
         }
     }
 
-    //
     public void showCamera(String text) {
         int numOfCamera = Integer.parseInt(text.substring(text.length() - 1));
         for (int i = 0; i < cameras.size(); i++) {
@@ -417,15 +414,18 @@ public class GuiController {
         }
     }
 
-    // при нажатии на кнопку преобразовать - проверить какая модель мейчас активна
-    // и светануть окошко тип, выбрана модель :... или как-то так
     public void convert(MouseEvent mouseEvent) {
         //реализовываю только для смещения
 
-        // проверить, что все поля заполенны
-        Matrix4f transposeMatrix = AffineTransformations.translationMatrix(
-                Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
-        TranslationModel.move(transposeMatrix, meshes.get(checkMesh()));
+        if (!Objects.equals(tx.getText(), "") || !Objects.equals(ty.getText(), "") || !Objects.equals(tz.getText(), "")
+                || !Objects.equals(sx.getText(), "") || !Objects.equals(sy.getText(), "") || !Objects.equals(sz.getText(), "")
+                || !Objects.equals(rx.getText(), "") || !Objects.equals(ry.getText(), "") || !Objects.equals(rz.getText(), "")) {
+            showMessage("Ошибка", "Введите необходимые данные!", messageError);
+        } else {
+            Matrix4f transposeMatrix = AffineTransformations.translationMatrix(
+                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
+            TranslationModel.move(transposeMatrix, meshes.get(checkMesh()));
+        }
     }
 
     private Integer checkMesh() {

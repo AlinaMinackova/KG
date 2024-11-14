@@ -66,9 +66,9 @@
                                           <Text layoutX="43.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Масштабировать" />
                                           <Text layoutX="31.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sy:" />
                                           <Text layoutX="31.0" layoutY="175.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sz:" />
-                                          <TextField fx:id="sx" layoutX="57.0" layoutY="89.0" prefHeight="25.0" prefWidth="67.0" />
-                                          <TextField fx:id="sy" layoutX="56.0" layoutY="123.0" prefHeight="25.0" prefWidth="65.0" />
-                                          <TextField fx:id="sz" layoutX="57.0" layoutY="158.0" prefHeight="25.0" prefWidth="63.0" />
+                                          <TextField fx:id="sx" layoutX="57.0" layoutY="89.0" prefHeight="25.0" prefWidth="67.0" text="0"/>
+                                          <TextField fx:id="sy" layoutX="56.0" layoutY="123.0" prefHeight="25.0" prefWidth="65.0" text="0"/>
+                                          <TextField fx:id="sz" layoutX="57.0" layoutY="158.0" prefHeight="25.0" prefWidth="63.0" text="0"/>
                                           <Text layoutX="31.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sx:" />
                                           <Text layoutX="215.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Повернуть" wrappingWidth="83.974609375" />
                                           <Text layoutX="356.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Переместить" wrappingWidth="100.267578125" />
@@ -76,14 +76,14 @@
                                           <Text layoutX="348.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ty:" />
                                           <Text layoutX="349.0" layoutY="175.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tz:" />
                                           <Text layoutX="191.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rx:" />
-                                          <TextField fx:id="tx" layoutX="378.0" layoutY="89.0" prefHeight="25.0" prefWidth="41.0" />
-                                          <TextField fx:id="ty" layoutX="377.0" layoutY="123.0" prefHeight="25.0" prefWidth="43.0" />
-                                          <TextField fx:id="tz" layoutX="378.0" layoutY="158.0" prefHeight="25.0" prefWidth="42.0" />
+                                          <TextField fx:id="tx" layoutX="378.0" layoutY="89.0" prefHeight="25.0" prefWidth="41.0" text="0"/>
+                                          <TextField fx:id="ty" layoutX="377.0" layoutY="123.0" prefHeight="25.0" prefWidth="43.0" text="0"/>
+                                          <TextField fx:id="tz" layoutX="378.0" layoutY="158.0" prefHeight="25.0" prefWidth="42.0" text="0"/>
                                           <Text layoutX="191.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ry:" />
                                           <Text layoutX="191.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rz:" />
-                                          <TextField fx:id="rx" layoutX="224.0" layoutY="89.0" prefHeight="25.0" prefWidth="46.0" />
-                                          <TextField fx:id="ry" layoutX="224.0" layoutY="123.0" prefHeight="25.0" prefWidth="46.0" />
-                                          <TextField fx:id="rz" layoutX="225.0" layoutY="158.0" prefHeight="25.0" prefWidth="45.0" />
+                                          <TextField fx:id="rx" layoutX="224.0" layoutY="89.0" prefHeight="25.0" prefWidth="46.0" text="0"/>
+                                          <TextField fx:id="ry" layoutX="224.0" layoutY="123.0" prefHeight="25.0" prefWidth="46.0" text="0"/>
+                                          <TextField fx:id="rz" layoutX="225.0" layoutY="158.0" prefHeight="25.0" prefWidth="45.0" text="0"/>
                                           <Button fx:id="convert" layoutX="45.0" layoutY="199.0" mnemonicParsing="false" onMouseClicked="#convert" prefHeight="25.0" prefWidth="110.0" text="Преобразовать" />
                                        </children>
                                     </AnchorPane>
@@ -91,7 +91,7 @@
                               </ScrollPane>
                            </content>
                         </TitledPane>
-                        <Text layoutX="170.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Цве модели без текстур (По умолчанию)" />
+                        <Text layoutX="170.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Цвет модели (по умолчанию)" />
                             </children>
                         </AnchorPane>
                     </content>

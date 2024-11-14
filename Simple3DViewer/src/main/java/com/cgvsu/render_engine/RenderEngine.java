@@ -61,7 +61,7 @@ public class RenderEngine {
                         graphicsContext,
                         new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x},
                         new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
-                        new Color[]{Color.SKYBLUE, Color.SKYBLUE, Color.SKYBLUE},
+                        new Color[]{mesh.color, mesh.color, mesh.color},
                         ZBuffer,
                         vz, normals, new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22});
 //            }

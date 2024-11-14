@@ -19,7 +19,7 @@ public class Model {
     public boolean isActiveGrid = false;
     public boolean isActiveTexture = false;
     public boolean isActiveLighting = false;
-    public Color color =Color.GRAY;
+    public Color color = Color.GRAY;
 
 
     public void triangulate(){

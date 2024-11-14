@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import javax.swing.*;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
@@ -65,8 +66,6 @@ public class GuiController {
 
     @FXML
     public Button open;
-    @FXML
-    public TextField text;
     @FXML
     public Button save;
     @FXML
@@ -208,26 +207,24 @@ public class GuiController {
     @FXML
     void save(MouseEvent event) {
         if (meshes.size() != 0) {
-            if (!text.getText().equals("") && text.getText().substring(text.getText().length() - 4).equals(".obj")) {
-                File f = new File(text.getText());
-                if (f.exists()) {
-                    showMessage("Предупреждение", "Файл с таким именем уже существует!", messageWarning);
-                } else {
-                    if (transformSave.isSelected()) { //сохранить модель с изменениями?
-                        //model.transform();
-                        // когда будут приходить значения для трансформации,
-                        // изменяй не сами вершины в модели, а создай доп поле transformationVertices которое
-                        // будет хранить изменённые вершины. Также создай метод transform(), при вызове которого
-                        // будешь менять местами згначения полей vertices и transformationVertices, чтобы
-                        // я смогла сохранить модель с изменёнными параметрами
-                    }
-                    ObjWriter.write(meshes.get(checkMesh()), text.getText());
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Model");
 
-                    showMessage("Информация", "Модель " + (checkMesh() + 1) + " успешно сохранёна!", messageInformation);
-                }
-            } else {
-                showMessage("Предупреждение", "Введите имя файла в формате .obj", messageWarning);
+            File file = fileChooser.showSaveDialog((Stage) canvas.getScene().getWindow());
+            if (file == null) {
+                return;
             }
+            String fileName = String.valueOf(Path.of(file.getAbsolutePath()));
+            if (transformSave.isSelected()) { //сохранить модель с изменениями?
+                //model.transform();
+                // когда будут приходить значения для трансформации,
+                // изменяй не сами вершины в модели, а создай доп поле transformationVertices которое
+                // будет хранить изменённые вершины. Также создай метод transform(), при вызове которого
+                // будешь менять местами згначения полей vertices и transformationVertices, чтобы
+                // я смогла сохранить модель с изменёнными параметрами
+            }
+            ObjWriter.write(meshes.get(checkMesh()), (fileName.substring(fileName.length() - 4).equals(".obj")) ? fileName : fileName + ".obj");
+            showMessage("Информация", "Модель " + (checkMesh() + 1) + " успешно сохранёна!", messageInformation);
         } else {
             showMessage("Предупреждение", "Откройте модель для сохранения!", messageWarning);
         }
@@ -417,9 +414,9 @@ public class GuiController {
     public void convert(MouseEvent mouseEvent) {
         //реализовываю только для смещения
 
-        if (!Objects.equals(tx.getText(), "") || !Objects.equals(ty.getText(), "") || !Objects.equals(tz.getText(), "")
-                || !Objects.equals(sx.getText(), "") || !Objects.equals(sy.getText(), "") || !Objects.equals(sz.getText(), "")
-                || !Objects.equals(rx.getText(), "") || !Objects.equals(ry.getText(), "") || !Objects.equals(rz.getText(), "")) {
+        if (Objects.equals(tx.getText(), "") || Objects.equals(ty.getText(), "") || Objects.equals(tz.getText(), "")
+                || Objects.equals(sx.getText(), "") || Objects.equals(sy.getText(), "") || Objects.equals(sz.getText(), "")
+                || Objects.equals(rx.getText(), "") || Objects.equals(ry.getText(), "") || Objects.equals(rz.getText(), "")) {
             showMessage("Ошибка", "Введите необходимые данные!", messageError);
         } else {
             Matrix4f transposeMatrix = AffineTransformations.translationMatrix(
@@ -434,7 +431,7 @@ public class GuiController {
                 return i;
             }
         }
-        //оповестить
+        showMessage("Предупреждение", "Активных моделей нет! Выбрана первая", messageWarning);
         return 0;
     }
 
@@ -448,9 +445,9 @@ public class GuiController {
             if (i + 1 == numOfModel) {
                 meshes.get(i).isActive = true;
                 choiceModelRadioButtons.get(i).setSelected(true);
+                choiceBaseColor.setValue(meshes.get(i).color);
             }
         }
-        System.out.println();
     }
 
     public void deleteModel(String text) {

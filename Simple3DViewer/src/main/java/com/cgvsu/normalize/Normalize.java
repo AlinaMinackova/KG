@@ -13,30 +13,19 @@ public class Normalize {
             int countP = 0;
             Vector3f normal = new Vector3f(0, 0, 0);
             for (Polygon polygon : polygons) {
-                if (vertices.get(polygon.getVertexIndices().get(0)).equals(vertex)) {
+                if (vertices.get(polygon.getVertexIndices().get(0)).equals(vertex) ||
+                        vertices.get(polygon.getVertexIndices().get(1)).equals(vertex) ||
+                        vertices.get(polygon.getVertexIndices().get(2)).equals(vertex)) {
                     countP++;
                     normal.add(getV(vertices.get(polygon.getVertexIndices().get(0)),
                             vertices.get(polygon.getVertexIndices().get(1)),
                             vertices.get(polygon.getVertexIndices().get(2))));
-                }
-                if (vertices.get(polygon.getVertexIndices().get(1)).equals(vertex)) {
-                    countP++;
-                    normal.add(getV(vertices.get(polygon.getVertexIndices().get(1)),
-                            vertices.get(polygon.getVertexIndices().get(0)),
-                            vertices.get(polygon.getVertexIndices().get(2))));
-                }
-                if (vertices.get(polygon.getVertexIndices().get(2)).equals(vertex)) {
-                    countP++;
-                    normal.add(getV(vertices.get(polygon.getVertexIndices().get(2)),
-                            vertices.get(polygon.getVertexIndices().get(1)),
-                            vertices.get(polygon.getVertexIndices().get(0))));
                 }
             }
             normal.div(countP);
             normal.div(Math.sqrt(normal.x * normal.x + normal.y * normal.y+ normal.z * normal.z));
             result.add(normal);
         }
-
         return result;
     }
 

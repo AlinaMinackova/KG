@@ -83,8 +83,6 @@ public class GuiController {
     @FXML
     private Canvas canvas;
 
-    private List<Model> meshes = new ArrayList<>();
-
     //кнопки  камер
     private List<Button> addedButtonsCamera = new ArrayList<>();
     //кнопки удаления камер
@@ -101,6 +99,7 @@ public class GuiController {
 
     private List<Camera> cameras = new ArrayList<>();
 
+    private List<Model> meshes = new ArrayList<>();
 
     private Timeline timeline;
 
@@ -115,33 +114,7 @@ public class GuiController {
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
-
-        // Возможность выбора цвета модели
-
-//        Label l1 = new Label("no selected color ");
-//        // create a color picker
-//        ColorPicker cp = new ColorPicker();
-//        EventHandler<ActionEvent> event2 = new EventHandler<ActionEvent>() {
-//            public void handle(ActionEvent e)
-//            {
-//                // color
-//                Color c = cp.getValue();
-//
-//                // set text of the label to RGB value of color
-//                l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
-//                        + ", Blue = " + c.getBlue());
-//            }
-//        };
-//        // set listener
-//        cp.setOnAction(event2);
-//        gadgetPane.getChildren().add(cp);
-
-        cameras.add(new Camera(
-                new Vector3f(0, 0, 100),
-                new Vector3f(0, 0, 0),
-                1.0F, 1, 0.001F, 1000, true));
-        addCameraButtons();
-
+        createCamera();
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();

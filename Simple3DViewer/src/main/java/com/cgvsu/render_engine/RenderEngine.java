@@ -8,7 +8,9 @@ import java.util.Random;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.rasterization.TriangleRasterization;
 import javafx.scene.canvas.GraphicsContext;
+
 import javax.vecmath.*;
+
 import com.cgvsu.model.Model;
 import javafx.scene.paint.Color;
 
@@ -21,8 +23,7 @@ public class RenderEngine {
             final Camera camera,
             final List<Model> meshes,
             final int width,
-            final int height)
-    {
+            final int height) {
         double[][] ZBuffer = new double[width][height];
         for (double[] longs : ZBuffer) {
             Arrays.fill(longs, Double.MAX_VALUE);
@@ -36,7 +37,7 @@ public class RenderEngine {
         modelViewProjectionMatrix.mul(projectionMatrix);
 
 
-        for (Model mesh: meshes) {
+        for (Model mesh : meshes) {
             final int nPolygons = mesh.polygons.size(); //количество полигонов
             for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
                 final int nVerticesInPolygon = mesh.polygons.get(polygonInd).getVertexIndices().size(); //количество вершин в полигоне
@@ -56,17 +57,6 @@ public class RenderEngine {
                     resultPoints.add(resultPoint);
                 }
 
-//            List<Integer> a;
-//            a = List.of(1, 201, 202, 203, 204, 205, 206, 207);
-//            if(a.contains(polygonInd)) {
-//                TriangleRasterization.draw(
-//                        graphicsContext,
-//                        new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x},
-//                        new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
-//                        new Color[]{Color.SKYBLUE, Color.SKYBLUE, Color.SKYBLUE},
-//                        ZBuffer,
-//                        vz);
-//            }else {
                 TriangleRasterization.draw(
                         graphicsContext,
                         new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x},

@@ -33,12 +33,12 @@
                                                 <AnchorPane fx:id="addCameraPane" minHeight="0.0" minWidth="0.0" prefHeight="700.0" prefWidth="482.0">
                                                     <children>
                                                         <Button mnemonicParsing="false" onMouseClicked="#createCamera" text="Добавить камеру" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="10.0" />
-                                                        <TextField fx:id="eyeX" layoutX="63.0" layoutY="69.0" />
-                                                        <TextField fx:id="targetX" layoutX="273.0" layoutY="69.0" />
-                                                        <TextField fx:id="eyeY" layoutX="63.0" layoutY="103.0" />
-                                                        <TextField fx:id="targetY" layoutX="273.0" layoutY="103.0" />
-                                                        <TextField fx:id="eyeZ" layoutX="63.0" layoutY="138.0" />
-                                                        <TextField fx:id="targetZ" layoutX="273.0" layoutY="138.0" />
+                                                        <TextField fx:id="eyeX" layoutX="63.0" layoutY="69.0" text="0" />
+                                                        <TextField fx:id="targetX" layoutX="273.0" layoutY="69.0" text="0" />
+                                                        <TextField fx:id="eyeY" layoutX="63.0" layoutY="103.0" text="0" />
+                                                        <TextField fx:id="targetY" layoutX="273.0" layoutY="103.0" text="0" />
+                                                        <TextField fx:id="eyeZ" layoutX="63.0" layoutY="138.0" text="100" />
+                                                        <TextField fx:id="targetZ" layoutX="273.0" layoutY="138.0" text="0" />
                                                         <Text layoutX="42.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Z:" />
                                                         <Text layoutX="42.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="X:" />
                                                         <Text layoutX="42.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Y:" />

@@ -12,6 +12,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -21,6 +23,7 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
@@ -40,7 +43,7 @@ public class GuiController {
 
     final private float TRANSLATION = 0.9F; //шаг перемещения камеры
 
-    public ColorPicker choiceBaseColor;
+    public ColorPicker choiceBaseColor = new ColorPicker();
     public CheckBox transformSave;
 
     //для модели
@@ -83,6 +86,8 @@ public class GuiController {
     @FXML
     private Canvas canvas;
 
+    private List<Model> meshes = new ArrayList<>();
+
     //кнопки  камер
     private List<Button> addedButtonsCamera = new ArrayList<>();
     //кнопки удаления камер
@@ -99,7 +104,6 @@ public class GuiController {
 
     private List<Camera> cameras = new ArrayList<>();
 
-    private List<Model> meshes = new ArrayList<>();
 
     private Timeline timeline;
 
@@ -115,6 +119,8 @@ public class GuiController {
         timeline.setCycleCount(Animation.INDEFINITE);
 
         createCamera();
+
+        choiceBaseColor.setValue(Color.GRAY);
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
@@ -219,7 +225,7 @@ public class GuiController {
                     }
                     ObjWriter.write(meshes.get(checkMesh()), text.getText());
 
-                    showMessage("Информация", "Модель " + (checkMesh()+1) + " успешно сохранёна!", messageInformation);
+                    showMessage("Информация", "Модель " + (checkMesh() + 1) + " успешно сохранёна!", messageInformation);
                 }
             } else {
                 showMessage("Предупреждение", "Введите имя файла в формате .obj", messageWarning);
@@ -264,8 +270,8 @@ public class GuiController {
         //кнопка добавления камеры
         Button addButton = new Button("Модель " + (addedButtonsModel.size() + 1));
         addButton.setLayoutY((addedButtonsModel.size() > 0) ?
-                addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutY() + 40 :
-                240);
+                addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutY() + 70 :
+                245);
         addButton.setLayoutX(45);
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -299,9 +305,48 @@ public class GuiController {
 
         showModel(addButton.getText());
 
+        //Сетка
+        CheckBox checkBoxGrid = new CheckBox("Сетка");
+        checkBoxGrid.setLayoutY(choiceModelRadioButtons.get(choiceModelRadioButtons.size() - 1).getLayoutY() - 20);
+        checkBoxGrid.setLayoutX(choiceModelRadioButtons.get(choiceModelRadioButtons.size() - 1).getLayoutX() + 35);
+        checkBoxGrid.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showGrid(addButton.getText());
+            }
+        });
+        checkBoxesGrid.add(checkBoxGrid);
+
+        //Тексутры
+        CheckBox checkBoxTexture = new CheckBox("Текстура");
+        checkBoxTexture.setLayoutY(checkBoxesGrid.get(checkBoxesGrid.size() - 1).getLayoutY() + 20);
+        checkBoxTexture.setLayoutX(checkBoxesGrid.get(checkBoxesGrid.size() - 1).getLayoutX());
+        checkBoxTexture.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showTexture(addButton.getText());
+            }
+        });
+        checkBoxesTexture.add(checkBoxTexture);
+
+        // Освещение
+        CheckBox checkBoxLighting = new CheckBox("Освещение");
+        checkBoxLighting.setLayoutY(checkBoxesTexture.get(checkBoxesTexture.size() - 1).getLayoutY() + 20);
+        checkBoxLighting.setLayoutX(checkBoxesTexture.get(checkBoxesTexture.size() - 1).getLayoutX());
+        checkBoxLighting.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showLighting(addButton.getText());
+            }
+        });
+        checkBoxesLighting.add(checkBoxLighting);
+
         modelPane.getChildren().add(addButton);
         modelPane.getChildren().add(deleteButton);
         modelPane.getChildren().add(radioButton);
+        modelPane.getChildren().add(checkBoxGrid);
+        modelPane.getChildren().add(checkBoxTexture);
+        modelPane.getChildren().add(checkBoxLighting);
     }
 
     @FXML
@@ -384,7 +429,7 @@ public class GuiController {
     }
 
     private Integer checkMesh() {
-        for (int i = 0; i < meshes.size(); i++){
+        for (int i = 0; i < meshes.size(); i++) {
             if (meshes.get(i).isActive) {
                 return i;
             }
@@ -414,6 +459,9 @@ public class GuiController {
         modelPane.getChildren().remove(addedButtonsModel.get(numOfModel - 1));
         modelPane.getChildren().remove(deletedButtonsModel.get(numOfModel - 1));
         modelPane.getChildren().remove(choiceModelRadioButtons.get(numOfModel - 1));
+        modelPane.getChildren().remove(checkBoxesGrid.get(numOfModel - 1));
+        modelPane.getChildren().remove(checkBoxesTexture.get(numOfModel - 1));
+        modelPane.getChildren().remove(checkBoxesLighting.get(numOfModel - 1));
         //переименовываем кнопки
         for (int i = 0; i < addedButtonsModel.size(); i++) {
             if (i + 1 > numOfModel) {
@@ -426,10 +474,75 @@ public class GuiController {
                 addedButtonsModel.get(i).setLayoutY(addedButtonsModel.get(i - 1).getLayoutY());
                 deletedButtonsModel.get(i).setLayoutY(deletedButtonsModel.get(i - 1).getLayoutY());
                 choiceModelRadioButtons.get(i).setLayoutY(choiceModelRadioButtons.get(i - 1).getLayoutY());
+                checkBoxesGrid.get(i).setLayoutY(checkBoxesGrid.get(i - 1).getLayoutY());
+                checkBoxesTexture.get(i).setLayoutY(checkBoxesTexture.get(i - 1).getLayoutY());
+                checkBoxesLighting.get(i).setLayoutY(checkBoxesLighting.get(i - 1).getLayoutY());
             }
         }
         addedButtonsModel.remove(numOfModel - 1);
         deletedButtonsModel.remove(numOfModel - 1);
         choiceModelRadioButtons.remove(numOfModel - 1);
+        checkBoxesGrid.remove(numOfModel - 1);
+        checkBoxesTexture.remove(numOfModel - 1);
+        checkBoxesLighting.remove(numOfModel - 1);
+    }
+
+    public void showGrid(String text) {
+        int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
+        for (int i = 0; i < meshes.size(); i++) {
+            if (i + 1 == numOfModel) {
+                if (meshes.get(i).isActiveGrid) {
+                    meshes.get(i).isActiveGrid = false;
+                    checkBoxesGrid.get(i).setSelected(false);
+                } else {
+                    meshes.get(i).isActiveGrid = true;
+                    checkBoxesGrid.get(i).setSelected(true);
+                }
+            }
+        }
+    }
+
+    public void showTexture(String text) {
+        int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
+        for (int i = 0; i < meshes.size(); i++) {
+            if (i + 1 == numOfModel) {
+                if (meshes.get(i).isActiveTexture) {
+                    meshes.get(i).isActiveTexture = false;
+                    checkBoxesTexture.get(i).setSelected(false);
+                } else {
+                    meshes.get(i).isActiveTexture = true;
+                    checkBoxesTexture.get(i).setSelected(true);
+                }
+            }
+        }
+    }
+
+    public void showLighting(String text) {
+        int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
+        for (int i = 0; i < meshes.size(); i++) {
+            if (i + 1 == numOfModel) {
+                if (meshes.get(i).isActiveLighting) {
+                    meshes.get(i).isActiveLighting = false;
+                    checkBoxesLighting.get(i).setSelected(false);
+                } else {
+                    meshes.get(i).isActiveLighting = true;
+                    checkBoxesLighting.get(i).setSelected(true);
+                }
+            }
+        }
+    }
+
+    public void choiceDefaultColor(MouseEvent mouseEvent) {
+        choiceBaseColor.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Color c = choiceBaseColor.getValue();
+                for (Model model : meshes) {
+                    if (model.isActive) {
+                        model.color = c;
+                    }
+                }
+            }
+        });
     }
 }

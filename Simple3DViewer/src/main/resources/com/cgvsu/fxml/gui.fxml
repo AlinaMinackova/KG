@@ -53,7 +53,8 @@
                                         </ScrollPane>
                                     </content>
                                 </TitledPane>
-                        <ColorPicker fx:id="choiceBaseColor" layoutX="20.0" layoutY="114.0" />
+                        <ColorPicker fx:id="choiceBaseColor" layoutX="20.0" layoutY="114.0"
+                                     onMouseClicked="#choiceDefaultColor" />
                         <CheckBox fx:id="transformSave" layoutX="145.0" layoutY="76.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="186.0" text="Учитывать трансформацию" />
                         <TitledPane animated="false" layoutX="21.0" layoutY="164.0" prefHeight="348.0" prefWidth="499.0" text="Модель">
                            <content>
@@ -90,6 +91,7 @@
                               </ScrollPane>
                            </content>
                         </TitledPane>
+                        <Text layoutX="170.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Цве модели без текстур (По умолчанию)" />
                             </children>
                         </AnchorPane>
                     </content>

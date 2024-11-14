@@ -5,6 +5,7 @@ import com.cgvsu.normalize.Normalize;
 import com.cgvsu.triangulation.Triangulation;
 
 
+import javafx.scene.paint.Color;
 import java.util.*;
 
 public class Model {
@@ -15,6 +16,10 @@ public class Model {
     public ArrayList<Polygon> polygons = new ArrayList<Polygon>();
     public ArrayList<Polygon> polygonsWithoutTriangulation = new ArrayList<Polygon>();
     public boolean isActive = true;
+    public boolean isActiveGrid = false;
+    public boolean isActiveTexture = false;
+    public boolean isActiveLighting = false;
+    public Color color =Color.GRAY;
 
 
     public void triangulate(){

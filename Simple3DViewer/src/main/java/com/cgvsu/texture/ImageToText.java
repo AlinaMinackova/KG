@@ -35,21 +35,46 @@ public class ImageToText {
         BufferedImage img;
 
         try {
-            img = ImageIO.read(new File("3DModels/CaracalCube/caracal_texture.png"));
+            img = ImageIO.read(new File("3DModels/CaracalCube/cat.png")); //caracal_texture.png
 
             pixelData = new int[img.getWidth()][img.getHeight()][3];
             wight = img.getWidth();
             height = img.getHeight();
             int[] rgb;
 
-            for(int i = 0; i < img.getWidth(); i++){
-                for(int j = 0; j < img.getHeight(); j++){
-                    rgb = getPixelData(img, i, j);
-                    pixelData[i][j][0] = rgb[0];
-                    pixelData[i][j][1] = rgb[1];
-                    pixelData[i][j][2] = rgb[2];
-                }
-            }
+//            for(int i = 0; i < img.getWidth(); i++){  //для лица и куба
+//                for(int j = 0; j < img.getHeight(); j++){
+//                    rgb = getPixelData(img, i, j);
+//                    pixelData[img.getWidth() - 1 - i][img.getHeight() - 1 - j][0] = rgb[0];
+//                    pixelData[img.getWidth() - 1 - i][img.getHeight() - 1 - j][1] = rgb[1];
+//                    pixelData[img.getWidth() - 1 - i][img.getHeight() - 1 - j][2] = rgb[2];
+//                }
+//            }
+//            for(int i = 0; i < img.getWidth(); i++){
+//                for(int j = 0; j < img.getHeight(); j++){
+//                    rgb = getPixelData(img, i, j);
+//                    pixelData[i][j][0] = rgb[0];
+//                    pixelData[i][j][1] = rgb[1];
+//                    pixelData[i][j][2] = rgb[2];
+//                }
+//            }
+//            for(int i = 0; i < img.getWidth(); i++){          //для кота pops
+//                for(int j = 0; j < img.getHeight(); j++){
+//                    rgb = getPixelData(img, i, j);
+//                    pixelData[i][img.getHeight() - 1 - j][0] = rgb[0];
+//                    pixelData[i][img.getHeight() - 1 - j][1] = rgb[1];
+//                    pixelData[i][img.getHeight() - 1 - j][2] = rgb[2];
+//                }
+//            }
+
+//            for(int i = 0; i < img.getWidth(); i++){
+//                for(int j = 0; j < img.getHeight(); j++){
+//                    rgb = getPixelData(img, i, j);
+//                    pixelData[img.getWidth() - 1 - i][j][0] = rgb[0];
+//                    pixelData[img.getWidth() - 1 - i][j][1] = rgb[1];
+//                    pixelData[img.getWidth() - 1 - i][j][2] = rgb[2];
+//                }
+//            }
 
 
         } catch (IOException e) {

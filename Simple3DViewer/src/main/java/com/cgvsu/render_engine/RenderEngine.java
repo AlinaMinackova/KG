@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.cgvsu.math.Vector3f;
+import com.cgvsu.math.Vector2f;
 import com.cgvsu.rasterization.TriangleRasterization;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -44,11 +45,13 @@ public class RenderEngine {
                 javax.vecmath.Vector3f v;
                 double[] vz = new double[nVerticesInPolygon];//вектор z
                 Vector3f[] normals = new Vector3f[3]; //список нормалей полигона
+                Vector2f[] textures = new Vector2f[3]; //список текстур полигона
 
                 ArrayList<Point2f> resultPoints = new ArrayList<>(); //список преобразованных вершин полигона в системе XY
                 for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) { //идем по вершинам в полигоне
                     Vector3f vertex = mesh.vertices.get(mesh.polygons.get(polygonInd).getVertexIndices().get(vertexInPolygonInd)); //получаю координату вершины
                     normals[vertexInPolygonInd] = (mesh.normals.get(mesh.polygons.get(polygonInd).getVertexIndices().get(vertexInPolygonInd))); //получаю нормаль вершины
+                    textures[vertexInPolygonInd] = (mesh.textureVertices.get(mesh.polygons.get(polygonInd).getTextureVertexIndices().get(vertexInPolygonInd))); //получаю текстуру вершины
 
                     javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.x, vertex.y, vertex.z); //делаем вектор строку
                     v = multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertexVecmath);
@@ -63,7 +66,7 @@ public class RenderEngine {
                         new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
                         new Color[]{mesh.color, mesh.color, mesh.color},
                         ZBuffer,
-                        vz, normals, new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22});
+                        vz, normals, textures, new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22});
 //            }
 
 //            for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {

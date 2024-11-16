@@ -30,6 +30,7 @@ public class GraphicConveyor {
         resultZ.normalize();
 
         //трпнспонированный видовая матрица
+        //напомнить поменять координаты на m20, m21, m22
         float[] matrix = new float[]{
                 resultX.x, resultY.x, resultZ.x, 0,
                 resultX.y, resultY.y, resultZ.y, 0,

@@ -1,18 +1,25 @@
 package com.cgvsu.rasterization;
 
 import com.cgvsu.light.Light;
+import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
+import com.cgvsu.model.Model;
+import com.cgvsu.texture.ImageToText;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
+import static com.cgvsu.checkbox.Light.getGradientCoordinatesRGB;
+import static com.cgvsu.checkbox.Light.smoothingNormal;
+import static com.cgvsu.checkbox.Texture.getGradientCoordinatesTexture;
+
 public class TriangleRasterization {
     public static void draw(final GraphicsContext graphicsContext,
                             final int[] coordX, final int[] coordY, final Color[] color,
-                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals, double[] light) {
+                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals, Vector2f[] textures, double[] light, Model mesh) {
         final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
 
-        sort(coordX, coordY, deepZ, normals, color);
+        sort(coordX, coordY, deepZ, normals, textures, color);
 
         for (int y = coordY[0]; y <= coordY[1]; y++) {
             //находим x
@@ -34,8 +41,20 @@ public class TriangleRasterization {
                             continue;
                         }
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
-                        Vector3f smooth = smoothingNormal(barizentric, normals);
-                        Light.calculateLight(rgb, light, smooth);
+                        if(mesh.isActiveTexture) {
+                            double[] texture = getGradientCoordinatesTexture(barizentric, textures);
+                            int u = (int) Math.round(texture[0] * (ImageToText.wight - 1));
+                            int v = (int) Math.round(texture[1] * (ImageToText.height - 1));
+                            if (u < ImageToText.wight && v < ImageToText.height) {
+                                rgb[0] = ImageToText.pixelData[u][v][0];
+                                rgb[1] = ImageToText.pixelData[u][v][1];
+                                rgb[2] = ImageToText.pixelData[u][v][2];
+                            }
+                        }
+                        else if(mesh.isActiveLighting) {
+                            Vector3f smooth = smoothingNormal(barizentric, normals);
+                            Light.calculateLight(rgb, light, smooth);
+                        }
                         zBuff[x][y] = zNew;
                         pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
                     }
@@ -63,8 +82,22 @@ public class TriangleRasterization {
                             continue;
                         }
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
-                        Vector3f smooth = smoothingNormal(barizentric, normals);
-                        Light.calculateLight(rgb, light, smooth);
+                        if(mesh.isActiveTexture) {
+                            double[] texture = getGradientCoordinatesTexture(barizentric, textures);
+                            int u = (int) Math.round(texture[0] * (ImageToText.wight - 1));
+                            int v = (int) Math.round(texture[1] * (ImageToText.height - 1));
+                            if (u < ImageToText.wight && v < ImageToText.height) {
+                                rgb[0] = ImageToText.pixelData[u][v][0];
+                                rgb[1] = ImageToText.pixelData[u][v][1];
+                                rgb[2] = ImageToText.pixelData[u][v][2];
+                            }
+                        }
+                        else if(mesh.isActiveLighting) {
+                            Vector3f smooth = smoothingNormal(barizentric, normals);
+                            Light.calculateLight(rgb, light, smooth);
+                        }
+//                        Vector3f smooth = smoothingNormal(barizentric, normals);
+//                        Light.calculateLight(rgb, light, smooth);
                         zBuff[x][y] = zNew;
                         pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
                     }
@@ -93,20 +126,20 @@ public class TriangleRasterization {
         return new double[]{alfa, betta, gamma};
     }
 
-    private static void sort(int[] coordX, int[] coordY, double[] deepZ, Vector3f[] normals,  Color[] color) {
+    private static void sort(int[] coordX, int[] coordY, double[] deepZ, Vector3f[] normals, Vector2f[] textures,  Color[] color) {
         //сортируем вершины
         if (coordY[0] > coordY[1]) {
-            reverse(0, 1, coordX, coordY, deepZ, normals, color);
+            reverse(0, 1, coordX, coordY, deepZ, normals, textures, color);
         }
         if (coordY[0] > coordY[2]) {
-            reverse(0, 2, coordX, coordY, deepZ, normals, color);
+            reverse(0, 2, coordX, coordY, deepZ, normals, textures, color);
         }
         if (coordY[1] > coordY[2]) {
-            reverse(1, 2, coordX, coordY, deepZ, normals, color);
+            reverse(1, 2, coordX, coordY, deepZ, normals, textures, color);
         }
     }
 
-    private static void reverse(int i, int j, int[] coordX, int[] coordY, double[] deepZ, Vector3f[] normals, Color[] color) {
+    private static void reverse(int i, int j, int[] coordX, int[] coordY, double[] deepZ, Vector3f[] normals, Vector2f[] textures, Color[] color) {
         int termY = coordY[i];
         coordY[i] = coordY[j];
         coordY[j] = termY;
@@ -122,29 +155,16 @@ public class TriangleRasterization {
         Vector3f normal = normals[i];
         normals[i] = normals[j];
         normals[j] = normal;
+        Vector2f texture = textures[i];
+        textures[i] = textures[j];
+        textures[j] = texture;
     }
 
-
-    public static Vector3f smoothingNormal(final double[] baristicCoords, final Vector3f[] normals) {
-        return new Vector3f((float) (baristicCoords[0] * normals[0].x + baristicCoords[1] * normals[1].x + baristicCoords[2] * normals[2].x),
-                (float) (baristicCoords[0] * normals[0].y + baristicCoords[1] * normals[1].y + baristicCoords[2] * normals[2].y),
-                (float) (baristicCoords[0] * normals[0].z + baristicCoords[1] * normals[1].z + baristicCoords[2] * normals[2].z));
-    }
 
 
     public static double interpolateCoordinatesZBuffer(final double[] baristicCoords, final double[] deepZ) {
         return baristicCoords[0] * deepZ[0] + baristicCoords[1] * deepZ[1] + baristicCoords[2] * deepZ[2];
     }
 
-
-    public static int[] getGradientCoordinatesRGB(final double[] baristicCoords, final Color[] color) {
-        int r = Math.min(255, (int) Math.abs(color[0].getRed() * 255 * baristicCoords[0] + color[1].getRed()
-                * 255 * baristicCoords[1] + color[2].getRed() * 255 * baristicCoords[2]));
-        int g = Math.min(255, (int) Math.abs(color[0].getGreen() * 255 * baristicCoords[0] + color[1].getGreen()
-                * 255 * baristicCoords[1] + color[2].getGreen() * 255 * baristicCoords[2]));
-        int b = Math.min(255, (int) Math.abs(color[0].getBlue() * 255 * baristicCoords[0] + color[1].getBlue()
-                * 255 * baristicCoords[1] + color[2].getBlue() * 255 * baristicCoords[2]));
-        return new int[]{r, g, b};
-    }
 
 }

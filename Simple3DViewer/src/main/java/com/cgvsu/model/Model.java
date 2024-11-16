@@ -18,6 +18,7 @@ public class Model {
     public boolean isActive = true;
     public boolean isActiveGrid = false;
     public boolean isActiveTexture = false;
+    public String pathTexture = null;
     public boolean isActiveLighting = false;
     public Color color = Color.GRAY;
 

@@ -498,12 +498,32 @@ public class GuiController {
         int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
         for (int i = 0; i < meshes.size(); i++) {
             if (i + 1 == numOfModel) {
-                if (meshes.get(i).isActiveTexture) {
-                    meshes.get(i).isActiveTexture = false;
-                    checkBoxesTexture.get(i).setSelected(false);
-                } else {
-                    meshes.get(i).isActiveTexture = true;
-                    checkBoxesTexture.get(i).setSelected(true);
+                if (meshes.get(i).pathTexture != null) {
+                    if (meshes.get(i).isActiveTexture) {
+                        meshes.get(i).isActiveTexture = false;
+                        checkBoxesTexture.get(i).setSelected(false);
+                    } else {
+                        meshes.get(i).isActiveTexture = true;
+                        checkBoxesTexture.get(i).setSelected(true);
+                    }
+                }
+                else {
+                    FileChooser fileChooser = new FileChooser();
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*.png", ".jpg"));
+                    fileChooser.setTitle("Load Texture");
+
+                    File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
+                    if (file == null) {
+                        return;
+                    }
+
+                    Path fileName = Path.of(file.getAbsolutePath());
+
+                    try {
+                        meshes.get(i).pathTexture = Files.readString(fileName);
+                    } catch (IOException exception) {
+                        showMessage("Ошибка", "Неудалось найти файл!", messageError);
+                    }
                 }
             }
         }
@@ -529,8 +549,8 @@ public class GuiController {
             @Override
             public void handle(ActionEvent event) {
                 Color c = baseModelColor.getValue();
-               Model model = activeModel();
-               model.color = c;
+                Model model = activeModel();
+                model.color = c;
             }
         });
     }

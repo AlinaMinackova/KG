@@ -506,10 +506,9 @@ public class GuiController {
                         meshes.get(i).isActiveTexture = true;
                         checkBoxesTexture.get(i).setSelected(true);
                     }
-                }
-                else {
+                } else {
                     FileChooser fileChooser = new FileChooser();
-                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*.png", ".jpg"));
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Texture (*.png, *.jpg)", "*.png", "*.jpg"));
                     fileChooser.setTitle("Load Texture");
 
                     File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
@@ -518,12 +517,7 @@ public class GuiController {
                     }
 
                     Path fileName = Path.of(file.getAbsolutePath());
-
-                    try {
-                        meshes.get(i).pathTexture = Files.readString(fileName);
-                    } catch (IOException exception) {
-                        showMessage("Ошибка", "Неудалось найти файл!", messageError);
-                    }
+                    meshes.get(i).pathTexture = String.valueOf(fileName);
                 }
             }
         }

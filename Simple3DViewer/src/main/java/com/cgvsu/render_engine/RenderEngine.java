@@ -66,7 +66,7 @@ public class RenderEngine {
                         new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
                         new Color[]{mesh.color, mesh.color, mesh.color},
                         ZBuffer,
-                        vz, normals, textures, new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22});
+                        vz, normals, textures, new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22}, mesh);
 //            }
 
 //            for (int vertexInPolygonInd = 1; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) {

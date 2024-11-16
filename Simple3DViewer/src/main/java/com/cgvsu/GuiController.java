@@ -18,21 +18,17 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
-import java.awt.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import javax.swing.*;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
@@ -44,7 +40,7 @@ public class GuiController {
 
     final private float TRANSLATION = 0.9F; //шаг перемещения камеры
 
-    public ColorPicker choiceBaseColor = new ColorPicker();
+    public ColorPicker baseModelColor = new ColorPicker();
     public CheckBox transformSave;
 
     //для модели
@@ -71,7 +67,7 @@ public class GuiController {
     @FXML
     public AnchorPane gadgetPane;
     @FXML
-    public AnchorPane addCameraPane;
+    public AnchorPane cameraPane;
     public TextField eyeX;
     public TextField targetX;
     public TextField eyeY;
@@ -85,23 +81,23 @@ public class GuiController {
     @FXML
     private Canvas canvas;
 
-    private List<Model> meshes = new ArrayList<>();
-
+    //список камер
+    private List<Camera> cameras = new ArrayList<>();
     //кнопки  камер
     private List<Button> addedButtonsCamera = new ArrayList<>();
     //кнопки удаления камер
     private List<Button> deletedButtonsCamera = new ArrayList<>();
 
+    //список моделей
+    private List<Model> meshes = new ArrayList<>();
     //кнопки моделей
     private List<Button> addedButtonsModel = new ArrayList<>();
-    //кнопки удаления моделей
-    private List<Button> deletedButtonsModel = new ArrayList<>();
     private List<CheckBox> checkBoxesTexture = new ArrayList<>();
     private List<CheckBox> checkBoxesLighting = new ArrayList<>();
     private List<CheckBox> checkBoxesGrid = new ArrayList<>();
     private List<RadioButton> choiceModelRadioButtons = new ArrayList<>();
-
-    private List<Camera> cameras = new ArrayList<>();
+    //кнопки удаления моделей
+    private List<Button> deletedButtonsModel = new ArrayList<>();
 
 
     private Timeline timeline;
@@ -119,7 +115,7 @@ public class GuiController {
 
         createCamera();
 
-        choiceBaseColor.setValue(Color.GRAY);
+        baseModelColor.setValue(Color.GRAY);
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
@@ -131,7 +127,7 @@ public class GuiController {
             }
 
             if (meshes.size() != 0) {
-                RenderEngine.render(canvas.getGraphicsContext2D(), choiceCamera(), meshes, (int) width, (int) height); //создаем отрисовку модели
+                RenderEngine.render(canvas.getGraphicsContext2D(), activeCamera(), meshes, (int) width, (int) height); //создаем отрисовку модели
 
             }
         });
@@ -147,7 +143,7 @@ public class GuiController {
     }
 
     //проверяем какая камера сейчас активна
-    private Camera choiceCamera() {
+    private Camera activeCamera() {
         for (Camera camera : cameras) {
             if (camera.isActive()) {
                 return camera;
@@ -160,22 +156,22 @@ public class GuiController {
     @FXML
     public void moveCamera(KeyEvent keyEvent) {
         if (Objects.equals(keyEvent.getText(), "w")) {
-            choiceCamera().movePosition(new Vector3f(0, 0, -TRANSLATION));
+            activeCamera().movePosition(new Vector3f(0, 0, -TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "s")) {
-            choiceCamera().movePosition(new Vector3f(0, 0, TRANSLATION));
+            activeCamera().movePosition(new Vector3f(0, 0, TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "a")) {
-            choiceCamera().movePosition(new Vector3f(TRANSLATION, 0, 0));
+            activeCamera().movePosition(new Vector3f(TRANSLATION, 0, 0));
         }
         if (Objects.equals(keyEvent.getText(), "d")) {
-            choiceCamera().movePosition(new Vector3f(-TRANSLATION, 0, 0));
+            activeCamera().movePosition(new Vector3f(-TRANSLATION, 0, 0));
         }
         if (Objects.equals(keyEvent.getText(), "r")) {
-            choiceCamera().movePosition(new Vector3f(0, TRANSLATION, 0));
+            activeCamera().movePosition(new Vector3f(0, TRANSLATION, 0));
         }
         if (Objects.equals(keyEvent.getText(), "f")) {
-            choiceCamera().movePosition(new Vector3f(0, -TRANSLATION, 0));
+            activeCamera().movePosition(new Vector3f(0, -TRANSLATION, 0));
         }
     }
 
@@ -223,14 +219,13 @@ public class GuiController {
                 // будешь менять местами згначения полей vertices и transformationVertices, чтобы
                 // я смогла сохранить модель с изменёнными параметрами
             }
-            ObjWriter.write(meshes.get(checkMesh()), (fileName.substring(fileName.length() - 4).equals(".obj")) ? fileName : fileName + ".obj");
-            showMessage("Информация", "Модель " + (checkMesh() + 1) + " успешно сохранёна!", messageInformation);
+            ObjWriter.write(activeModel(), (fileName.substring(fileName.length() - 4).equals(".obj")) ? fileName : fileName + ".obj");
+            showMessage("Информация", "Модель успешно сохранёна!", messageInformation);
         } else {
             showMessage("Предупреждение", "Откройте модель для сохранения!", messageWarning);
         }
     }
 
-    // обработка кнопок для добавления, удаления и выбора камер
     public void addCameraButtons() {
         //кнопка добавления камеры
         Button addButton = new Button("Камера " + (addedButtonsCamera.size() + 1));
@@ -245,6 +240,7 @@ public class GuiController {
             }
         });
         addedButtonsCamera.add(addButton);
+
         //кнопка удаления камеры
         Button deleteButton = new Button("Удалить");
         deleteButton.setLayoutY(addedButtonsCamera.get(addedButtonsCamera.size() - 1).getLayoutY());
@@ -257,12 +253,11 @@ public class GuiController {
         });
         deletedButtonsCamera.add(deleteButton);
 
-        addCameraPane.getChildren().add(addButton);
-        addCameraPane.getChildren().add(deleteButton);
+        cameraPane.getChildren().add(addButton);
+        cameraPane.getChildren().add(deleteButton);
     }
 
     public void addModelButtons() {
-        //кнопка добавления камеры
         Button addButton = new Button("Модель " + (addedButtonsModel.size() + 1));
         addButton.setLayoutY((addedButtonsModel.size() > 0) ?
                 addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutY() + 70 :
@@ -275,7 +270,7 @@ public class GuiController {
             }
         });
         addedButtonsModel.add(addButton);
-        //кнопка удаления камеры
+
         Button deleteButton = new Button("Удалить");
         deleteButton.setLayoutY(addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutY());
         deleteButton.setLayoutX(addedButtonsModel.get(addedButtonsModel.size() - 1).getLayoutX() + 85);
@@ -381,6 +376,7 @@ public class GuiController {
                     cameras.get(0).setActive(true);
                 }
                 delete(i);
+                showMessage("Информация", "Вы перенаправлены на: Камера 1", messageInformation);
                 break;
             }
         }
@@ -391,8 +387,8 @@ public class GuiController {
             showMessage("Ошибка", "Нельзя удалить единственную камеру!", messageError);
         } else {
             cameras.remove(cameraID);
-            addCameraPane.getChildren().remove(addedButtonsCamera.get(cameraID));
-            addCameraPane.getChildren().remove(deletedButtonsCamera.get(cameraID));
+            cameraPane.getChildren().remove(addedButtonsCamera.get(cameraID));
+            cameraPane.getChildren().remove(deletedButtonsCamera.get(cameraID));
             //переименовываем кнопки
             for (int i = 0; i < addedButtonsCamera.size(); i++) {
                 if (i + 1 > cameraID) {
@@ -413,7 +409,6 @@ public class GuiController {
 
     public void convert(MouseEvent mouseEvent) {
         //реализовываю только для смещения
-
         if (Objects.equals(tx.getText(), "") || Objects.equals(ty.getText(), "") || Objects.equals(tz.getText(), "")
                 || Objects.equals(sx.getText(), "") || Objects.equals(sy.getText(), "") || Objects.equals(sz.getText(), "")
                 || Objects.equals(rx.getText(), "") || Objects.equals(ry.getText(), "") || Objects.equals(rz.getText(), "")) {
@@ -421,18 +416,18 @@ public class GuiController {
         } else {
             Matrix4f transposeMatrix = AffineTransformations.translationMatrix(
                     Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
-            TranslationModel.move(transposeMatrix, meshes.get(checkMesh()));
+            TranslationModel.move(transposeMatrix, activeModel());
         }
     }
 
-    private Integer checkMesh() {
-        for (int i = 0; i < meshes.size(); i++) {
-            if (meshes.get(i).isActive) {
-                return i;
+    private Model activeModel() {
+        for (Model mesh : meshes) {
+            if (mesh.isActive) {
+                return mesh;
             }
         }
         showMessage("Предупреждение", "Активных моделей нет! Выбрана первая", messageWarning);
-        return 0;
+        return meshes.get(0);
     }
 
     public void showModel(String text) {
@@ -445,7 +440,7 @@ public class GuiController {
             if (i + 1 == numOfModel) {
                 meshes.get(i).isActive = true;
                 choiceModelRadioButtons.get(i).setSelected(true);
-                choiceBaseColor.setValue(meshes.get(i).color);
+                baseModelColor.setValue(meshes.get(i).color);
             }
         }
     }
@@ -529,16 +524,13 @@ public class GuiController {
         }
     }
 
-    public void choiceDefaultColor(MouseEvent mouseEvent) {
-        choiceBaseColor.setOnAction(new EventHandler<ActionEvent>() {
+    public void changeDefaultColor(MouseEvent mouseEvent) {
+        baseModelColor.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Color c = choiceBaseColor.getValue();
-                for (Model model : meshes) {
-                    if (model.isActive) {
-                        model.color = c;
-                    }
-                }
+                Color c = baseModelColor.getValue();
+               Model model = activeModel();
+               model.color = c;
             }
         });
     }

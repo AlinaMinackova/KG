@@ -24,12 +24,12 @@
                     <content>
                         <AnchorPane fx:id="gadgetPane" prefHeight="981.0" prefWidth="547.0">
                             <children>
-                                <Button fx:id="save" layoutX="30.0" layoutY="915.0" mnemonicParsing="false" onMouseClicked="#save" text="Сохранить" />
+                                <Button fx:id="save" layoutX="30.0" layoutY="853.0" mnemonicParsing="false" onMouseClicked="#save" text="Сохранить" />
                                 <TitledPane animated="false" layoutX="28.0" layoutY="422.0" prefHeight="393.0" prefWidth="491.0" text="Камера">
                                     <content>
                                         <ScrollPane prefHeight="367.0" prefWidth="491.0">
                                             <content>
-                                                <AnchorPane fx:id="addCameraPane" minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="482.0">
+                                                <AnchorPane fx:id="cameraPane" minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="482.0">
                                                     <children>
                                                         <Button mnemonicParsing="false" onMouseClicked="#createCamera" text="Добавить камеру" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="10.0" />
                                                         <TextField fx:id="eyeX" layoutX="63.0" layoutY="69.0" text="0" />
@@ -52,8 +52,8 @@
                                         </ScrollPane>
                                     </content>
                                 </TitledPane>
-                        <ColorPicker fx:id="choiceBaseColor" layoutX="30.0" layoutY="22.0" onMouseClicked="#choiceDefaultColor" />
-                        <CheckBox fx:id="transformSave" layoutX="131.0" layoutY="919.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="186.0" text="Учитывать трансформацию" />
+                        <ColorPicker fx:id="baseModelColor" layoutX="30.0" layoutY="22.0" onMouseClicked="#changeDefaultColor" />
+                        <CheckBox fx:id="transformSave" layoutX="123.0" layoutY="857.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="186.0" text="Учитывать трансформацию" />
                         <TitledPane animated="false" layoutX="30.0" layoutY="59.0" prefHeight="348.0" prefWidth="499.0" text="Модель">
                            <content>
                               <ScrollPane prefHeight="287.0" prefWidth="497.0">

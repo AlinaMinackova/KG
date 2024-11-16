@@ -43,12 +43,12 @@ public class TriangleRasterization {
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
                         if(mesh.isActiveTexture) {
                             double[] texture = getGradientCoordinatesTexture(barizentric, textures);
-                            int u = (int) Math.round(texture[0] * (ImageToText.wight - 1));
-                            int v = (int) Math.round(texture[1] * (ImageToText.height - 1));
-                            if (u < ImageToText.wight && v < ImageToText.height) {
-                                rgb[0] = ImageToText.pixelData[u][v][0];
-                                rgb[1] = ImageToText.pixelData[u][v][1];
-                                rgb[2] = ImageToText.pixelData[u][v][2];
+                            int u = (int) Math.round(texture[0] * (mesh.imageToText.wight - 1));
+                            int v = (int) Math.round(texture[1] * (mesh.imageToText.height - 1));
+                            if (u < mesh.imageToText.wight && v < mesh.imageToText.height) {
+                                rgb[0] = mesh.imageToText.pixelData[u][v][0];
+                                rgb[1] = mesh.imageToText.pixelData[u][v][1];
+                                rgb[2] = mesh.imageToText.pixelData[u][v][2];
                             }
                         }
                         else if(mesh.isActiveLighting) {
@@ -84,12 +84,12 @@ public class TriangleRasterization {
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
                         if(mesh.isActiveTexture) {
                             double[] texture = getGradientCoordinatesTexture(barizentric, textures);
-                            int u = (int) Math.round(texture[0] * (ImageToText.wight - 1));
-                            int v = (int) Math.round(texture[1] * (ImageToText.height - 1));
-                            if (u < ImageToText.wight && v < ImageToText.height) {
-                                rgb[0] = ImageToText.pixelData[u][v][0];
-                                rgb[1] = ImageToText.pixelData[u][v][1];
-                                rgb[2] = ImageToText.pixelData[u][v][2];
+                            int u = (int) Math.round(texture[0] * (mesh.imageToText.wight - 1));
+                            int v = (int) Math.round(texture[1] * (mesh.imageToText.height - 1));
+                            if (u < mesh.imageToText.wight && v < mesh.imageToText.height) {
+                                rgb[0] = mesh.imageToText.pixelData[u][v][0];
+                                rgb[1] = mesh.imageToText.pixelData[u][v][1];
+                                rgb[2] = mesh.imageToText.pixelData[u][v][2];
                             }
                         }
                         else if(mesh.isActiveLighting) {

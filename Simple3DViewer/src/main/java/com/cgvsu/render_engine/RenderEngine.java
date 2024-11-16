@@ -8,6 +8,7 @@ import java.util.Random;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.rasterization.TriangleRasterization;
+import com.cgvsu.texture.ImageToText;
 import javafx.scene.canvas.GraphicsContext;
 
 import javax.vecmath.*;
@@ -39,6 +40,10 @@ public class RenderEngine {
 
 
         for (Model mesh : meshes) {
+            if(mesh.pathTexture != null && mesh.imageToText == null){
+               mesh.imageToText = new ImageToText();
+               mesh.imageToText.loadImage(mesh.pathTexture);
+            }
             final int nPolygons = mesh.polygons.size(); //количество полигонов
             for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
                 final int nVerticesInPolygon = mesh.polygons.get(polygonInd).getVertexIndices().size(); //количество вершин в полигоне
@@ -51,7 +56,9 @@ public class RenderEngine {
                 for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) { //идем по вершинам в полигоне
                     Vector3f vertex = mesh.vertices.get(mesh.polygons.get(polygonInd).getVertexIndices().get(vertexInPolygonInd)); //получаю координату вершины
                     normals[vertexInPolygonInd] = (mesh.normals.get(mesh.polygons.get(polygonInd).getVertexIndices().get(vertexInPolygonInd))); //получаю нормаль вершины
-                    textures[vertexInPolygonInd] = (mesh.textureVertices.get(mesh.polygons.get(polygonInd).getTextureVertexIndices().get(vertexInPolygonInd))); //получаю текстуру вершины
+                    if(mesh.pathTexture != null) {
+                        textures[vertexInPolygonInd] = (mesh.textureVertices.get(mesh.polygons.get(polygonInd).getTextureVertexIndices().get(vertexInPolygonInd))); //получаю текстуру вершины
+                    }
 
                     javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.x, vertex.y, vertex.z); //делаем вектор строку
                     v = multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertexVecmath);

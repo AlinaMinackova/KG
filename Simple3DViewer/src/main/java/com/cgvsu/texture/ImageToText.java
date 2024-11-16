@@ -26,16 +26,16 @@ import java.util.Arrays;
 
 public class ImageToText {
 
-    static public int[][][] pixelData;
-    public static int wight;
-    public static int height;
+    public int[][][] pixelData;
+    public  int wight;
+    public  int height;
 
-    static { // main(String[] args)
+    public void loadImage(String path) {
 
         BufferedImage img;
 
         try {
-            img = ImageIO.read(new File("3DModels/CaracalCube/cat.png")); //caracal_texture.png
+            img = ImageIO.read(new File(path));
 
             pixelData = new int[img.getWidth()][img.getHeight()][3];
             wight = img.getWidth();
@@ -53,10 +53,9 @@ public class ImageToText {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    private static int[] getPixelData(BufferedImage img, int x, int y) {
+    private int[] getPixelData(BufferedImage img, int x, int y) {
         int argb = img.getRGB(x, y);
 
         return new int[] {

@@ -498,15 +498,7 @@ public class GuiController {
         int numOfModel = Integer.parseInt(text.substring(text.length() - 1));
         for (int i = 0; i < meshes.size(); i++) {
             if (i + 1 == numOfModel) {
-                if (meshes.get(i).pathTexture != null) {
-                    if (meshes.get(i).isActiveTexture) {
-                        meshes.get(i).isActiveTexture = false;
-                        checkBoxesTexture.get(i).setSelected(false);
-                    } else {
-                        meshes.get(i).isActiveTexture = true;
-                        checkBoxesTexture.get(i).setSelected(true);
-                    }
-                } else {
+                if (meshes.get(i).pathTexture == null) {
                     FileChooser fileChooser = new FileChooser();
                     fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Texture (*.png, *.jpg)", "*.png", "*.jpg"));
                     fileChooser.setTitle("Load Texture");
@@ -519,6 +511,14 @@ public class GuiController {
                     Path fileName = Path.of(file.getAbsolutePath());
                     meshes.get(i).pathTexture = String.valueOf(fileName);
                 }
+                if (meshes.get(i).isActiveTexture) {
+                    meshes.get(i).isActiveTexture = false;
+                    checkBoxesTexture.get(i).setSelected(false);
+                } else {
+                    meshes.get(i).isActiveTexture = true;
+                    checkBoxesTexture.get(i).setSelected(true);
+                }
+
             }
         }
     }

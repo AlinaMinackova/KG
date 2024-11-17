@@ -1,5 +1,6 @@
 package com.cgvsu.rasterization;
 
+import com.cgvsu.checkbox.Greed;
 import com.cgvsu.checkbox.Lighting;
 import com.cgvsu.checkbox.Texture;
 import com.cgvsu.math.Vector2f;
@@ -86,13 +87,13 @@ public class TriangleRasterization {
 
     }
 
-    private static double determinator(int[][] arr) {
+    public static double determinator(int[][] arr) {
         return arr[0][0] * arr[1][1] * arr[2][2] + arr[1][0] * arr[0][2] * arr[2][1] +
                 arr[0][1] * arr[1][2] * arr[2][0] - arr[0][2] * arr[1][1] * arr[2][0] -
                 arr[0][0] * arr[1][2] * arr[2][1] - arr[0][1] * arr[1][0] * arr[2][2];
     }
 
-    private static double[] barizentricCoordinates(int x, int y, int[] arrX, int[] arrY) {
+    public static double[] barizentricCoordinates(int x, int y, int[] arrX, int[] arrY) {
         final double generalDeterminant = determinator(new int[][]{arrX, arrY, new int[]{1, 1, 1}});
         final double alfa = Math.abs(determinator(
                 new int[][]{new int[]{x, arrX[1], arrX[2]}, new int[]{y, arrY[1], arrY[2]}, new int[]{1, 1, 1}}) /
@@ -106,7 +107,7 @@ public class TriangleRasterization {
         return new double[]{alfa, betta, gamma};
     }
 
-    private static void sort(int[] coordX, int[] coordY, double[] deepZ, Vector3f[] normals, Vector2f[] textures, Color[] color) {
+    public static void sort(int[] coordX, int[] coordY, double[] deepZ, Vector3f[] normals, Vector2f[] textures, Color[] color) {
         //сортируем вершины
         if (coordY[0] > coordY[1]) {
             reverse(0, 1, coordX, coordY, deepZ, normals, textures, color);

@@ -69,14 +69,25 @@ public class RenderEngine {
 
                 }
 
+                int[] coorX = new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x};
+                int[] coorY = new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y};
+
+
                 TriangleRasterization.draw(
                         graphicsContext,
-                        new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x},
-                        new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y},
+                        coorX,
+                        coorY,
                         new Color[]{mesh.color, mesh.color, mesh.color},
                         ZBuffer,
                         vz, normals, textures, new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22}, mesh);
+
+                if(mesh.isActiveGrid){
+                    Greed.drawLine(coorX[0], coorY[0], coorX[1], coorY[1], ZBuffer, vz, coorX, coorY, graphicsContext);
+                    Greed.drawLine(coorX[0], coorY[0], coorX[2], coorY[2], ZBuffer, vz, coorX, coorY, graphicsContext);
+                    Greed.drawLine(coorX[2], coorY[2], coorX[1], coorY[1], ZBuffer, vz, coorX, coorY, graphicsContext);
+                }
             }
+
         }
     }
 }

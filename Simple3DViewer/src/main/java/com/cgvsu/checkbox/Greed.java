@@ -4,28 +4,38 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
+import static com.cgvsu.rasterization.TriangleRasterization.barizentricCoordinates;
+import static com.cgvsu.rasterization.TriangleRasterization.interpolateCoordinatesZBuffer;
+
 public class Greed {
 
-    public static void drawLine(int x1, int y1, int x2, int y2, GraphicsContext graphicsContext){
+    public static void drawLine(int x0, int y0, int x1, int y1, final double[][] zBuff, double[] deepZ,
+                                int[] coordX, int[] coordY, GraphicsContext graphicsContext) {
         final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
-        int deltaX = Math.abs(x2 - x1);
-        int deltaY = Math.abs(y2 - y1);
-        int y = y1;
-        int dirY = y2 - y1;
+        int dx = Math.abs(x1 - x0);
+        int dy = Math.abs(y1 - y0);
+        int sx = (x0 < x1) ? 1 : -1;
+        int sy = (y0 < y1) ? 1 : -1;
+        int err = dx - dy;
 
-        double error = 0;
-        double deltaerr = (double) (deltaY + 1) / (double) (deltaX + 1);
+        while (true) {
+            double[] barizentric = barizentricCoordinates(x0, y0, coordX, coordY);
+            if (!Double.isNaN(barizentric[0]) && !Double.isNaN(barizentric[1]) && !Double.isNaN(barizentric[2])) {
+                double zNew = interpolateCoordinatesZBuffer(barizentric, deepZ);
+                if (Math.abs(zBuff[x0][y0] - zNew) <= 1e-7f) {
+                    pixelWriter.setColor(x0, y0, Color.BLACK); // Можно выбрать любой цвет
+                }
+            }
+            if (x0 == x1 && y0 == y1) break;
 
-        if (dirY > 0) {dirY = 1;}
-        if (dirY < 0) {dirY = -1;}
-
-        for (int x = Math.min(x1, x2); x <= Math.max(x1, x2); x++){
-            pixelWriter.setColor(x, y, Color.BLACK);
-            error += deltaerr;
-            if(error >= 1.0){
-                y += dirY;
-                error -= 1.0;
-
+            int e2 = err * 2;
+            if (e2 > -dy) {
+                err -= dy;
+                x0 += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y0 += sy;
             }
         }
     }

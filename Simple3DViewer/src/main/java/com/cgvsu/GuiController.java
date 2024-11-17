@@ -4,6 +4,7 @@ import com.cgvsu.math.AffineTransformations;
 import com.cgvsu.math.TranslationModel;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.RenderEngine;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,6 +23,7 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
@@ -112,6 +114,21 @@ public class GuiController {
 
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
+
+        ToggleSwitch buttonStyle = new ToggleSwitch();
+        buttonStyle.setLayoutY(20);
+        buttonStyle.setLayoutX(350);
+        SimpleBooleanProperty isOn = buttonStyle.switchOnProperty();
+        String path = "file:/C:/Users/Ololo/IdeaProjects/KG/Simple3DViewer/target/classes/style.css";
+        isOn.addListener((observable, oldValue, newValue) -> {
+            if (newValue){
+                buttonStyle.getScene().getRoot().getStylesheets().add(path);
+            }
+            else {
+                buttonStyle.getScene().getRoot().getStylesheets().remove(path);
+            }
+        });
+        gadgetPane.getChildren().add(buttonStyle);
 
         createCamera();
 

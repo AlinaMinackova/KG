@@ -24,12 +24,12 @@
                     <content>
                         <AnchorPane fx:id="gadgetPane" prefHeight="981.0" prefWidth="547.0">
                             <children>
-                                <Button fx:id="save" layoutX="30.0" layoutY="853.0" mnemonicParsing="false" onMouseClicked="#save" text="Сохранить" />
-                                <TitledPane animated="false" layoutX="28.0" layoutY="422.0" prefHeight="393.0" prefWidth="491.0" text="Камера">
+                                <Button fx:id="save" layoutX="30.0" layoutY="920.0" mnemonicParsing="false" onMouseClicked="#save" text="Сохранить" />
+                                <TitledPane animated="false" layoutX="28.0" layoutY="500.0" prefHeight="393.0" prefWidth="491.0" text="Камера">
                                     <content>
                                         <ScrollPane prefHeight="367.0" prefWidth="491.0">
                                             <content>
-                                                <AnchorPane fx:id="cameraPane" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="482.0">
+                                                <AnchorPane fx:id="cameraPane" minHeight="0.0" minWidth="0.0" prefHeight="700.0" prefWidth="482.0">
                                                     <children>
                                                         <Button mnemonicParsing="false" onMouseClicked="#createCamera" text="Добавить камеру" AnchorPane.leftAnchor="35.0" AnchorPane.topAnchor="10.0" />
                                                         <TextField fx:id="eyeX" layoutX="63.0" layoutY="69.0" text="0" />
@@ -53,20 +53,20 @@
                                     </content>
                                 </TitledPane>
                         <ColorPicker fx:id="baseModelColor" layoutX="30.0" layoutY="22.0" onMouseClicked="#changeDefaultColor" />
-                        <CheckBox fx:id="transformSave" layoutX="123.0" layoutY="857.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="186.0" text="Учитывать трансформацию" />
-                        <TitledPane animated="false" layoutX="30.0" layoutY="59.0" prefHeight="348.0" prefWidth="499.0" text="Модель">
+                        <CheckBox fx:id="transformSave" layoutX="131.0" layoutY="924.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="186.0" text="Учитывать трансформацию" />
+                        <TitledPane animated="false" layoutX="30.0" layoutY="131.0" prefHeight="348.0" prefWidth="499.0" text="Модель">
                            <content>
                               <ScrollPane prefHeight="287.0" prefWidth="497.0">
                                 <content>
-                                  <AnchorPane fx:id="modelPane" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="494.0">
+                                  <AnchorPane fx:id="modelPane" minHeight="0.0" minWidth="0.0" prefHeight="700.0" prefWidth="494.0">
                                        <children>
                                                   <Button fx:id="open" layoutX="43.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#open" text="Добавить модель" />
                                           <Text layoutX="43.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Масштабировать" />
                                           <Text layoutX="31.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sy:" />
                                           <Text layoutX="31.0" layoutY="175.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sz:" />
-                                          <TextField fx:id="sx" layoutX="57.0" layoutY="89.0" prefHeight="25.0" prefWidth="67.0" text="0" />
-                                          <TextField fx:id="sy" layoutX="56.0" layoutY="123.0" prefHeight="25.0" prefWidth="65.0" text="0" />
-                                          <TextField fx:id="sz" layoutX="57.0" layoutY="158.0" prefHeight="25.0" prefWidth="63.0" text="0" />
+                                          <TextField fx:id="sx" layoutX="57.0" layoutY="89.0" prefHeight="25.0" prefWidth="67.0" text="1" />
+                                          <TextField fx:id="sy" layoutX="56.0" layoutY="123.0" prefHeight="25.0" prefWidth="65.0" text="1" />
+                                          <TextField fx:id="sz" layoutX="57.0" layoutY="158.0" prefHeight="25.0" prefWidth="63.0" text="1" />
                                           <Text layoutX="31.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sx:" />
                                           <Text layoutX="215.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Повернуть" wrappingWidth="83.974609375" />
                                           <Text layoutX="356.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Переместить" wrappingWidth="100.267578125" />
@@ -90,6 +90,9 @@
                            </content>
                         </TitledPane>
                         <Text layoutX="168.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Цвет модели (по умолчанию)" />
+                        <TextField fx:id="deleteVertex" layoutX="30.0" layoutY="89.0" prefHeight="25.0" prefWidth="288.0" text="-1.000000 1.000000 1.000000" />
+                        <Button fx:id="deleteVertexButton" layoutX="347.0" layoutY="89.0" mnemonicParsing="false" onMouseClicked="#deleteVertexAction" text="Удалить" />
+                        <Text layoutX="30.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Введите координаты удаляемой вершины" />
                             </children>
                         </AnchorPane>
                     </content>

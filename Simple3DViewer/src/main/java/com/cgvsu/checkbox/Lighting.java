@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 
 public class Lighting {
 
-    final static double k = 0.25;
+    final static double k = 0.5;
 
     public static void calculateLight(int[] rgb, double[] light, Vector3f normal){
         double l = -(light[0] * normal.x + light[1] * normal.y + light[2] * normal.z);

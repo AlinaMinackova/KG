@@ -2,8 +2,10 @@ package com.cgvsu;
 
 import com.cgvsu.math.AffineTransformations;
 import com.cgvsu.math.TranslationModel;
+import com.cgvsu.model.DeleteVertices;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.RenderEngine;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
@@ -55,6 +58,8 @@ public class GuiController {
     public TextField ry;
     public TextField rz;
     public Button convert;
+    public TextField deleteVertex;
+    public Button deleteVertexButton;
 
     Alert messageWarning = new Alert(Alert.AlertType.WARNING);
     Alert messageError = new Alert(Alert.AlertType.ERROR);
@@ -112,6 +117,20 @@ public class GuiController {
 
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
+
+        ToggleSwitch buttonStyle = new ToggleSwitch();
+        buttonStyle.setLayoutY(20);
+        buttonStyle.setLayoutX(350);
+        SimpleBooleanProperty isOn = buttonStyle.switchOnProperty();
+        String path = "file:/C:/Users/Ololo/IdeaProjects/KG/Simple3DViewer/target/classes/style.css";
+        isOn.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                buttonStyle.getScene().getRoot().getStylesheets().add(path);
+            } else {
+                buttonStyle.getScene().getRoot().getStylesheets().remove(path);
+            }
+        });
+        gadgetPane.getChildren().add(buttonStyle);
 
         createCamera();
 
@@ -373,10 +392,10 @@ public class GuiController {
         for (int i = 0; i < addedButtonsCamera.size(); i++) {
             if (i + 1 == numOfCamera) {
                 if (cameras.get(i).isActive()) {
+                    showMessage("Информация", "Вы перенаправлены на: Камера 1", messageInformation);
                     cameras.get(0).setActive(true);
                 }
                 delete(i);
-                showMessage("Информация", "Вы перенаправлены на: Камера 1", messageInformation);
                 break;
             }
         }
@@ -414,8 +433,10 @@ public class GuiController {
                 || Objects.equals(rx.getText(), "") || Objects.equals(ry.getText(), "") || Objects.equals(rz.getText(), "")) {
             showMessage("Ошибка", "Введите необходимые данные!", messageError);
         } else {
-            Matrix4f transposeMatrix = AffineTransformations.translationMatrix(
-                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
+            Matrix4f transposeMatrix = AffineTransformations.modelMatrix(
+                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()),
+                    Float.parseFloat(rx.getText()), Float.parseFloat(ry.getText()), Float.parseFloat(rz.getText()),
+                    Integer.parseInt(sx.getText()), Integer.parseInt(sy.getText()), Integer.parseInt(sz.getText()));
             TranslationModel.move(transposeMatrix, activeModel());
         }
     }
@@ -505,6 +526,8 @@ public class GuiController {
 
                     File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
                     if (file == null) {
+                        meshes.get(i).isActiveTexture = false;
+                        checkBoxesTexture.get(i).setSelected(false);
                         return;
                     }
 
@@ -521,6 +544,7 @@ public class GuiController {
 
             }
         }
+
     }
 
     public void showLighting(String text) {
@@ -547,5 +571,38 @@ public class GuiController {
                 model.color = c;
             }
         });
+    }
+
+    public void deleteVertexAction(MouseEvent mouseEvent) {
+        List<Integer> vectorIndex = parseVertex(deleteVertex.getText());
+        if (vectorIndex.size() == 0) {
+            showMessage("Ошибка", "нет такой вершины у активной модели", messageError);
+        } else {
+            Model model = activeModel();
+            model = DeleteVertices.deleteVerticesFromModel(activeModel(), vectorIndex);
+            model.normalize();
+        }
+    }
+
+    public List<Integer> parseVertex(String vertex) {
+        List<Float> coords = new ArrayList<>();
+        StringBuilder prom = new StringBuilder();
+        for (int i = 0; i < vertex.length(); i++) {
+            if (vertex.charAt(i) == ' ') {
+                coords.add(Float.parseFloat(String.valueOf(prom)));
+                prom = new StringBuilder();
+            } else {
+                prom.append(vertex.charAt(i));
+            }
+        }
+        coords.add(Float.parseFloat(String.valueOf(prom)));
+        com.cgvsu.math.Vector3f resultVector = new com.cgvsu.math.Vector3f(coords.get(0), coords.get(1), coords.get(2));
+        Model model = activeModel();
+        for (int i = 0; i < model.vertices.size(); i++) {
+            if (model.vertices.get(i).equals(resultVector)) {
+                return new ArrayList<>(List.of(i));
+            }
+        }
+        return new ArrayList<>();
     }
 }

@@ -433,8 +433,10 @@ public class GuiController {
                 || Objects.equals(rx.getText(), "") || Objects.equals(ry.getText(), "") || Objects.equals(rz.getText(), "")) {
             showMessage("Ошибка", "Введите необходимые данные!", messageError);
         } else {
-            Matrix4f transposeMatrix = AffineTransformations.translationMatrix(
-                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
+            Matrix4f transposeMatrix = AffineTransformations.modelMatrix(
+                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()),
+                    Float.parseFloat(rx.getText()), Float.parseFloat(ry.getText()), Float.parseFloat(rz.getText()),
+                    Integer.parseInt(sx.getText()), Integer.parseInt(sy.getText()), Integer.parseInt(sz.getText()));
             TranslationModel.move(transposeMatrix, activeModel());
         }
     }
@@ -524,6 +526,8 @@ public class GuiController {
 
                     File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
                     if (file == null) {
+                        meshes.get(i).isActiveTexture = false;
+                        checkBoxesTexture.get(i).setSelected(false);
                         return;
                     }
 
@@ -540,6 +544,7 @@ public class GuiController {
 
             }
         }
+
     }
 
     public void showLighting(String text) {

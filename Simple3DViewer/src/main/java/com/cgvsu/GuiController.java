@@ -392,10 +392,10 @@ public class GuiController {
         for (int i = 0; i < addedButtonsCamera.size(); i++) {
             if (i + 1 == numOfCamera) {
                 if (cameras.get(i).isActive()) {
+                    showMessage("Информация", "Вы перенаправлены на: Камера 1", messageInformation);
                     cameras.get(0).setActive(true);
                 }
                 delete(i);
-                showMessage("Информация", "Вы перенаправлены на: Камера 1", messageInformation);
                 break;
             }
         }

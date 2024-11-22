@@ -526,6 +526,8 @@ public class GuiController {
 
                     File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
                     if (file == null) {
+                        meshes.get(i).isActiveTexture = false;
+                        checkBoxesTexture.get(i).setSelected(false);
                         return;
                     }
 
@@ -542,6 +544,7 @@ public class GuiController {
 
             }
         }
+
     }
 
     public void showLighting(String text) {

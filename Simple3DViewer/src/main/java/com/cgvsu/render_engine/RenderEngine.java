@@ -72,7 +72,6 @@ public class RenderEngine {
                 int[] coorX = new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x};
                 int[] coorY = new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y};
 
-
                 TriangleRasterization.draw(
                         graphicsContext,
                         coorX,
@@ -91,18 +90,3 @@ public class RenderEngine {
         }
     }
 }
-
-
-//                graphicsContext.strokeLine( //соединяем линией две точки полигона
-//                        resultPoints.get(vertexInPolygonInd - 1).x,
-//                        resultPoints.get(vertexInPolygonInd - 1).y,
-//                        resultPoints.get(vertexInPolygonInd).x,
-//                        resultPoints.get(vertexInPolygonInd).y);
-
-//            if (nVerticesInPolygon > 0) //дорисовать соединение между последней и первой точкой
-//                graphicsContext.strokeLine(
-//                        resultPoints.get(nVerticesInPolygon - 1).x,
-//                        resultPoints.get(nVerticesInPolygon - 1).y,
-//                        resultPoints.get(0).x,
-//                        resultPoints.get(0).y);
-//            }

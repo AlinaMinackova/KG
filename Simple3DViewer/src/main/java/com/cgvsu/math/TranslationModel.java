@@ -12,6 +12,7 @@ public class TranslationModel {
             vertex.y = newVertex.y;
             vertex.z = newVertex.z;
         }
+        model.normalize();
     }
 
     public static Vector3f mul(Vector3f vector3f, Matrix4f modelMatrix) {

@@ -20,10 +20,12 @@ public class Greed {
 
         while (true) {
             double[] barizentric = barizentricCoordinates(x0, y0, coordX, coordY);
-            if (!Double.isNaN(barizentric[0]) && !Double.isNaN(barizentric[1]) && !Double.isNaN(barizentric[2])) {
-                double zNew = interpolateCoordinatesZBuffer(barizentric, deepZ);
-                if (Math.abs(zBuff[x0][y0] - zNew) <= 1e-7f) {
-                    pixelWriter.setColor(x0, y0, Color.BLACK); // Можно выбрать любой цвет
+            if (x0 >= 0 && y0 >= 0 && x0 < zBuff.length && y0 < zBuff[0].length) {
+                if (!Double.isNaN(barizentric[0]) && !Double.isNaN(barizentric[1]) && !Double.isNaN(barizentric[2])) {
+                    double zNew = interpolateCoordinatesZBuffer(barizentric, deepZ);
+                    if (Math.abs(zBuff[x0][y0] - zNew) <= 1e-7f) {
+                        pixelWriter.setColor(x0, y0, Color.BLACK); // Можно выбрать любой цвет
+                    }
                 }
             }
             if (x0 == x1 && y0 == y1) break;

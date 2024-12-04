@@ -108,7 +108,7 @@ public class GuiController {
     private Timeline timeline;
 
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
         anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
         anchorPane.prefHeightProperty().addListener((ov, oldValue, newValue) -> canvas.setHeight(newValue.doubleValue()));
 
@@ -122,7 +122,9 @@ public class GuiController {
         buttonStyle.setLayoutY(20);
         buttonStyle.setLayoutX(350);
         SimpleBooleanProperty isOn = buttonStyle.switchOnProperty();
-        String path = "file:/C:/Users/Ololo/IdeaProjects/KG/Simple3DViewer/target/classes/style.css";
+        //АБСОЛЮТНЫЙ ПУТЬ ДО ПРОЕКТА
+        File directory = new File(".");
+        String path = "file:/" + directory.getCanonicalPath().replace("\\", "/") + "/Simple3DViewer/target/classes/style.css";
         isOn.addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 buttonStyle.getScene().getRoot().getStylesheets().add(path);

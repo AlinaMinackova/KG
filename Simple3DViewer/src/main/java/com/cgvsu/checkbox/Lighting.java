@@ -24,6 +24,7 @@ public class Lighting {
                 * 255 * baristicCoords[1] + color[2].getGreen() * 255 * baristicCoords[2]));
         int b = Math.min(255, (int) Math.abs(color[0].getBlue() * 255 * baristicCoords[0] + color[1].getBlue()
                 * 255 * baristicCoords[1] + color[2].getBlue() * 255 * baristicCoords[2]));
+
         return new int[]{r, g, b};
     }
 

@@ -34,7 +34,8 @@ public class TriangleRasterization {
             for (int x = xl; x <= xr; x++) {
                 if (x >= 0 && y >= 0 && x < zBuff.length && y < zBuff[0].length) {
                     double[] barizentric = barizentricCoordinates(x, y, coordX, coordY);
-                    if (!Double.isNaN(barizentric[0]) && !Double.isNaN(barizentric[1]) && !Double.isNaN(barizentric[2])) {
+                    if (!Double.isNaN(barizentric[0]) && !Double.isNaN(barizentric[1]) && !Double.isNaN(barizentric[2]) &&
+                            ((barizentric[0] + barizentric[1] + barizentric[2] - 1) < 1e-7f)) {
                         double zNew = interpolateCoordinatesZBuffer(barizentric, deepZ);
                         if (zBuff[x][y] <= zNew) {
                             continue;
@@ -42,10 +43,10 @@ public class TriangleRasterization {
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
                         if (mesh.isActiveTexture) {
                             Texture.texture(barizentric, textures, mesh, rgb);
-                        } else if (mesh.isActiveLighting) {
+                        }
+                        if (mesh.isActiveLighting) {
                             Lighting.light(barizentric, normals, light, rgb);
                         }
-
                         zBuff[x][y] = zNew;
                         pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
                     }
@@ -67,7 +68,8 @@ public class TriangleRasterization {
             for (int x = xl; x <= xr; x++) {
                 if (x >= 0 && y >= 0 && x < zBuff.length && y < zBuff[0].length) {
                     double[] barizentric = barizentricCoordinates(x, y, coordX, coordY);
-                    if (!Double.isNaN(barizentric[0]) && !Double.isNaN(barizentric[1]) && !Double.isNaN(barizentric[2])) {
+                    if (!Double.isNaN(barizentric[0]) && !Double.isNaN(barizentric[1]) && !Double.isNaN(barizentric[2]) &&
+                            ((barizentric[0] + barizentric[1] + barizentric[2] - 1) < 1e-7f)) {
                         double zNew = interpolateCoordinatesZBuffer(barizentric, deepZ);
                         if (zBuff[x][y] <= zNew) {
                             continue;
@@ -75,7 +77,8 @@ public class TriangleRasterization {
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
                         if (mesh.isActiveTexture) {
                             Texture.texture(barizentric, textures, mesh, rgb);
-                        } else if (mesh.isActiveLighting) {
+                        }
+                        if (mesh.isActiveLighting) {
                             Lighting.light(barizentric, normals, light, rgb);
                         }
                         zBuff[x][y] = zNew;

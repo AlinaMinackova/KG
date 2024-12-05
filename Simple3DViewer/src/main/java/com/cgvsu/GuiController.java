@@ -60,6 +60,7 @@ public class GuiController {
     public Button convert;
     public TextField deleteVertex;
     public Button deleteVertexButton;
+    public ListView ListModels;
 
     Alert messageWarning = new Alert(Alert.AlertType.WARNING);
     Alert messageError = new Alert(Alert.AlertType.ERROR);
@@ -157,6 +158,41 @@ public class GuiController {
         timeline.play();
     }
 
+    @FXML
+    public void open(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
+        fileChooser.setTitle("Load Model");
+
+        File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
+        if (file == null) {
+            return;
+        }
+
+        Path fileName = Path.of(file.getAbsolutePath());
+
+        try {
+            String fileContent = Files.readString(fileName);
+            Model mesh = ObjReader.read(fileContent);
+            mesh.triangulate();
+            mesh.normalize();
+            meshes.add(mesh);
+            addModelButtons();
+        } catch (IOException exception) {
+            showMessage("Ошибка", "Неудалось найти файл!", messageError);
+        }
+    }
+
+    @FXML
+    public void saveWithTransform(ActionEvent actionEvent) {
+        save(true);
+    }
+
+    @FXML
+    public void saveWithoutTransform(ActionEvent actionEvent) {
+        save(false);
+    }
+
     private void showMessage(String headText, String messageText, Alert alert) {
         alert.setHeaderText(headText);
         alert.setContentText(messageText);
@@ -196,33 +232,7 @@ public class GuiController {
         }
     }
 
-    @FXML
-    void open(MouseEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
-        fileChooser.setTitle("Load Model");
-
-        File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
-        if (file == null) {
-            return;
-        }
-
-        Path fileName = Path.of(file.getAbsolutePath());
-
-        try {
-            String fileContent = Files.readString(fileName);
-            Model mesh = ObjReader.read(fileContent);
-            mesh.triangulate();
-            mesh.normalize();
-            meshes.add(mesh);
-            addModelButtons();
-        } catch (IOException exception) {
-            showMessage("Ошибка", "Неудалось найти файл!", messageError);
-        }
-    }
-
-    @FXML
-    void save(MouseEvent event) {
+    void save(Boolean transform) {
         if (meshes.size() != 0) {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Model");
@@ -232,7 +242,7 @@ public class GuiController {
                 return;
             }
             String fileName = String.valueOf(Path.of(file.getAbsolutePath()));
-            if (transformSave.isSelected()) { //сохранить модель с изменениями?
+            if (transform) { //сохранить модель с изменениями?
                 //model.transform();
                 // когда будут приходить значения для трансформации,
                 // изменяй не сами вершины в модели, а создай доп поле transformationVertices которое

@@ -1,8 +1,7 @@
 package com.cgvsu.rasterization;
 
-import com.cgvsu.checkbox.Greed;
-import com.cgvsu.checkbox.Lighting;
-import com.cgvsu.checkbox.Texture;
+import com.cgvsu.lightTextureMesh.Lighting;
+import com.cgvsu.lightTextureMesh.Texture;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.model.Model;
@@ -10,7 +9,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
-import static com.cgvsu.checkbox.Lighting.getGradientCoordinatesRGB;
+import static com.cgvsu.lightTextureMesh.Lighting.getGradientCoordinatesRGB;
 
 public class TriangleRasterization {
     public static void draw(final GraphicsContext graphicsContext,

@@ -1,4 +1,4 @@
-package com.cgvsu.checkbox;
+package com.cgvsu.lightTextureMesh;
 
 import com.cgvsu.math.Vector3f;
 import javafx.scene.paint.Color;

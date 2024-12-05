@@ -1,4 +1,4 @@
-package com.cgvsu.checkbox;
+package com.cgvsu.lightTextureMesh;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import static com.cgvsu.rasterization.TriangleRasterization.barizentricCoordinates;
 import static com.cgvsu.rasterization.TriangleRasterization.interpolateCoordinatesZBuffer;
 
-public class Greed {
+public class Mesh {
 
     public static void drawLine(int x0, int y0, int x1, int y1, final double[][] zBuff, double[] deepZ,
                                 int[] coordX, int[] coordY, GraphicsContext graphicsContext) {

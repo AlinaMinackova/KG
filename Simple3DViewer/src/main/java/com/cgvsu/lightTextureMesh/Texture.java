@@ -1,4 +1,4 @@
-package com.cgvsu.checkbox;
+package com.cgvsu.lightTextureMesh;
 
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.model.Model;

@@ -14,7 +14,7 @@ import static com.cgvsu.lightTextureMesh.Lighting.getGradientCoordinatesRGB;
 public class TriangleRasterization {
     public static void draw(final GraphicsContext graphicsContext,
                             final int[] coordX, final int[] coordY, final Color[] color,
-                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals, Vector2f[] textures, double[] light, Model mesh) {
+                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals, Vector2f[] textures, double[] light, Model model) {
         final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
 
         sort(coordX, coordY, deepZ, normals, textures, color);
@@ -40,10 +40,10 @@ public class TriangleRasterization {
                             continue;
                         }
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
-                        if (mesh.isActiveTexture) {
-                            Texture.texture(barizentric, textures, mesh, rgb);
+                        if (model.isActiveTexture) {
+                            Texture.texture(barizentric, textures, model, rgb);
                         }
-                        if (mesh.isActiveLighting) {
+                        if (model.isActiveLighting) {
                             Lighting.light(barizentric, normals, light, rgb);
                         }
                         zBuff[x][y] = zNew;
@@ -74,10 +74,10 @@ public class TriangleRasterization {
                             continue;
                         }
                         int[] rgb = getGradientCoordinatesRGB(barizentric, color);
-                        if (mesh.isActiveTexture) {
-                            Texture.texture(barizentric, textures, mesh, rgb);
+                        if (model.isActiveTexture) {
+                            Texture.texture(barizentric, textures, model, rgb);
                         }
-                        if (mesh.isActiveLighting) {
+                        if (model.isActiveLighting) {
                             Lighting.light(barizentric, normals, light, rgb);
                         }
                         zBuff[x][y] = zNew;

@@ -16,7 +16,6 @@ public class Model {
     public ArrayList<Vector3f> normals = new ArrayList<Vector3f>();
     public ArrayList<Polygon> polygons = new ArrayList<Polygon>();
     public ArrayList<Polygon> polygonsWithoutTriangulation = new ArrayList<Polygon>();
-    public boolean isActive = true;
     public boolean isActiveGrid = false;
     public boolean isActiveTexture = false;
     public String pathTexture = null;

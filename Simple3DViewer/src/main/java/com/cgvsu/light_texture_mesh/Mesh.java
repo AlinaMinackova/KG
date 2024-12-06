@@ -1,4 +1,4 @@
-package com.cgvsu.lightTextureMesh;
+package com.cgvsu.light_texture_mesh;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;

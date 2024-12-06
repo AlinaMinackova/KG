@@ -1,7 +1,7 @@
 package com.cgvsu.rasterization;
 
-import com.cgvsu.lightTextureMesh.Lighting;
-import com.cgvsu.lightTextureMesh.Texture;
+import com.cgvsu.light_texture_mesh.Lighting;
+import com.cgvsu.light_texture_mesh.Texture;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.model.Model;
@@ -9,7 +9,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
-import static com.cgvsu.lightTextureMesh.Lighting.getGradientCoordinatesRGB;
+import static com.cgvsu.light_texture_mesh.Lighting.getGradientCoordinatesRGB;
 
 public class TriangleRasterization {
     public static void draw(final GraphicsContext graphicsContext,

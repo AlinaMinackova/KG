@@ -1,4 +1,4 @@
-package com.cgvsu.lightTextureMesh;
+package com.cgvsu.light_texture_mesh;
 
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.model.Model;

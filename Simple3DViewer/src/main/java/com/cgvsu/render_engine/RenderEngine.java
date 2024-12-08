@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.cgvsu.lightTextureMesh.Mesh;
+import com.cgvsu.light_texture_mesh.Mesh;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.math.Vector2f;
+import com.cgvsu.model.Polygon;
 import com.cgvsu.rasterization.TriangleRasterization;
-import com.cgvsu.texture.ImageToText;
+import com.cgvsu.texture.ImageToTexture;
 import javafx.scene.canvas.GraphicsContext;
 
 import javax.vecmath.*;
@@ -20,10 +21,10 @@ import static com.cgvsu.render_engine.GraphicConveyor.*;
 
 public class RenderEngine {
 
-    public static void render(
+    public static void prepareToRender(
             final GraphicsContext graphicsContext,
             final Camera camera,
-            final List<Model> meshes,
+            final List<Model> models,
             final int width,
             final int height) {
         double[][] ZBuffer = new double[width][height];
@@ -38,62 +39,63 @@ public class RenderEngine {
         modelViewProjectionMatrix.mul(viewMatrix);
         modelViewProjectionMatrix.mul(projectionMatrix);
 
-
-        for (Model mesh : meshes) {
-            drawingModel(mesh, graphicsContext, width, height, ZBuffer, viewMatrix, modelViewProjectionMatrix);
-        }
+        RenderAttributes renderAttributes = new RenderAttributes(models, graphicsContext, width, height, ZBuffer, viewMatrix, modelViewProjectionMatrix);
+        render(renderAttributes);
     }
 
-    public static void drawingModel(final Model mesh,
-                                    final GraphicsContext graphicsContext,
-                                    final int width,
-                                    final int height,
-                                    final double[][] ZBuffer,
-                                    final Matrix4f viewMatrix,
-                                    final Matrix4f modelViewProjectionMatrix){
-        if (mesh.pathTexture != null && mesh.imageToText == null) {
-            mesh.imageToText = new ImageToText();
-            mesh.imageToText.loadImage(mesh.pathTexture);
-        }
-        final int nPolygons = mesh.polygons.size(); //количество полигонов
-        for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
-            final int nVerticesInPolygon = mesh.polygons.get(polygonInd).getVertexIndices().size(); //количество вершин в полигоне
-            javax.vecmath.Vector3f v;
-            double[] vz = new double[nVerticesInPolygon];//вектор z
-            Vector3f[] normals = new Vector3f[3]; //список нормалей полигона
-            Vector2f[] textures = new Vector2f[3]; //список текстур полигона
-
-            ArrayList<Point2f> resultPoints = new ArrayList<>(); //список преобразованных вершин полигона в системе XY
-            for (int vertexInPolygonInd = 0; vertexInPolygonInd < nVerticesInPolygon; ++vertexInPolygonInd) { //идем по вершинам в полигоне
-                Vector3f vertex = mesh.vertices.get(mesh.polygons.get(polygonInd).getVertexIndices().get(vertexInPolygonInd)); //получаю координату вершины
-                normals[vertexInPolygonInd] = (mesh.normals.get(mesh.polygons.get(polygonInd).getVertexIndices().get(vertexInPolygonInd))); //получаю нормаль вершины
-                if (mesh.pathTexture != null) {
-                    textures[vertexInPolygonInd] = (mesh.textureVertices.get(mesh.polygons.get(polygonInd).getTextureVertexIndices().get(vertexInPolygonInd))); //получаю текстуру вершины
-                }
-
-                javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.x, vertex.y, vertex.z); //делаем вектор строку
-                v = multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertexVecmath);
-                vz[vertexInPolygonInd] = v.z;
-                Point2f resultPoint = vertexToPoint(v, width, height); //преобразуем координаты в систему координат монитора
-                resultPoints.add(resultPoint);
-
+    public static void render(final RenderAttributes renderAttributes){
+        for (Model model: renderAttributes.models){
+            if (model.pathTexture != null && model.imageToTexture == null) {
+                model.imageToTexture = new ImageToTexture();
+                model.imageToTexture.loadImage(model.pathTexture);
             }
 
-            int[] coorX = new int[]{(int) resultPoints.get(0).x, (int) resultPoints.get(1).x, (int) resultPoints.get(2).x};
-            int[] coorY = new int[]{(int) resultPoints.get(0).y, (int) resultPoints.get(1).y, (int) resultPoints.get(2).y};
+        VertexAttributes[] vertexAttributes = new VertexAttributes[model.verticesTransform.size()]; //массив с данными вершин
+        for (int i = 0; i < model.verticesTransform.size(); i++) {
+            VertexAttributes vertex = new VertexAttributes();
+            vertex.setCoorVertex(model.verticesTransform.get(i));
+            vertex.setNormal(model.normals.get(i));
+            javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.coorVertex.x, vertex.coorVertex.y, vertex.coorVertex.z); //делаем вектор строку
+            javax.vecmath.Vector3f v = multiplyMatrix4ByVector3(renderAttributes.modelViewProjectionMatrix, vertexVecmath);
+            vertex.setZ(v.z);
+            Point2f resultPoint = vertexToPoint(v, renderAttributes.width, renderAttributes.height); //преобразуем координаты в систему координат монитора
+            vertex.setResultPoint(resultPoint);
 
-            TriangleRasterization.draw(
-                    graphicsContext,
-                    coorX,
-                    coorY,
-                    new Color[]{mesh.color, mesh.color, mesh.color},
-                    ZBuffer,
-                    vz, normals, textures, new double[]{viewMatrix.m02, viewMatrix.m12, viewMatrix.m22}, mesh);
+                vertexAttributes[i] = vertex;
+            }
 
-            if(mesh.isActiveGrid){
-                Mesh.drawLine(coorX[0], coorY[0], coorX[1], coorY[1], ZBuffer, vz, coorX, coorY, graphicsContext);
-                Mesh.drawLine(coorX[0], coorY[0], coorX[2], coorY[2], ZBuffer, vz, coorX, coorY, graphicsContext);
-                Mesh.drawLine(coorX[2], coorY[2], coorX[1], coorY[1], ZBuffer, vz, coorX, coorY, graphicsContext);
+            for (Polygon polygon : model.polygons) {
+                double[] vz = new double[3];//вектор z
+                Vector3f[] normals = new Vector3f[3]; //список нормалей полигона
+                Vector2f[] textures = new Vector2f[3]; //список текстур полигона
+                for (int i = 0; i < polygon.getVertexIndices().size(); i++) {
+                    normals[i] = vertexAttributes[polygon.getVertexIndices().get(i)].normal; //получаю нормаль вершины
+                    if (model.pathTexture != null) {
+                        textures[i] = model.textureVertices.get(polygon.getTextureVertexIndices().get(i)); //получаю текстуру вершины
+                    }
+                    vz[i] = vertexAttributes[polygon.getVertexIndices().get(i)].z;
+                }
+
+                int[] coorX = new int[]{(int) vertexAttributes[polygon.getVertexIndices().get(0)].resultPoint.x,
+                        (int) vertexAttributes[polygon.getVertexIndices().get(1)].resultPoint.x,
+                        (int) vertexAttributes[polygon.getVertexIndices().get(2)].resultPoint.x};
+                int[] coorY = new int[]{(int) vertexAttributes[polygon.getVertexIndices().get(0)].resultPoint.y,
+                        (int) vertexAttributes[polygon.getVertexIndices().get(1)].resultPoint.y,
+                        (int) vertexAttributes[polygon.getVertexIndices().get(2)].resultPoint.y};
+
+                TriangleRasterization.draw(
+                        renderAttributes.graphicsContext,
+                        coorX,
+                        coorY,
+                        new Color[]{model.color, model.color, model.color},
+                        renderAttributes.ZBuffer,
+                        vz, normals, textures, new double[]{renderAttributes.viewMatrix.m02, renderAttributes.viewMatrix.m12, renderAttributes.viewMatrix.m22}, model);
+
+                if(model.isActiveGrid){
+                    Mesh.drawLine(coorX[0], coorY[0], coorX[1], coorY[1], renderAttributes.ZBuffer, vz, coorX, coorY, renderAttributes.graphicsContext);
+                    Mesh.drawLine(coorX[0], coorY[0], coorX[2], coorY[2], renderAttributes.ZBuffer, vz, coorX, coorY, renderAttributes.graphicsContext);
+                    Mesh.drawLine(coorX[2], coorY[2], coorX[1], coorY[1], renderAttributes.ZBuffer, vz, coorX, coorY, renderAttributes.graphicsContext);
+                }
             }
         }
     }

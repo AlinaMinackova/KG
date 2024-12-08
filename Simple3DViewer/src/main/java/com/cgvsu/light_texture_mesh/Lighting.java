@@ -1,4 +1,4 @@
-package com.cgvsu.lightTextureMesh;
+package com.cgvsu.light_texture_mesh;
 
 import com.cgvsu.math.Vector3f;
 import javafx.scene.paint.Color;

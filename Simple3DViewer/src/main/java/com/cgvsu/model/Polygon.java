@@ -2,7 +2,7 @@ package com.cgvsu.model;
 
 import java.util.ArrayList;
 
-public class Polygon {
+public class Polygon implements Cloneable {
 
     private ArrayList<Integer> vertexIndices;
     private ArrayList<Integer> textureVertexIndices;
@@ -40,5 +40,16 @@ public class Polygon {
 
     public ArrayList<Integer> getNormalIndices() {
         return normalIndices;
+    }
+
+    @Override
+    public Polygon clone() {
+        try {
+            Polygon clone = (Polygon) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

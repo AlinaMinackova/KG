@@ -10,15 +10,13 @@ public class Camera {
             final float fov,
             final float aspectRatio,
             final float nearPlane,
-            final float farPlane,
-            final boolean isActive) {
+            final float farPlane) {
         this.position = position;
         this.target = target;
         this.fov = fov;
         this.aspectRatio = aspectRatio;
         this.nearPlane = nearPlane;
         this.farPlane = farPlane;
-        this.isActive = isActive;
     }
 
     public void setPosition(final Vector3f position) {
@@ -39,14 +37,6 @@ public class Camera {
 
     public Vector3f getTarget() {
         return target;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
     }
 
     public void movePosition(final Vector3f translation) {
@@ -72,5 +62,4 @@ public class Camera {
     private float aspectRatio;
     private float nearPlane;
     private float farPlane;
-    private boolean isActive;
 }

@@ -2,7 +2,7 @@ package com.cgvsu.model;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.normalize.Normalize;
-import com.cgvsu.texture.ImageToText;
+import com.cgvsu.texture.ImageToTexture;
 import com.cgvsu.triangulation.Triangulation;
 
 
@@ -12,22 +12,29 @@ import java.util.*;
 public class Model {
 
     public ArrayList<Vector3f> vertices = new ArrayList<Vector3f>();
+    public ArrayList<Vector3f> verticesTransform = new ArrayList<Vector3f>();
+    public ArrayList<Integer> deletedVertexes = new ArrayList<Integer>();
     public ArrayList<Vector2f> textureVertices = new ArrayList<Vector2f>();
     public ArrayList<Vector3f> normals = new ArrayList<Vector3f>();
     public ArrayList<Polygon> polygons = new ArrayList<Polygon>();
+    public ArrayList<Polygon> polygonsBase = new ArrayList<Polygon>();
     public ArrayList<Polygon> polygonsWithoutTriangulation = new ArrayList<Polygon>();
-    public boolean isActive = true;
     public boolean isActiveGrid = false;
     public boolean isActiveTexture = false;
     public String pathTexture = null;
     public boolean isActiveLighting = false;
     public Color color = Color.GRAY;
-    public ImageToText imageToText = null;
-
+    public ImageToTexture imageToTexture = null;
 
     public void triangulate(){
+        for (Vector3f vertex : vertices){
+            verticesTransform.add(vertex.clone());
+        }
         polygonsWithoutTriangulation = polygons;
         polygons = (ArrayList<Polygon>) Triangulation.triangulate(polygons);
+        for (Polygon polygon : polygons){
+            polygonsBase.add(polygon.clone());
+        }
     }
 
     public void normalize(){

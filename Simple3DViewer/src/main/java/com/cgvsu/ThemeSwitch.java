@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 
-public class ToggleSwitch extends HBox {
+public class ThemeSwitch extends HBox {
 
     private final Label label = new Label();
     private final Button button = new Button();
@@ -45,7 +45,7 @@ public class ToggleSwitch extends HBox {
         button.prefHeightProperty().bind(heightProperty());
     }
 
-    public ToggleSwitch() {
+    public ThemeSwitch() {
         init();
         switchedOn.addListener((a,b,c) -> {
             if (c) {

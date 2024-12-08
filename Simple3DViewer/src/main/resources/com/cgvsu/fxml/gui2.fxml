@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="anchorPane" prefHeight="1000.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cgvsu.GuiController">
+   <children>
+      <SplitPane dividerPositions="0.5" layoutX="-64.0" layoutY="-187.0" prefHeight="300.0" prefWidth="736.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-64.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <items>
+            <ScrollPane onKeyPressed="#moveCamera" onKeyReleased="#moveCamera" onKeyTyped="#moveCamera" prefHeight="934.0" prefWidth="546.0">
+               <content>
+                  <Canvas fx:id="canvas" height="580.0" onKeyPressed="#moveCamera" onKeyReleased="#moveCamera" onKeyTyped="#moveCamera" width="534.0" />
+               </content>
+            </ScrollPane>
+            <ScrollPane maxWidth="600.0" minWidth="0.0" prefHeight="200.0" prefWidth="600.0">
+               <content>
+                  <AnchorPane fx:id="gadgetPane" maxHeight="609.0" prefHeight="586.0" prefWidth="537.0">
+                     <children>
+                        <ColorPicker fx:id="baseModelColor" layoutX="30.0" layoutY="22.0" onMouseClicked="#changeDefaultColor" />
+                        <Text layoutX="168.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Цвет модели (по умолчанию)" />
+                        <ScrollPane layoutX="30.0" layoutY="95.0" minHeight="200.0" prefHeight="313.0" prefWidth="270.0">
+                           <content>
+                              <AnchorPane minHeight="192.0" minWidth="0.0" prefHeight="584.0" prefWidth="254.0">
+                                 <children>
+                                    <ListView fx:id="listModels" onMouseClicked="#choiceModel" prefHeight="584.0" prefWidth="266.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-12.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </ScrollPane>
+                        <Text layoutX="38.0" layoutY="75.0" smooth="false" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" text="Модели" wrappingWidth="87.2626953125">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="316.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Камеры" AnchorPane.topAnchor="60.892578125">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <ScrollPane layoutX="310.0" layoutY="95.0" prefHeight="312.0" prefWidth="270.0" AnchorPane.topAnchor="95.0">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="581.0" prefWidth="255.0">
+                                 <children>
+                                    <ListView fx:id="listCameras" onMouseClicked="#choiceCamera" prefHeight="581.0" prefWidth="265.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-10.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </ScrollPane>
+                        <Accordion maxWidth="-Infinity" minHeight="380.0" prefHeight="380.0" prefWidth="549.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="435.0">
+                           <panes>
+                              <TitledPane animated="false" maxHeight="100.0" minHeight="100.0" prefHeight="100.0" text="Трансформации">
+                                 <content>
+                                    <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="280.0">
+                                       <children>
+                                          <TextField fx:id="sx" layoutX="74.0" layoutY="67.0" prefHeight="25.0" prefWidth="67.0" text="1" />
+                                          <TextField fx:id="sy" layoutX="74.0" layoutY="115.0" prefHeight="25.0" prefWidth="67.0" text="1" />
+                                          <TextField fx:id="sz" layoutX="74.0" layoutY="160.0" prefHeight="25.0" prefWidth="67.0" text="1" />
+                                          <TextField fx:id="ry" layoutX="240.0" layoutY="116.0" prefHeight="25.0" prefWidth="67.0" text="0" />
+                                          <TextField fx:id="rx" layoutX="239.0" layoutY="67.0" prefHeight="25.0" prefWidth="69.0" text="0" />
+                                          <TextField fx:id="rz" layoutX="240.0" layoutY="160.0" prefHeight="25.0" prefWidth="67.0" text="0" />
+                                          <TextField fx:id="tz" layoutX="392.0" layoutY="160.0" prefHeight="25.0" prefWidth="67.0" text="0" />
+                                          <TextField fx:id="ty" layoutX="392.0" layoutY="113.0" prefHeight="25.0" prefWidth="67.0" text="0" />
+                                          <TextField fx:id="tx" layoutX="392.0" layoutY="67.0" prefHeight="25.0" prefWidth="67.0" text="0" />
+                                          <Text layoutX="39.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sx:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="38.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sy:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="39.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sz:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="203.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rx:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="202.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ry:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="203.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rz:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="354.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tx:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="353.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ty:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="353.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tz:">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="47.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Масштабировать" wrappingWidth="144.48828125">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="239.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Повернуть">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="386.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Переместить" wrappingWidth="94.48828125">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Button fx:id="convertButton" layoutX="49.0" layoutY="227.0" mnemonicParsing="false" onMouseClicked="#convert" text="Преобразовать">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TitledPane>
+                              <TitledPane animated="false" maxHeight="100.0" minHeight="100.0" prefHeight="100.0" text="Вид модели">
+                                 <content>
+                                    <AnchorPane maxHeight="309.0" minHeight="0.0" minWidth="0.0" prefHeight="309.0" prefWidth="488.0">
+                                       <children>
+                                          <CheckBox fx:id="texture" layoutX="52.0" layoutY="48.0" mnemonicParsing="false" onMouseClicked="#showTexture" text="Подгрузить текстуру">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="light" layoutX="53.0" layoutY="88.0" mnemonicParsing="false" onMouseClicked="#showLight" text="Включить освещение">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <CheckBox fx:id="grid" layoutX="52.0" layoutY="135.0" mnemonicParsing="false" onMouseClicked="#showGrid" text="Наложить сетку">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Button fx:id="deleteModelButton" layoutX="289.0" layoutY="58.0" mnemonicParsing="false" onMouseClicked="#deleteModel" text="Удалить модель">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                          <Button fx:id="hideModelButton" layoutX="289.0" layoutY="120.0" mnemonicParsing="false" onMouseClicked="#hideModel" text="Скрыть модель">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                          <Text layoutX="53.0" layoutY="205.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Введите индексы удаляемых вершин">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <TextField fx:id="deleteVertexField" layoutX="52.0" layoutY="218.0" prefHeight="27.0" prefWidth="239.0" text="-1.000000 1.000000 1.000000" />
+                                          <Button fx:id="deleteVertexButton" layoutX="316.0" layoutY="218.0" mnemonicParsing="false" onMouseClicked="#deleteVertexAction" text="Удалить" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TitledPane>
+                              <TitledPane fx:id="paneViewCamera" animated="false" maxHeight="100.0" minHeight="100.0" minWidth="-Infinity" prefHeight="100.0" text="Вид камеры">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <TextField fx:id="targetZ" layoutX="305.0" layoutY="158.0" text="0" />
+                                          <TextField fx:id="targetY" layoutX="305.0" layoutY="107.0" text="0" />
+                                          <TextField fx:id="targetX" layoutX="305.0" layoutY="61.0" text="0" />
+                                          <TextField fx:id="eyeX" layoutX="65.0" layoutY="60.0" text="0" />
+                                          <TextField fx:id="eyeY" layoutX="65.0" layoutY="107.0" text="0" />
+                                          <TextField fx:id="eyeZ" layoutX="65.0" layoutY="158.0" text="100" />
+                                          <Text layoutX="99.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Позиция" wrappingWidth="83.71875">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="309.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Точка напрвления" wrappingWidth="124.71875">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="38.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="X:" wrappingWidth="19.71875">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="38.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Y:" wrappingWidth="19.71875">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="38.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Z:" wrappingWidth="19.71875">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="277.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="X:" wrappingWidth="19.71875">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="268.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" text="  Y:" wrappingWidth="19.71875">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Text layoutX="265.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" text="   Z:" wrappingWidth="25.71875">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <Button fx:id="createCameraButton" layoutX="67.0" layoutY="210.0" mnemonicParsing="false" onMouseClicked="#createCamera" text="Добавить камеру">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                          <Button fx:id="deleteCameraButton" layoutX="311.0" layoutY="210.0" mnemonicParsing="false" onMouseClicked="#deleteCamera" text="Удалить камеру">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TitledPane>
+                           </panes>
+                        </Accordion>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </ScrollPane>
+         </items>
+      </SplitPane>
+      <MenuBar layoutX="10.0" layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="2.0">
+         <menus>
+           <Menu mnemonicParsing="false" text="Модель">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#open" text="Загрузить" />
+               </items></Menu>
+            <Menu mnemonicParsing="false" text="Сохранить модель">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#saveWithTransform" text="Учитывать трансформацию">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="UP" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#saveWithoutTransform" text="Без трансформации">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="DOWN" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+   </children>
+</AnchorPane>

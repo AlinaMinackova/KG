@@ -3,7 +3,6 @@ package com.cgvsu.texture;
 import java.io.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 //public class ImageToText {
 //
@@ -24,7 +23,7 @@ import java.util.Arrays;
 //       }
 //    }
 
-public class ImageToText {
+public class ImageToTexture {
 
     public int[][][] pixelData;
     public  int wight;

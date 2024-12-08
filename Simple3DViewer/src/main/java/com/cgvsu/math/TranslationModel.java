@@ -6,11 +6,11 @@ import javax.vecmath.Matrix4f;
 
 public class TranslationModel {
     public static void move(Matrix4f transposeMatrix, Model model) {
-        for (Vector3f vertex : model.vertices) {
-            Vector3f newVertex = mul(vertex, transposeMatrix);
-            vertex.x = newVertex.x;
-            vertex.y = newVertex.y;
-            vertex.z = newVertex.z;
+        for (int i = 0; i < model.vertices.size(); i++){ //кручу координаты исходных вершин для трансформации
+            Vector3f newVertex = mul(model.vertices.get(i), transposeMatrix);
+            model.verticesTransform.get(i).x = newVertex.x; // и заношу их в измененные
+            model.verticesTransform.get(i).y = newVertex.y;
+            model.verticesTransform.get(i).z = newVertex.z;
         }
         model.normalize();
     }

@@ -57,10 +57,10 @@ public class RenderEngine {
             model.imageToText.loadImage(model.pathTexture);
         }
 
-        VertexAttributes[] vertexAttributes = new VertexAttributes[model.vertices.size()]; //массив с данными вершин
-        for (int i = 0; i < model.vertices.size(); i++) {
+        VertexAttributes[] vertexAttributes = new VertexAttributes[model.verticesTransform.size()]; //массив с данными вершин
+        for (int i = 0; i < model.verticesTransform.size(); i++) {
             VertexAttributes vertex = new VertexAttributes();
-            vertex.setCoorVertex(model.vertices.get(i));
+            vertex.setCoorVertex(model.verticesTransform.get(i));
             vertex.setNormal(model.normals.get(i));
             javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.coorVertex.x, vertex.coorVertex.y, vertex.coorVertex.z); //делаем вектор строку
             javax.vecmath.Vector3f v = multiplyMatrix4ByVector3(modelViewProjectionMatrix, vertexVecmath);

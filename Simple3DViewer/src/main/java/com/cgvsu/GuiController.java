@@ -100,6 +100,10 @@ public class GuiController {
     public Button createCameraButton;
     @FXML
     public Button deleteCameraButton;
+    @FXML
+    public TextField deleteVertexField;
+    @FXML
+    public Button deleteVertexButton;
 
     private Timeline timeline;
 
@@ -215,7 +219,7 @@ public class GuiController {
     private void createCamera() {
         if (!Objects.equals(eyeX.getText(), "") && !Objects.equals(eyeY.getText(), "") && !Objects.equals(eyeZ.getText(), "")
                 && !Objects.equals(targetX.getText(), "") && !Objects.equals(targetY.getText(), "") && !Objects.equals(targetZ.getText(), "")) {
-            SceneTools.createCamera(eyeX, eyeY, eyeZ, tx, ty, tz);
+            SceneTools.createCamera(eyeX, eyeY, eyeZ, targetX, targetY, targetZ);
             listCameras.getItems().add("Камера " + SceneTools.cameras.size());
             listCameras.getSelectionModel().select(listCameras.getItems().size() - 1);
         } else {
@@ -253,6 +257,27 @@ public class GuiController {
             selectedModels.add(modelId);
         }
         SceneTools.choiceModels(selectedModels);
+        //при выборе моделей, в панельке Вид модели менять чекбоксы
+        if (SceneTools.activeModels().size() == 1){
+            texture.setSelected(SceneTools.activeModels().get(0).isActiveTexture);
+            light.setSelected(SceneTools.activeModels().get(0).isActiveLighting);
+            grid.setSelected(SceneTools.activeModels().get(0).isActiveGrid);
+        }
+        else {
+            boolean gridChoice = true;
+            boolean lightChoice = true;
+            for (Model model : SceneTools.activeModels()){
+                if (!model.isActiveLighting){
+                    lightChoice = false;
+                }
+                if (!model.isActiveGrid){
+                    gridChoice = false;
+                }
+            }
+            texture.setSelected(false);
+            light.setSelected(lightChoice);
+            grid.setSelected(gridChoice);
+        }
     }
 
     @FXML
@@ -339,54 +364,48 @@ public class GuiController {
 
     @FXML
     public void convert(MouseEvent mouseEvent) {
-
+        if (Objects.equals(tx.getText(), "") || Objects.equals(ty.getText(), "") || Objects.equals(tz.getText(), "")
+                || Objects.equals(sx.getText(), "") || Objects.equals(sy.getText(), "") || Objects.equals(sz.getText(), "")
+                || Objects.equals(rx.getText(), "") || Objects.equals(ry.getText(), "") || Objects.equals(rz.getText(), "")) {
+            showMessage("Ошибка", "Введите необходимые данные!");
+        } else {
+            //TODO: ЗДЕСЬ ИСПОЛЬЗУЕТСЯ МОЙ МЕТОД ПРИМЕНЕНИЯ АФФИННЫХ ПРЕОБРАЗОВАНИЙ, КОГДА БУДЕШЬ ДЕЛАТЬ, ЗАМЕНИ НА СВОЙ
+            SceneTools.convert(sx, sy, sz, rx, ry, rz, tx, ty, tz);
+            //обновляю поля пребразований
+            sx.setText("1");
+            sy.setText("1");
+            sz.setText("1");
+            rx.setText("0");
+            ry.setText("0");
+            rz.setText("0");
+            tx.setText("0");
+            ty.setText("0");
+            tz.setText("0");
+        }
     }
 
-//    public void convert(MouseEvent mouseEvent) {
-//        //реализовываю только для смещения
-//        if (Objects.equals(tx.getText(), "") || Objects.equals(ty.getText(), "") || Objects.equals(tz.getText(), "")
-//                || Objects.equals(sx.getText(), "") || Objects.equals(sy.getText(), "") || Objects.equals(sz.getText(), "")
-//                || Objects.equals(rx.getText(), "") || Objects.equals(ry.getText(), "") || Objects.equals(rz.getText(), "")) {
-//            showMessage("Ошибка", "Введите необходимые данные!");
-//        } else {
-//            Matrix4f transposeMatrix = AffineTransformations.modelMatrix(
-//                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()),
-//                    Float.parseFloat(rx.getText()), Float.parseFloat(ry.getText()), Float.parseFloat(rz.getText()),
-//                    Integer.parseInt(sx.getText()), Integer.parseInt(sy.getText()), Integer.parseInt(sz.getText()));
-//            TranslationModel.move(transposeMatrix, activeModel());
-//        }
-//    }
+    @FXML
+    public void deleteVertexAction(MouseEvent mouseEvent) {
+        if (SceneTools.activeModels().size() == 1) {
+            List<Integer> indexes = parseVertex();
+            SceneTools.deleteVertexes(indexes);
+        } else {
+            showMessage("Ошибка", "Веберите одну модель для удаления вершин");
+        }
+    }
 
-//    public void deleteVertexAction(MouseEvent mouseEvent) {
-//        List<Integer> vectorIndex = parseVertex(deleteVertex.getText());
-//        if (vectorIndex.size() == 0) {
-//            showMessage("Ошибка", "нет такой вершины у активной модели", messageError);
-//        } else {
-//            Model model = activeModel();
-//            model = DeleteVertices.deleteVerticesFromModel(activeModel(), vectorIndex);
-//            model.normalize();
-//        }
-//    }
-//
-//    public List<Integer> parseVertex(String vertex) {
-//        List<Float> coords = new ArrayList<>();
-//        StringBuilder prom = new StringBuilder();
-//        for (int i = 0; i < vertex.length(); i++) {
-//            if (vertex.charAt(i) == ' ') {
-//                coords.add(Float.parseFloat(String.valueOf(prom)));
-//                prom = new StringBuilder();
-//            } else {
-//                prom.append(vertex.charAt(i));
-//            }
-//        }
-//        coords.add(Float.parseFloat(String.valueOf(prom)));
-//        com.cgvsu.math.Vector3f resultVector = new com.cgvsu.math.Vector3f(coords.get(0), coords.get(1), coords.get(2));
-//        Model model = activeModel();
-//        for (int i = 0; i < model.vertices.size(); i++) {
-//            if (model.vertices.get(i).equals(resultVector)) {
-//                return new ArrayList<>(List.of(i));
-//            }
-//        }
-//        return new ArrayList<>();
-//    }
+    public List<Integer> parseVertex() {
+        List<Integer> vertexIndexes = new ArrayList<>();
+        StringBuilder index = new StringBuilder();
+        for (int i = 0; i < deleteVertexField.getText().length(); i++) {
+            if (deleteVertexField.getText().charAt(i) == ',') {
+                vertexIndexes.add(Integer.parseInt(String.valueOf(index)));
+                index = new StringBuilder();
+            } else {
+                index.append(deleteVertexField.getText().charAt(i));
+            }
+        }
+        vertexIndexes.add(Integer.parseInt(String.valueOf(index)));
+        return vertexIndexes;
+    }
 }

@@ -133,31 +133,38 @@
                                  <content>
                                     <AnchorPane maxHeight="309.0" minHeight="0.0" minWidth="0.0" prefHeight="309.0" prefWidth="488.0">
                                        <children>
-                                          <CheckBox fx:id="texture" layoutX="53.0" layoutY="70.0" mnemonicParsing="false" onMouseClicked="#showTexture" text="Подгрузить текстуру">
+                                          <CheckBox fx:id="texture" layoutX="53.0" layoutY="33.0" mnemonicParsing="false" onMouseClicked="#showTexture" text="Подгрузить текстуру">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="light" layoutX="53.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#showLight" text="Включить освещение">
+                                          <CheckBox fx:id="light" layoutX="53.0" layoutY="76.0" mnemonicParsing="false" onMouseClicked="#showLight" text="Включить освещение">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <CheckBox fx:id="grid" layoutX="53.0" layoutY="201.0" mnemonicParsing="false" onMouseClicked="#showGrid" text="Наложить сетку">
+                                          <CheckBox fx:id="grid" layoutX="53.0" layoutY="116.0" mnemonicParsing="false" onMouseClicked="#showGrid" text="Наложить сетку">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </CheckBox>
-                                          <Button fx:id="deleteModelButton" layoutX="295.0" layoutY="96.0" mnemonicParsing="false" onMouseClicked="#deleteModel" text="Удалить модель">
+                                          <Button fx:id="deleteModelButton" layoutX="283.0" layoutY="38.0" mnemonicParsing="false" onMouseClicked="#deleteModel" text="Удалить модель">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Button>
-                                          <Button fx:id="hideModelButton" layoutX="297.0" layoutY="171.0" mnemonicParsing="false" onMouseClicked="#hideModel" text="Скрыть модель">
+                                          <Button fx:id="hideModelButton" layoutX="283.0" layoutY="101.0" mnemonicParsing="false" onMouseClicked="#hideModel" text="Скрыть модель">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Button>
+                                          <Text layoutX="53.0" layoutY="193.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Введите индексы удаляемых вершин">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Text>
+                                          <TextField fx:id="deleteVertexField" layoutX="52.0" layoutY="217.0" prefHeight="27.0" prefWidth="239.0" text="-1.000000 1.000000 1.000000" />
+                                          <Button fx:id="deleteVertexButton" layoutX="315.0" layoutY="217.0" mnemonicParsing="false" onMouseClicked="#deleteVertexAction" text="Удалить" />
                                        </children>
                                     </AnchorPane>
                                  </content>
@@ -181,7 +188,7 @@
                                     </ScrollPane>
                                  </content>
                               </TitledPane>
-                              <TitledPane fx:id="paneViewCamera" animated="false" maxHeight="100.0" minHeight="100.0" minWidth="-Infinity" prefHeight="100.0" text="Вид камеры">
+                              <TitledPane animated="false" maxHeight="100.0" minHeight="100.0" minWidth="-Infinity" prefHeight="100.0" text="Вид камеры">
                                  <content>
                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>

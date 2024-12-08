@@ -1,15 +1,18 @@
 package com.cgvsu.scene_tools;
 
+import com.cgvsu.math.AffineTransformations;
+import com.cgvsu.math.TranslationModel;
+import com.cgvsu.model.DeleteVertices;
 import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.Camera;
-import javafx.collections.ObservableList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import java.io.File;
 import java.io.IOException;
@@ -61,17 +64,9 @@ public class SceneTools {
                 return "Ошибка сохранения! Файл не найден.";
             }
             String fileName = String.valueOf(Path.of(file.getAbsolutePath()));
-            if (transform) { //сохранить модель с изменениями?
-                //model.transform();
-                // когда будут приходить значения для трансформации,
-                // изменяй не сами вершины в модели, а создай доп поле transformationVertices которое
-                // будет хранить изменённые вершины. Также создай метод transform(), при вызове которого
-                // будешь менять местами згначения полей vertices и transformationVertices, чтобы
-                // я смогла сохранить модель с изменёнными параметрами
-            }
             int index = 1;
             for (Model model : activeModels()) {
-                ObjWriter.write(model, fileName + index + ".obj");
+                ObjWriter.write(model, fileName + index + ".obj", transform);
                 index++;
             }
             return "Модель успешно сохранёна!";
@@ -107,7 +102,7 @@ public class SceneTools {
     }
 
     public static void deleteModel() {
-        for (int i : activeMeshes){
+        for (int i : activeMeshes) {
             meshes.remove(i);
         }
         activeMeshes.clear();
@@ -116,13 +111,12 @@ public class SceneTools {
     public static List<Model> activeModels() {
         List<Model> activeModels = new ArrayList<>();
         for (int i = 0; i < meshes.size(); i++) {
-            if (!hideMeshes.contains(i)){
+            if (!hideMeshes.contains(i)) {
                 activeModels.add(meshes.get(i));
             }
         }
         return activeModels;
     }
-
 
 
     public static void hideModels() {
@@ -141,11 +135,13 @@ public class SceneTools {
             Set<Integer> intersection = new HashSet<>(hideModels);
             intersection.retainAll(selectedHideModels);
             hideMeshes.removeAll(intersection);
+            activeMeshes.addAll(intersection); //если модели больше не спрятаны, то становятся активными
         }
         //если хотя бы 1 неактивна, сделать все неактивными
         else {
             hideModels.addAll(selectedHideModels);
             hideMeshes = new ArrayList<>(hideModels);
+            activeMeshes.removeAll(selectedHideModels);//если модели спрятаны, то становятся не активными
         }
     }
 
@@ -185,7 +181,7 @@ public class SceneTools {
                 break;
             }
         }
-        if (isSubset){
+        if (isSubset) {
             Set<Integer> intersection = new HashSet<>(lightModels);
             intersection.retainAll(activeModels);
             for (int i = 0; i < meshes.size(); i++) {
@@ -242,5 +238,20 @@ public class SceneTools {
             }
             return true;
         }
+    }
+
+    public static void convert(TextField sx, TextField sy, TextField sz, TextField rx, TextField ry, TextField rz, TextField tx, TextField ty, TextField tz) {
+        for (Model model : activeModels()) {
+            Matrix4f transposeMatrix = AffineTransformations.modelMatrix(
+                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()),
+                    Float.parseFloat(rx.getText()), Float.parseFloat(ry.getText()), Float.parseFloat(rz.getText()),
+                    Integer.parseInt(sx.getText()), Integer.parseInt(sy.getText()), Integer.parseInt(sz.getText()));
+            //TODO: ЭТО МОЙ МЕТОД ПРИМЕНЕНИЯ АФФИННЫХ ПРЕОБРАЗОВАНИЙ, КОГДА БУДЕШЬ ДЕЛАТЬ, ЗАМЕНИ НА СВОЙ
+            TranslationModel.move(transposeMatrix, model);
+        }
+    }
+
+    public static void deleteVertexes(List<Integer> indexes) {
+        DeleteVertices.deleteVerticesFromModel(activeModels().get(0), indexes);
     }
 }

@@ -2,7 +2,7 @@ package com.cgvsu.model;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.normalize.Normalize;
-import com.cgvsu.texture.ImageToText;
+import com.cgvsu.texture.ImageToTexture;
 import com.cgvsu.triangulation.Triangulation;
 
 
@@ -21,7 +21,7 @@ public class Model {
     public String pathTexture = null;
     public boolean isActiveLighting = false;
     public Color color = Color.GRAY;
-    public ImageToText imageToText = null;
+    public ImageToTexture imageToTexture = null;
 
 
     public void triangulate(){

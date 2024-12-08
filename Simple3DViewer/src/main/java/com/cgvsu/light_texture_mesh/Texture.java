@@ -12,12 +12,12 @@ public class Texture {
 
     public static void texture(double[] barizentric, Vector2f[] textures, Model mesh, int[] rgb){
         double[] texture = getGradientCoordinatesTexture(barizentric, textures);
-        int u = (int) Math.round(texture[0] * (mesh.imageToText.wight - 1));
-        int v = (int) Math.round(texture[1] * (mesh.imageToText.height - 1));
-        if (u < mesh.imageToText.wight && v < mesh.imageToText.height) {
-            rgb[0] = mesh.imageToText.pixelData[u][v][0];
-            rgb[1] = mesh.imageToText.pixelData[u][v][1];
-            rgb[2] = mesh.imageToText.pixelData[u][v][2];
+        int u = (int) Math.round(texture[0] * (mesh.imageToTexture.wight - 1));
+        int v = (int) Math.round(texture[1] * (mesh.imageToTexture.height - 1));
+        if (u < mesh.imageToTexture.wight && v < mesh.imageToTexture.height) {
+            rgb[0] = mesh.imageToTexture.pixelData[u][v][0];
+            rgb[1] = mesh.imageToTexture.pixelData[u][v][1];
+            rgb[2] = mesh.imageToTexture.pixelData[u][v][2];
         }
     }
 }

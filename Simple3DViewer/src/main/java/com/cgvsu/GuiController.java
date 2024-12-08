@@ -1,13 +1,9 @@
 package com.cgvsu;
 
-import com.cgvsu.math.AffineTransformations;
-import com.cgvsu.math.TranslationModel;
-import com.cgvsu.model.DeleteVertices;
 import com.cgvsu.render_engine.Camera;
 import com.cgvsu.render_engine.RenderEngine;
 import com.cgvsu.scene_tools.SceneTools;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,18 +18,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
-import java.nio.file.Path;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.swing.*;
-import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
 import com.cgvsu.model.Model;
@@ -147,7 +138,7 @@ public class GuiController {
             }
 
             if (SceneTools.meshes.size() != 0) {
-                RenderEngine.render(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.activeModels(), (int) width, (int) height); //создаем отрисовку модели
+                RenderEngine.prepareToRender(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.activeModels(), (int) width, (int) height); //создаем отрисовку модели
             }
         });
 

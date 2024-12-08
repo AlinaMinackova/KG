@@ -22,9 +22,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import javax.vecmath.Vector3f;
 
 import com.cgvsu.model.Model;
@@ -142,7 +140,7 @@ public class GuiController {
             }
 
             if (SceneTools.meshes.size() != 0) {
-                RenderEngine.prepareToRender(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.activeModels(), (int) width, (int) height); //создаем отрисовку модели
+                RenderEngine.prepareToRender(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.drawMeshes(), (int) width, (int) height); //создаем отрисовку модели
             }
         });
 
@@ -156,9 +154,14 @@ public class GuiController {
             SceneTools.open(canvas);
             listModels.getItems().add("Модель " + SceneTools.meshes.size());
             listModels.getSelectionModel().select(listModels.getItems().size() - 1);
+            texture.setSelected(false);
+            light.setSelected(false);
+            grid.setSelected(false);
 
         } catch (IOException e) {
             showMessage("Ошибка", "Неудалось найти файл!");
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -220,10 +223,9 @@ public class GuiController {
 
     @FXML
     public void choiceCamera(MouseEvent mouseEvent) {
-        //TODO: СДЕЛАТЬ ЧТОБЫ МОДЕЛЬ 10 ТОЖЕ ОБРАБАТЫВАЛАСЬ
-        int cameraId = Integer.parseInt(listCameras.getSelectionModel().getSelectedItem().substring(listCameras.getSelectionModel().getSelectedItem().length() - 1)) - 1;
-        SceneTools.choiceCamera(cameraId);
-        listCameras.getSelectionModel().select(cameraId);
+        String[] cameraId = listCameras.getSelectionModel().getSelectedItem().split(" ");
+        SceneTools.choiceCamera(Integer.parseInt(cameraId[cameraId.length - 1]) - 1);
+        listCameras.getSelectionModel().select(Integer.parseInt(cameraId[cameraId.length - 1]) - 1);
     }
 
     @FXML
@@ -234,40 +236,44 @@ public class GuiController {
         for (int i = 0; i < listCameras.getItems().size(); i++) {
             listCameras.getItems().set(i, "Камера " + (i + 1));
         }
-        //TODO: ПРОВЕРИТЬ ЕСЛИ УДАЛЕНА ВКЛЮЧЕННАЯ КАМЕРА
         listCameras.getSelectionModel().select(0);
     }
 
     @FXML
     public void choiceModel(MouseEvent mouseEvent) {
-        //TODO: ПРОВЕРИТЬ ЕСЛИ КАМЕРА НАЖАТА СНЯТЬ ВЫДЕЛЕНИЯ И УДАЛИТЬ ИЗ АКТИВНЫХ
         List<Integer> selectedModels = new ArrayList<>();
         for (String modelName : listModels.getSelectionModel().getSelectedItems()) {
-            int modelId = Integer.parseInt(modelName.substring(modelName.length() - 1)) - 1;
-            listModels.getSelectionModel().select(modelId);
-            selectedModels.add(modelId);
+            String[] modelId = modelName.split(" ");
+            //int modelId = Integer.parseInt(modelName.substring(modelName.length() - 1)) - 1;
+            listModels.getSelectionModel().select(Integer.parseInt(modelId[modelId.length - 1]) - 1);
+            selectedModels.add(Integer.parseInt(modelId[modelId.length - 1]) - 1);
         }
         SceneTools.choiceModels(selectedModels);
+        baseModelColor.setValue(SceneTools.activeModels().get(0).color);
         //при выборе моделей, в панельке Вид модели менять чекбоксы
-        if (SceneTools.activeModels().size() == 1){
+        if (SceneTools.activeModels().size() == 1) {
             texture.setSelected(SceneTools.activeModels().get(0).isActiveTexture);
             light.setSelected(SceneTools.activeModels().get(0).isActiveLighting);
             grid.setSelected(SceneTools.activeModels().get(0).isActiveGrid);
-        }
-        else {
+        } else {
             boolean gridChoice = true;
             boolean lightChoice = true;
-            for (Model model : SceneTools.activeModels()){
-                if (!model.isActiveLighting){
+            texture.setSelected(false);
+            for (Model model : SceneTools.activeModels()) {
+                if (!model.isActiveLighting) {
                     lightChoice = false;
                 }
-                if (!model.isActiveGrid){
+                if (!model.isActiveGrid) {
                     gridChoice = false;
                 }
             }
-            texture.setSelected(false);
-            light.setSelected(lightChoice);
-            grid.setSelected(gridChoice);
+            if (SceneTools.activeModels().size() == 0) {
+                light.setSelected(false);
+                grid.setSelected(false);
+            } else {
+                light.setSelected(lightChoice);
+                grid.setSelected(gridChoice);
+            }
         }
     }
 
@@ -275,10 +281,11 @@ public class GuiController {
     public void deleteModel(MouseEvent mouseEvent) {
         if (SceneTools.activeMeshes.size() != 0) {
             List<Integer> modelsId = SceneTools.activeMeshes;
-            SceneTools.deleteModel();
-            for (int i : modelsId) {
-                listModels.getItems().remove(i);
+            Collections.sort(modelsId);
+            for (int i = modelsId.size() - 1; i >= 0; i--) {
+                listModels.getItems().remove((int) modelsId.get(i));
             }
+            SceneTools.deleteModel();
 
             for (int i = 0; i < listModels.getItems().size(); i++) {
                 listModels.getItems().set(i, "Модель " + (i + 1));
@@ -312,6 +319,31 @@ public class GuiController {
                     }
                 }
             });
+            //при выборе моделей, в панельке Вид модели менять чекбоксы
+            if (SceneTools.activeModels().size() == 1) {
+                texture.setSelected(SceneTools.activeModels().get(0).isActiveTexture);
+                light.setSelected(SceneTools.activeModels().get(0).isActiveLighting);
+                grid.setSelected(SceneTools.activeModels().get(0).isActiveGrid);
+            } else {
+                boolean gridChoice = true;
+                boolean lightChoice = true;
+                texture.setSelected(false);
+                for (Model model : SceneTools.activeModels()) {
+                    if (!model.isActiveLighting) {
+                        lightChoice = false;
+                    }
+                    if (!model.isActiveGrid) {
+                        gridChoice = false;
+                    }
+                }
+                if (SceneTools.activeModels().size() == 0) {
+                    light.setSelected(false);
+                    grid.setSelected(false);
+                } else {
+                    light.setSelected(lightChoice);
+                    grid.setSelected(gridChoice);
+                }
+            }
         } else {
             showMessage("Ошибка", "Нет моделей для скрытия");
         }
@@ -386,17 +418,10 @@ public class GuiController {
     }
 
     public List<Integer> parseVertex() {
-        List<Integer> vertexIndexes = new ArrayList<>();
-        StringBuilder index = new StringBuilder();
-        for (int i = 0; i < deleteVertexField.getText().length(); i++) {
-            if (deleteVertexField.getText().charAt(i) == ',') {
-                vertexIndexes.add(Integer.parseInt(String.valueOf(index)));
-                index = new StringBuilder();
-            } else {
-                index.append(deleteVertexField.getText().charAt(i));
-            }
+        Set<Integer> vertexIndexes = new HashSet<>();
+        for (String index : deleteVertexField.getText().split(", ")) {
+            vertexIndexes.add(Integer.valueOf(index));
         }
-        vertexIndexes.add(Integer.parseInt(String.valueOf(index)));
-        return vertexIndexes;
+        return new ArrayList<Integer>(vertexIndexes);
     }
 }

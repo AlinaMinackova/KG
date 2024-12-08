@@ -13,7 +13,7 @@ public class DeleteVertices {
         List<Integer> vertexIndicesToDelete = new ArrayList<>(vertexIndices).stream().sorted(Comparator.reverseOrder()).toList();
 
         // Удаление вершин
-        deleteVertices(model.vertices, vertexIndicesToDelete);
+        deleteVertices(model.verticesTransform, vertexIndicesToDelete);
 
         // Удаление полигонов, часть вершин которых исчезла
         deleteDanglingPolygons(model.polygons, vertexIndices);

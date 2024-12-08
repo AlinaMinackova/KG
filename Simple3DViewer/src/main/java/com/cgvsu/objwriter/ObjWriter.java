@@ -17,17 +17,19 @@ public class ObjWriter {
     private static final String OBJ_FACE_TOKEN = "f";
 
     public static void write(Model model, String filename, boolean transform) {
-        ArrayList<Vector3f> vertices = new ArrayList<>();
+        ArrayList<Vector3f> vertices;
+        ArrayList<Polygon> polygons;
         if (transform){
             vertices = model.verticesTransform;
+            polygons = model.polygons;
         }
         else {
             vertices = model.vertices;
+            polygons = model.polygonsBase;
         }
         //сделать поля в Vector3f public
         ArrayList<Vector2f> textureVertices = model.textureVertices;
         ArrayList<Vector3f> normals = model.normals;
-        ArrayList<Polygon> polygons = model.polygons;
 
         try (FileWriter writer = new FileWriter(filename, false)) {
             for (Vector3f node : vertices) {

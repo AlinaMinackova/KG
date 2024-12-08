@@ -13,9 +13,11 @@ public class Model {
 
     public ArrayList<Vector3f> vertices = new ArrayList<Vector3f>();
     public ArrayList<Vector3f> verticesTransform = new ArrayList<Vector3f>();
+    public ArrayList<Integer> deletedVertexes = new ArrayList<Integer>();
     public ArrayList<Vector2f> textureVertices = new ArrayList<Vector2f>();
     public ArrayList<Vector3f> normals = new ArrayList<Vector3f>();
     public ArrayList<Polygon> polygons = new ArrayList<Polygon>();
+    public ArrayList<Polygon> polygonsBase = new ArrayList<Polygon>();
     public ArrayList<Polygon> polygonsWithoutTriangulation = new ArrayList<Polygon>();
     public boolean isActiveGrid = false;
     public boolean isActiveTexture = false;
@@ -25,9 +27,14 @@ public class Model {
     public ImageToTexture imageToTexture = null;
 
     public void triangulate(){
-        verticesTransform = new ArrayList<>(vertices);
+        for (Vector3f vertex : vertices){
+            verticesTransform.add(vertex.clone());
+        }
         polygonsWithoutTriangulation = polygons;
         polygons = (ArrayList<Polygon>) Triangulation.triangulate(polygons);
+        for (Polygon polygon : polygons){
+            polygonsBase.add(polygon.clone());
+        }
     }
 
     public void normalize(){

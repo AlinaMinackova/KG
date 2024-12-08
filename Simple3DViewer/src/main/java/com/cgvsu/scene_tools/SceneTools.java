@@ -18,10 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SceneTools {
 
@@ -40,7 +37,7 @@ public class SceneTools {
 
         File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
         if (file == null) {
-            return;
+            throw new RuntimeException("не открыли файл!");
         }
 
         Path fileName = Path.of(file.getAbsolutePath());
@@ -102,16 +99,21 @@ public class SceneTools {
     }
 
     public static void deleteModel() {
-        for (int i : activeMeshes) {
-            meshes.remove(i);
+        List<Integer> modelsId = activeMeshes;
+        Collections.sort(modelsId);
+        for (int i = modelsId.size() - 1; i >= 0; i--) {
+            meshes.remove((int) modelsId.get(i));
+            hideMeshes.remove(modelsId.get(i));
+
         }
         activeMeshes.clear();
+
     }
 
     public static List<Model> activeModels() {
         List<Model> activeModels = new ArrayList<>();
         for (int i = 0; i < meshes.size(); i++) {
-            if (!hideMeshes.contains(i)) {
+            if (!hideMeshes.contains(i) && activeMeshes.contains(i)) {
                 activeModels.add(meshes.get(i));
             }
         }
@@ -252,6 +254,18 @@ public class SceneTools {
     }
 
     public static void deleteVertexes(List<Integer> indexes) {
+        activeModels().get(0).deletedVertexes.addAll(indexes);
         DeleteVertices.deleteVerticesFromModel(activeModels().get(0), indexes);
+    }
+
+    public static List<Model> drawMeshes() {
+        List<Model> activeModels = new ArrayList<>();
+        for (int i = 0; i < meshes.size(); i++) {
+            if (!hideMeshes.contains(i)) {
+                activeModels.add(meshes.get(i));
+            }
+        }
+        return activeModels;
+
     }
 }

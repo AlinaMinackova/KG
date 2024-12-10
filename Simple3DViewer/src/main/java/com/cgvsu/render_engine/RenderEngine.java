@@ -83,13 +83,18 @@ public class RenderEngine {
                         (int) vertexAttributes[polygon.getVertexIndices().get(1)].resultPoint.y,
                         (int) vertexAttributes[polygon.getVertexIndices().get(2)].resultPoint.y};
 
+                List<List<Double>> light = new ArrayList<>();
+                light.add(List.of((double) renderAttributes.viewMatrix.m02, (double) renderAttributes.viewMatrix.m12, (double) renderAttributes.viewMatrix.m22));
+                light.add(List.of(1.0, 0.0, 1.0));
+                light.add(List.of(1.0, -1.0, 0.0));
+
                 TriangleRasterization.draw(
                         renderAttributes.graphicsContext,
                         coorX,
                         coorY,
                         new Color[]{model.color, model.color, model.color},
                         renderAttributes.ZBuffer,
-                        vz, normals, textures, new double[]{renderAttributes.viewMatrix.m02, renderAttributes.viewMatrix.m12, renderAttributes.viewMatrix.m22}, model);
+                        vz, normals, textures, light, model);
 
                 if(model.isActiveGrid){
                     Mesh.drawLine(coorX[0], coorY[0], coorX[1], coorY[1], renderAttributes.ZBuffer, vz, coorX, coorY, renderAttributes.graphicsContext);

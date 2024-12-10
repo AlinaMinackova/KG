@@ -9,12 +9,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 import static com.cgvsu.light_texture_mesh.Lighting.getGradientCoordinatesRGB;
 
 public class TriangleRasterization {
     public static void draw(final GraphicsContext graphicsContext,
                             final int[] coordX, final int[] coordY, final Color[] color,
-                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals, Vector2f[] textures, double[] light, Model model) {
+                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals, Vector2f[] textures, List<List<Double>> light, Model model) {
         final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
 
         sort(coordX, coordY, deepZ, normals, textures, color);

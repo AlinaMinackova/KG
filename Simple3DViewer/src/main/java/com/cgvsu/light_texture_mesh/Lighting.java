@@ -9,22 +9,28 @@ public class Lighting {
 
     final static double k = 0.5;
 
-    public static void calculateLight(int[] rgb, List<List<Double>> light, Vector3f normal){
-        double l = -(light.get(0).get(0) * normal.x + light.get(0).get(1) * normal.y + light.get(0).get(2) * normal.z);
+    public static void calculateLight(int[] rgb, List<Light> light, Vector3f normal){
+        double l = -(light.get(0).x * normal.x + light.get(0).y * normal.y + light.get(0).z * normal.z);
         if(l < 0){
-            l = 0;
+            l = 0; // фоновый свет
         }
-        double l2 = -(light.get(1).get(0) * normal.x + light.get(1).get(1) * normal.y + light.get(1).get(2) * normal.z);
-        if(l2 < 0){
-            l2 = 0;
+        double mixingLightRed = 0;
+        double mixingLightGreen = 0;
+        double mixingLightBlue = 0;
+        for (Light light1: light) {
+            if (light1.color != null){
+                double l2 = -(light1.x * normal.x + light1.y * normal.y + light1.z * normal.z);
+                if(l2 < 0){
+                    l2 = 0;
+                }
+                mixingLightRed += light1.color.getRed() * 255 * l2;
+                mixingLightGreen += light1.color.getGreen() * 255 * l2;
+                mixingLightBlue += light1.color.getBlue() * 255 * l2;
+            }
         }
-        double l3 = -(light.get(2).get(0) * normal.x + light.get(2).get(1) * normal.y + light.get(2).get(2) * normal.z);
-        if(l3 < 0){
-            l3 = 0;
-        }
-        rgb[0] = Math.min(255, (int) ((rgb[0] * (1 - k) + rgb[0] * k * l) + (255 * l2) + (0 * l3)));
-        rgb[1] = Math.min(255, (int) ((rgb[1] * (1 - k) + rgb[1] * k * l) + (0 * l2) + (0 * l3)));
-        rgb[2] = Math.min(255, (int) ((rgb[2] * (1 - k) + rgb[2] * k * l) + (255 * l2) + (255 * l3)));
+        rgb[0] = Math.min(255, (int) ((rgb[0] * (1 - k) + rgb[0] * k * l) + mixingLightRed));
+        rgb[1] = Math.min(255, (int) ((rgb[1] * (1 - k) + rgb[1] * k * l) + mixingLightGreen));
+        rgb[2] = Math.min(255, (int) ((rgb[2] * (1 - k) + rgb[2] * k * l) + mixingLightBlue));
     }
 
     public static int[] getGradientCoordinatesRGB(final double[] baristicCoords, final Color[] color) {
@@ -44,7 +50,7 @@ public class Lighting {
                 (float) (baristicCoords[0] * normals[0].z + baristicCoords[1] * normals[1].z + baristicCoords[2] * normals[2].z));
     }
 
-    public static void light(final double[] barizentric, final Vector3f[] normals, List<List<Double>> light, int[] rgb){
+    public static void light(final double[] barizentric, final Vector3f[] normals, List<Light> light, int[] rgb){
         Vector3f smooth = smoothingNormal(barizentric, normals);
         calculateLight(rgb, light, smooth);
     }

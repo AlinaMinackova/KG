@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.cgvsu.light_texture_mesh.Light;
 import com.cgvsu.light_texture_mesh.Mesh;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.math.Vector2f;
@@ -83,10 +84,12 @@ public class RenderEngine {
                         (int) vertexAttributes[polygon.getVertexIndices().get(1)].resultPoint.y,
                         (int) vertexAttributes[polygon.getVertexIndices().get(2)].resultPoint.y};
 
-                List<List<Double>> light = new ArrayList<>();
-                light.add(List.of((double) renderAttributes.viewMatrix.m02, (double) renderAttributes.viewMatrix.m12, (double) renderAttributes.viewMatrix.m22));
-                light.add(List.of(1.0, 0.0, 1.0));
-                light.add(List.of(1.0, -1.0, 0.0));
+                List<Light> light = new ArrayList<>();
+                // вставить камеру на первое место
+                //light.set(0, new Light((double) renderAttributes.viewMatrix.m02, (double) renderAttributes.viewMatrix.m12, (double) renderAttributes.viewMatrix.m22, null));
+                light.add(new Light((double) renderAttributes.viewMatrix.m02, (double) renderAttributes.viewMatrix.m12, (double) renderAttributes.viewMatrix.m22, null));
+                light.add(new Light(1.0, -1.0, 0.0, Color.rgb(90, 26, 100)));
+                light.add(new Light(-1.0, -1.0, 0.0, Color.rgb(0, 86, 50)));
 
                 TriangleRasterization.draw(
                         renderAttributes.graphicsContext,

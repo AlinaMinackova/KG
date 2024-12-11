@@ -50,7 +50,6 @@ public class SceneTools {
         activeMeshes.add(meshes.size() - 1);
     }
 
-    //TODO: СДЕЛАТЬ СОХРАНЕНИЕ НЕСКОЛЬКИХ МОДЕЛЕЙ
     public static String save(Canvas canvas, Boolean transform) {
         if (meshes.size() != 0) {
             FileChooser fileChooser = new FileChooser();

@@ -153,6 +153,7 @@ public class GuiController {
         try {
             SceneTools.open(canvas);
             listModels.getItems().add("Модель " + SceneTools.meshes.size());
+            SceneTools.meshes.get(SceneTools.meshes.size()-1).color = baseModelColor.getValue();
             listModels.getSelectionModel().select(listModels.getItems().size() - 1);
             texture.setSelected(false);
             light.setSelected(false);

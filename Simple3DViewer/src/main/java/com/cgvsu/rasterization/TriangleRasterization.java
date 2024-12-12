@@ -17,7 +17,7 @@ import static com.cgvsu.light_texture_mesh.Lighting.getGradientCoordinatesRGB;
 public class TriangleRasterization {
     public static void draw(final GraphicsContext graphicsContext,
                             final int[] coordX, final int[] coordY, final Color[] color,
-                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals, Vector2f[] textures, List<Light> light, Model model) {
+                            final double[][] zBuff, final double[] deepZ, Vector3f[] normals, Vector2f[] textures, List<Light> lights, Model model) {
         final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
 
         sort(coordX, coordY, deepZ, normals, textures, color);
@@ -47,7 +47,7 @@ public class TriangleRasterization {
                             Texture.texture(barizentric, textures, model, rgb);
                         }
                         if (model.isActiveLighting) {
-                            Lighting.light(barizentric, normals, light, rgb);
+                            Lighting.light(barizentric, normals, lights, rgb);
                         }
                         zBuff[x][y] = zNew;
                         pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));
@@ -81,7 +81,7 @@ public class TriangleRasterization {
                             Texture.texture(barizentric, textures, model, rgb);
                         }
                         if (model.isActiveLighting) {
-                            Lighting.light(barizentric, normals, light, rgb);
+                            Lighting.light(barizentric, normals, lights, rgb);
                         }
                         zBuff[x][y] = zNew;
                         pixelWriter.setColor(x, y, Color.rgb(rgb[0], rgb[1], rgb[2]));

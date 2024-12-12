@@ -27,7 +27,8 @@ public class RenderEngine {
             final Camera camera,
             final List<Model> models,
             final int width,
-            final int height) {
+            final int height,
+            final List<Light> lights) {
         double[][] ZBuffer = new double[width][height];
         for (double[] longs : ZBuffer) {
             Arrays.fill(longs, Double.MAX_VALUE);
@@ -40,27 +41,27 @@ public class RenderEngine {
         modelViewProjectionMatrix.mul(viewMatrix);
         modelViewProjectionMatrix.mul(projectionMatrix);
 
-        RenderAttributes renderAttributes = new RenderAttributes(models, graphicsContext, width, height, ZBuffer, viewMatrix, modelViewProjectionMatrix);
+        RenderAttributes renderAttributes = new RenderAttributes(models, graphicsContext, width, height, ZBuffer, viewMatrix, modelViewProjectionMatrix, lights);
         render(renderAttributes);
     }
 
-    public static void render(final RenderAttributes renderAttributes){
-        for (Model model: renderAttributes.models){
+    public static void render(final RenderAttributes renderAttributes) {
+        for (Model model : renderAttributes.models) {
             if (model.pathTexture != null && model.imageToTexture == null) {
                 model.imageToTexture = new ImageToTexture();
                 model.imageToTexture.loadImage(model.pathTexture);
             }
 
-        VertexAttributes[] vertexAttributes = new VertexAttributes[model.verticesTransform.size()]; //массив с данными вершин
-        for (int i = 0; i < model.verticesTransform.size(); i++) {
-            VertexAttributes vertex = new VertexAttributes();
-            vertex.setCoorVertex(model.verticesTransform.get(i));
-            vertex.setNormal(model.normals.get(i));
-            javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.coorVertex.x, vertex.coorVertex.y, vertex.coorVertex.z); //делаем вектор строку
-            javax.vecmath.Vector3f v = multiplyMatrix4ByVector3(renderAttributes.modelViewProjectionMatrix, vertexVecmath);
-            vertex.setZ(v.z);
-            Point2f resultPoint = vertexToPoint(v, renderAttributes.width, renderAttributes.height); //преобразуем координаты в систему координат монитора
-            vertex.setResultPoint(resultPoint);
+            VertexAttributes[] vertexAttributes = new VertexAttributes[model.verticesTransform.size()]; //массив с данными вершин
+            for (int i = 0; i < model.verticesTransform.size(); i++) {
+                VertexAttributes vertex = new VertexAttributes();
+                vertex.setCoorVertex(model.verticesTransform.get(i));
+                vertex.setNormal(model.normals.get(i));
+                javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.coorVertex.x, vertex.coorVertex.y, vertex.coorVertex.z); //делаем вектор строку
+                javax.vecmath.Vector3f v = multiplyMatrix4ByVector3(renderAttributes.modelViewProjectionMatrix, vertexVecmath);
+                vertex.setZ(v.z);
+                Point2f resultPoint = vertexToPoint(v, renderAttributes.width, renderAttributes.height); //преобразуем координаты в систему координат монитора
+                vertex.setResultPoint(resultPoint);
 
                 vertexAttributes[i] = vertex;
             }
@@ -77,6 +78,11 @@ public class RenderEngine {
                     vz[i] = vertexAttributes[polygon.getVertexIndices().get(i)].z;
                 }
 
+                if (renderAttributes.lights.get(0).color == null) {
+                    renderAttributes.lights.set(0, new Light((double) renderAttributes.viewMatrix.m02,
+                            (double) renderAttributes.viewMatrix.m12, (double) renderAttributes.viewMatrix.m22, null));
+                }
+
                 int[] coorX = new int[]{(int) vertexAttributes[polygon.getVertexIndices().get(0)].resultPoint.x,
                         (int) vertexAttributes[polygon.getVertexIndices().get(1)].resultPoint.x,
                         (int) vertexAttributes[polygon.getVertexIndices().get(2)].resultPoint.x};
@@ -84,22 +90,15 @@ public class RenderEngine {
                         (int) vertexAttributes[polygon.getVertexIndices().get(1)].resultPoint.y,
                         (int) vertexAttributes[polygon.getVertexIndices().get(2)].resultPoint.y};
 
-                List<Light> light = new ArrayList<>();
-                // вставить камеру на первое место
-                //light.set(0, new Light((double) renderAttributes.viewMatrix.m02, (double) renderAttributes.viewMatrix.m12, (double) renderAttributes.viewMatrix.m22, null));
-                light.add(new Light((double) renderAttributes.viewMatrix.m02, (double) renderAttributes.viewMatrix.m12, (double) renderAttributes.viewMatrix.m22, null));
-                light.add(new Light(1.0, -1.0, 0.0, Color.rgb(90, 26, 100)));
-                light.add(new Light(-1.0, -1.0, 0.0, Color.rgb(0, 86, 50)));
-
                 TriangleRasterization.draw(
                         renderAttributes.graphicsContext,
                         coorX,
                         coorY,
                         new Color[]{model.color, model.color, model.color},
                         renderAttributes.ZBuffer,
-                        vz, normals, textures, light, model);
+                        vz, normals, textures, renderAttributes.lights, model);
 
-                if(model.isActiveGrid){
+                if (model.isActiveGrid) {
                     Mesh.drawLine(coorX[0], coorY[0], coorX[1], coorY[1], renderAttributes.ZBuffer, vz, coorX, coorY, renderAttributes.graphicsContext);
                     Mesh.drawLine(coorX[0], coorY[0], coorX[2], coorY[2], renderAttributes.ZBuffer, vz, coorX, coorY, renderAttributes.graphicsContext);
                     Mesh.drawLine(coorX[2], coorY[2], coorX[1], coorY[1], renderAttributes.ZBuffer, vz, coorX, coorY, renderAttributes.graphicsContext);

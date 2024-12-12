@@ -4,6 +4,7 @@ import com.cgvsu.render_engine.Camera;
 import com.cgvsu.render_engine.RenderEngine;
 import com.cgvsu.scene_tools.SceneTools;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -93,6 +94,24 @@ public class GuiController {
     public TextField deleteVertexField;
     @FXML
     public Button deleteVertexButton;
+    @FXML
+    public ListView<String> listLights;
+    @FXML
+    public ProgressBar progressBar;
+    @FXML
+    public TextField eyeXLight;
+    @FXML
+    public TextField eyeYLight;
+    @FXML
+    public TextField eyeZLight;
+    @FXML
+    public Button createLightButton;
+    @FXML
+    public Button deleteLightButton;
+    @FXML
+    public Button hideLightButton;
+    @FXML
+    public ColorPicker chooseLightColor;
 
     private Timeline timeline;
 
@@ -108,6 +127,7 @@ public class GuiController {
         timeline.setCycleCount(Animation.INDEFINITE);
 
         listCameras.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        listLights.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listModels.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         ThemeSwitch buttonStyle = new ThemeSwitch();
@@ -140,7 +160,7 @@ public class GuiController {
             }
 
             if (SceneTools.meshes.size() != 0) {
-                RenderEngine.prepareToRender(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.drawMeshes(), (int) width, (int) height); //создаем отрисовку модели
+                RenderEngine.prepareToRender(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.drawMeshes(), (int) width, (int) height, SceneTools.activeLights()); //создаем отрисовку модели
             }
         });
 
@@ -216,6 +236,10 @@ public class GuiController {
             SceneTools.createCamera(eyeX, eyeY, eyeZ, targetX, targetY, targetZ);
             listCameras.getItems().add("Камера " + SceneTools.cameras.size());
             listCameras.getSelectionModel().select(listCameras.getItems().size() - 1);
+            if (listLights.getItems().size() == 0) {
+                listLights.getItems().add("Свет камеры");
+                listLights.getSelectionModel().select(listLights.getItems().size() - 1);
+            }
         } else {
             showMessage("Предупреждение", "Введите необходимые данные!");
         }
@@ -233,6 +257,20 @@ public class GuiController {
         int cameraId = SceneTools.indexActiveCamera;
         SceneTools.deleteCamera();
         listCameras.getItems().remove(cameraId);
+        //нахлжу свет удаляемой камеры и удаляю его
+        List<Integer> indexesLightCamera = new ArrayList<>();
+        for (int i = 0; i < listLights.getItems().size(); i++) {
+            String[] lightId = listLights.getItems().get(i).split(" ");
+            if (lightId.length == 3 && Integer.parseInt(lightId[lightId.length - 1]) == cameraId) {
+                listLights.getItems().remove(cameraId);
+            }
+        }
+        for (int i = 0; i < listLights.getItems().size(); i++) {
+            String[] lightId = listLights.getItems().get(i).split(" ");
+            if (lightId.length == 3) {
+                listLights.getItems().remove(cameraId);
+            }
+        }
         for (int i = 0; i < listCameras.getItems().size(); i++) {
             listCameras.getItems().set(i, "Камера " + (i + 1));
         }
@@ -423,5 +461,79 @@ public class GuiController {
             vertexIndexes.add(Integer.valueOf(index));
         }
         return new ArrayList<Integer>(vertexIndexes);
+    }
+
+    @FXML
+    public void createLight(MouseEvent mouseEvent) {
+        if (!Objects.equals(eyeXLight.getText(), "") && !Objects.equals(eyeYLight.getText(), "") && !Objects.equals(eyeZLight.getText(), "")) {
+            SceneTools.createLight(eyeXLight, eyeYLight, eyeZLight, chooseLightColor.getValue());
+            listLights.getItems().add(String.valueOf(chooseLightColor.getValue()));
+            listLights.getSelectionModel().select(listLights.getItems().size() - 1);
+        } else {
+            showMessage("Предупреждение", "Введите необходимые данные!");
+        }
+    }
+
+    @FXML
+    public void deleteLight(MouseEvent mouseEvent) {
+        if (SceneTools.indexActiveLight != -1) {
+            if (listLights.getSelectionModel().getSelectedItem().split(" ").length == 2) {
+                showMessage("Ошибка", "Нельзя удалить свет камеры");
+            } else {
+                listLights.getItems().remove(SceneTools.indexActiveLight);
+                SceneTools.deleteLight();
+
+                for (int i = SceneTools.indexActiveLight; i < listLights.getItems().size() - 1; i++) {
+                    listLights.getItems().set(i, listLights.getItems().get(i + 1));
+                }
+            }
+        } else {
+            showMessage("Ошибка", "Нет света для удаления");
+        }
+
+    }
+
+    @FXML
+    public void hideLight(MouseEvent mouseEvent) {
+        if (SceneTools.indexActiveLight != -1) {
+            if (SceneTools.lights.size() > 1) {
+                SceneTools.hideLights();
+                final int[] countv = {0};
+
+                // Устанавливаем CellFactory для кастомизации отображения элементов
+                listLights.setCellFactory(list -> new ListCell<String>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setText(null);
+                            setStyle("");
+                        } else {
+                            countv[0]++;
+                            setText(item);
+                            // Меняем цвет текста для определенного элемента
+                            if (SceneTools.hideLights.contains(countv[0] - 1)) {
+                                setTextFill(Color.GRAY);  // Изменить цвет текста
+                            } else {
+                                setTextFill(Color.BLACK);  // Для остальных элементов
+                            }
+                        }
+                    }
+                });
+            }
+            else {
+                showMessage("Ошибка", "Нельзя скрыть единственный источник света");
+            }
+        } else {
+            showMessage("Ошибка", "Нет света для скрытия");
+        }
+    }
+
+    @FXML
+    public void chooseLights(MouseEvent mouseEvent) {
+        int lightId = listLights.getSelectionModel().getSelectedIndex();
+        SceneTools.chooseLight(lightId);
+        listLights.getSelectionModel().select(lightId);
     }
 }

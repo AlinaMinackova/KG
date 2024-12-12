@@ -4,10 +4,10 @@ import javafx.scene.paint.Color;
 
 public class Light {
 
-    final Double x;
-    final Double y;
-    final Double z;
-    final Color color;
+    public final Double x;
+    public final Double y;
+    public final Double z;
+    public final Color color;
 
 
     public Light(Double x, Double y, Double z, Color color) {

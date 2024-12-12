@@ -1,5 +1,6 @@
 package com.cgvsu.scene_tools;
 
+import com.cgvsu.light_texture_mesh.Light;
 import com.cgvsu.math.AffineTransformations;
 import com.cgvsu.math.TranslationModel;
 import com.cgvsu.model.DeleteVertices;
@@ -9,6 +10,7 @@ import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.Camera;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -29,6 +31,10 @@ public class SceneTools {
     public static List<Model> meshes = new ArrayList<>();
     public static List<Integer> activeMeshes = new ArrayList<>();
     public static List<Integer> hideMeshes = new ArrayList<>();
+    //список освещений
+    public static List<Light> lights = new ArrayList<>();
+    public static int indexActiveLight = -1;
+    public static List<Integer> hideLights = new ArrayList<>();
 
     public static void open(Canvas canvas) throws IOException {
         FileChooser fileChooser = new FileChooser();
@@ -50,7 +56,6 @@ public class SceneTools {
         activeMeshes.add(meshes.size() - 1);
     }
 
-    //TODO: СДЕЛАТЬ СОХРАНЕНИЕ НЕСКОЛЬКИХ МОДЕЛЕЙ
     public static String save(Canvas canvas, Boolean transform) {
         if (meshes.size() != 0) {
             FileChooser fileChooser = new FileChooser();
@@ -78,6 +83,16 @@ public class SceneTools {
                 new Vector3f(Float.parseFloat(tx.getText()), Float.parseFloat(ty.getText()), Float.parseFloat(tz.getText())),
                 1.0F, 1, 0.01F, 100));
         indexActiveCamera = cameras.size() - 1;
+
+        indexActiveLight = 0;
+        if (lights.size() == 0) {
+            lights.add(new Light(
+                    Double.parseDouble(eyeX.getText()),
+                    Double.parseDouble(eyeY.getText()),
+                    Double.parseDouble(eyeZ.getText()),
+                    null));
+
+        }
     }
 
     public static void choiceCamera(int cameraId) {
@@ -107,7 +122,6 @@ public class SceneTools {
 
         }
         activeMeshes.clear();
-
     }
 
     public static List<Model> activeModels() {
@@ -267,5 +281,50 @@ public class SceneTools {
         }
         return activeModels;
 
+    }
+
+    public static void createLight(TextField eyeXLight, TextField eyeYLight, TextField eyeZLight, Color value) {
+        lights.add(new Light(
+                Double.parseDouble(eyeXLight.getText()),
+                Double.parseDouble(eyeYLight.getText()),
+                Double.parseDouble(eyeZLight.getText()),
+                value));
+        indexActiveLight = lights.size() - 1;
+        int v = 0;
+    }
+
+    public static void deleteLight() {
+        lights.remove(indexActiveLight);
+        indexActiveLight = -1;
+    }
+
+    public static void hideLights() {
+        boolean flag = true;
+        for (int i = 0; i < hideLights.size(); i++) {
+            if (indexActiveLight == hideLights.get(i)) {
+                hideLights.remove(i);
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            hideLights.add(indexActiveLight);
+            int v = 0;
+        }
+    }
+
+    public static void chooseLight(int i) {
+        indexActiveLight = i;
+    }
+
+    public static List<Light> activeLights() {
+        List<Light> light = new ArrayList<>();
+        for (int i = 0; i < lights.size(); i++) {
+            if (!hideLights.contains(i)) {
+                light.add(lights.get(i));
+            }
+        }
+        int v = 0;
+        return light;
     }
 }

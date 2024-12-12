@@ -173,8 +173,9 @@ public class GuiController {
     @FXML
     public void open(ActionEvent actionEvent) {
         try {
-            SceneTools.open(canvas);
-            listModels.getItems().add("Модель " + SceneTools.meshes.size());
+            String fileName = SceneTools.open(canvas);
+            SceneTools.meshes.get(SceneTools.meshes.size()-1).color = baseModelColor.getValue();
+            listModels.getItems().add(fileName);
             listModels.getSelectionModel().select(listModels.getItems().size() - 1);
             texture.setSelected(false);
             light.setSelected(false);
@@ -208,6 +209,7 @@ public class GuiController {
         message.setContentText(messageText);
         message.showAndWait();
     }
+
 
     @FXML
     public void moveCamera(KeyEvent keyEvent) {
@@ -282,13 +284,7 @@ public class GuiController {
     @FXML
     public void choiceModel(MouseEvent mouseEvent) {
         List<Integer> selectedModels = new ArrayList<>();
-        for (String modelName : listModels.getSelectionModel().getSelectedItems()) {
-            String[] modelId = modelName.split(" ");
-            //int modelId = Integer.parseInt(modelName.substring(modelName.length() - 1)) - 1;
-            listModels.getSelectionModel().select(Integer.parseInt(modelId[modelId.length - 1]) - 1);
-            selectedModels.add(Integer.parseInt(modelId[modelId.length - 1]) - 1);
-        }
-        SceneTools.choiceModels(selectedModels);
+        SceneTools.choiceModels(listModels.getSelectionModel().getSelectedIndices());
         baseModelColor.setValue(SceneTools.activeModels().get(0).color);
         //при выборе моделей, в панельке Вид модели менять чекбоксы
         if (SceneTools.activeModels().size() == 1) {
@@ -326,10 +322,6 @@ public class GuiController {
                 listModels.getItems().remove((int) modelsId.get(i));
             }
             SceneTools.deleteModel();
-
-            for (int i = 0; i < listModels.getItems().size(); i++) {
-                listModels.getItems().set(i, "Модель " + (i + 1));
-            }
         } else {
             showMessage("Ошибка", "Нет моделей для удаления");
         }
@@ -350,8 +342,9 @@ public class GuiController {
                         setStyle("");
                     } else {
                         setText(item);
+                        int index = getIndex();
                         // Меняем цвет текста для определенного элемента
-                        if (SceneTools.hideMeshes.contains(Integer.parseInt(item.substring(item.length() - 1)) - 1)) {
+                        if (SceneTools.hideMeshes.contains(index)) {
                             setTextFill(Color.GRAY);  // Изменить цвет текста
                         } else {
                             setTextFill(Color.BLACK);  // Для остальных элементов
@@ -406,6 +399,7 @@ public class GuiController {
     @FXML
     public void showTexture(MouseEvent mouseEvent) {
         if (SceneTools.activeMeshes.size() > 1) {
+            texture.setSelected(false);
             showMessage("Предупреждение", "Выберите одну модель");
         } else {
             boolean action = SceneTools.showTexture(canvas);
@@ -508,7 +502,6 @@ public class GuiController {
         if (SceneTools.indexActiveLight != -1) {
             if (SceneTools.lights.size() > 1) {
                 SceneTools.hideLights();
-                final int[] countv = {0};
 
                 // Устанавливаем CellFactory для кастомизации отображения элементов
                 listLights.setCellFactory(list -> new ListCell<String>() {
@@ -520,10 +513,10 @@ public class GuiController {
                             setText(null);
                             setStyle("");
                         } else {
-                            countv[0]++;
                             setText(item);
+                            int index = getIndex();
                             // Меняем цвет текста для определенного элемента
-                            if (SceneTools.hideLights.contains(countv[0] - 1)) {
+                            if (SceneTools.hideLights.contains(index)) {
                                 setTextFill(Color.GRAY);  // Изменить цвет текста
                             } else {
                                 setTextFill(Color.BLACK);  // Для остальных элементов

@@ -36,7 +36,7 @@ public class SceneTools {
     public static int indexActiveLight = -1;
     public static List<Integer> hideLights = new ArrayList<>();
 
-    public static void open(Canvas canvas) throws IOException {
+    public static String open(Canvas canvas) throws IOException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         fileChooser.setTitle("Load Model");
@@ -47,6 +47,7 @@ public class SceneTools {
         }
 
         Path fileName = Path.of(file.getAbsolutePath());
+        String name = fileName.getFileName().toString();
 
         String fileContent = Files.readString(fileName);
         Model mesh = ObjReader.read(fileContent);
@@ -54,6 +55,7 @@ public class SceneTools {
         mesh.normalize();
         meshes.add(mesh);
         activeMeshes.add(meshes.size() - 1);
+        return name;
     }
 
     public static String save(Canvas canvas, Boolean transform) {

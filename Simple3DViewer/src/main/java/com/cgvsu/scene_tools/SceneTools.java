@@ -1,5 +1,6 @@
 package com.cgvsu.scene_tools;
 
+import com.cgvsu.ProgressBack;
 import com.cgvsu.light_texture_mesh.Light;
 import com.cgvsu.math.AffineTransformations;
 import com.cgvsu.math.TranslationModel;
@@ -10,7 +11,6 @@ import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.Camera;
 import javafx.concurrent.Task;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -38,7 +38,7 @@ public class SceneTools {
     public static int indexActiveLight = -1;
     public static List<Integer> hideLights = new ArrayList<>();
 
-    public static void open(Canvas canvas, ProgressBar progressBar) throws IOException {
+    public static void open(Canvas canvas, ProgressBack progressBack){
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         fileChooser.setTitle("Load Model");
@@ -53,7 +53,7 @@ public class SceneTools {
                 Path fileName = Path.of(file.getAbsolutePath());
 
                 String fileContent = Files.readString(fileName);
-                Model mesh = ObjReader.read(fileContent, progressBar);
+                Model mesh = ObjReader.read(fileContent, progressBack);
                 mesh.triangulate();
                 mesh.normalize();
                 meshes.add(mesh);

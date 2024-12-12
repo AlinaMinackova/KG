@@ -114,30 +114,10 @@ public class GuiController {
     public Button hideLightButton;
     @FXML
     public ColorPicker chooseLightColor;
+    public ProgressBack progressBack;
 
 
     private Timeline timeline;
-
-//    @FXML
-//    void doSomething() {
-//        Task<Void> task = new Task<>() {
-//            @Override
-//            public Void call() {
-//                progressBar.setProgress(ObjReader.n);
-//                return null;
-//            }
-//        };
-//        progressBar.progressProperty().bind(task.progressProperty());
-//        new Thread(task).start();
-//    }
-
-//    class MyRunnable implements Runnable {
-//        @Override
-//        public void run() {
-//            // Код, который будет выполняться в потоке
-//            progressBar.setProgress(ObjReader.n);
-//        }
-//    }
 
     @FXML
     private void initialize() throws IOException {
@@ -170,15 +150,11 @@ public class GuiController {
         });
         gadgetPane.getChildren().add(buttonStyle);
 
-        //doSomething();
-//        MyRunnable myRunnable = new MyRunnable();
-//        // Создаем объект потока и передаем Runnable
-//        thread = new Thread(myRunnable);
-        // Запускаем поток
-
         createCamera();
 
         baseModelColor.setValue(Color.GRAY);
+
+        progressBack = new ProgressBack(progressBar);
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
@@ -201,15 +177,13 @@ public class GuiController {
     @FXML
     public void open(ActionEvent actionEvent) {
         try {
-            SceneTools.open(canvas, progressBar);
+            SceneTools.open(canvas, progressBack);
             listModels.getItems().add("Модель " + SceneTools.meshes.size());
             listModels.getSelectionModel().select(listModels.getItems().size() - 1);
             texture.setSelected(false);
             light.setSelected(false);
             grid.setSelected(false);
 
-        } catch (IOException e) {
-            showMessage("Ошибка", "Неудалось найти файл!");
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
         }

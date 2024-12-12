@@ -1,11 +1,10 @@
 package com.cgvsu.objreader;
 
+import com.cgvsu.ProgressBack;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.model.Model;
 import com.cgvsu.model.Polygon;
-import javafx.concurrent.Task;
-import javafx.scene.control.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,21 +18,8 @@ public class ObjReader {
     private static final String OBJ_FACE_TOKEN = "f";
     public static double n = 0.0;
 
-    static void doSomething(ProgressBar progressBar) throws InterruptedException {
-        Task<Void> task = new Task<>() {
-            @Override
-            public Void call() {
-                progressBar.setProgress(ObjReader.n);
-                return null;
-            }
-        };
-        Thread t = new Thread(task);
-        t.start();
-        t.join();
-    }
 
-
-    public static Model read(String fileContent, ProgressBar progressBar) throws InterruptedException {
+    public static Model read(String fileContent, ProgressBack progressBack) throws InterruptedException {
         Model result = new Model();
         int lineCount = 0;
         Scanner scanner = new Scanner(fileContent);
@@ -54,7 +40,7 @@ public class ObjReader {
             wordsInLine.remove(0);
 
             n = (double) lineInd / (double) lineCount;
-            doSomething(progressBar);
+            progressBack.doSomething();
             ++lineInd;
             switch (token) {
                 // Для структур типа вершин методы написаны так, чтобы ничего не знать о внешней среде.
@@ -77,7 +63,7 @@ public class ObjReader {
         }
 
         n = 1;
-        doSomething(progressBar);
+        progressBack.doSomething();
 
         return result;
     }

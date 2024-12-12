@@ -134,6 +134,8 @@ public class GuiController {
         listLights.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listModels.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+        progressBar.setStyle("-fx-accent: green;");
+
         ThemeSwitch buttonStyle = new ThemeSwitch();
         buttonStyle.setLayoutY(20);
         buttonStyle.setLayoutX(350);

@@ -1,6 +1,5 @@
 package com.cgvsu;
 
-import com.cgvsu.objreader.ObjReader;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressBar;
 
@@ -12,11 +11,11 @@ public class ProgressBack {
         this.progressBar = progressBar;
     }
 
-    public void doSomething() throws InterruptedException {
+    public void doSomething(double progress) throws InterruptedException {
         Task<Void> task = new Task<>() {
             @Override
             public Void call() {
-                progressBar.setProgress(ObjReader.n);
+                progressBar.setProgress(progress);
                 return null;
             }
         };

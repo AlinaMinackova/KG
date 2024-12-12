@@ -16,10 +16,10 @@ public class ObjReader {
     private static final String OBJ_TEXTURE_TOKEN = "vt";
     private static final String OBJ_NORMAL_TOKEN = "vn";
     private static final String OBJ_FACE_TOKEN = "f";
-    public static double n = 0.0;
 
 
     public static Model read(String fileContent, ProgressBack progressBack) throws InterruptedException {
+        double progress = 0;
         Model result = new Model();
         int lineCount = 0;
         Scanner scanner = new Scanner(fileContent);
@@ -38,9 +38,6 @@ public class ObjReader {
 
             final String token = wordsInLine.get(0);
             wordsInLine.remove(0);
-
-            n = (double) lineInd / (double) lineCount;
-            progressBack.doSomething();
             ++lineInd;
             switch (token) {
                 // Для структур типа вершин методы написаны так, чтобы ничего не знать о внешней среде.
@@ -60,11 +57,12 @@ public class ObjReader {
                 default -> {
                 }
             }
+            progress = (double) lineInd / (double) lineCount;
+            progressBack.doSomething(progress);
         }
 
-        n = 1;
-        progressBack.doSomething();
-
+        progress = 1;
+        progressBack.doSomething(progress);
         return result;
     }
 

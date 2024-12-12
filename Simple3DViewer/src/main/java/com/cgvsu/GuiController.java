@@ -1,10 +1,12 @@
 package com.cgvsu;
 
+import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.render_engine.Camera;
 import com.cgvsu.render_engine.RenderEngine;
 import com.cgvsu.scene_tools.SceneTools;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -113,7 +115,29 @@ public class GuiController {
     @FXML
     public ColorPicker chooseLightColor;
 
+
     private Timeline timeline;
+
+//    @FXML
+//    void doSomething() {
+//        Task<Void> task = new Task<>() {
+//            @Override
+//            public Void call() {
+//                progressBar.setProgress(ObjReader.n);
+//                return null;
+//            }
+//        };
+//        progressBar.progressProperty().bind(task.progressProperty());
+//        new Thread(task).start();
+//    }
+
+//    class MyRunnable implements Runnable {
+//        @Override
+//        public void run() {
+//            // Код, который будет выполняться в потоке
+//            progressBar.setProgress(ObjReader.n);
+//        }
+//    }
 
     @FXML
     private void initialize() throws IOException {
@@ -146,6 +170,12 @@ public class GuiController {
         });
         gadgetPane.getChildren().add(buttonStyle);
 
+        //doSomething();
+//        MyRunnable myRunnable = new MyRunnable();
+//        // Создаем объект потока и передаем Runnable
+//        thread = new Thread(myRunnable);
+        // Запускаем поток
+
         createCamera();
 
         baseModelColor.setValue(Color.GRAY);
@@ -171,7 +201,7 @@ public class GuiController {
     @FXML
     public void open(ActionEvent actionEvent) {
         try {
-            SceneTools.open(canvas);
+            SceneTools.open(canvas, progressBar);
             listModels.getItems().add("Модель " + SceneTools.meshes.size());
             listModels.getSelectionModel().select(listModels.getItems().size() - 1);
             texture.setSelected(false);
@@ -521,8 +551,7 @@ public class GuiController {
                         }
                     }
                 });
-            }
-            else {
+            } else {
                 showMessage("Ошибка", "Нельзя скрыть единственный источник света");
             }
         } else {

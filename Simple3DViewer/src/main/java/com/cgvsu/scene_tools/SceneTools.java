@@ -8,7 +8,9 @@ import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.Camera;
+import javafx.concurrent.Task;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -36,7 +38,7 @@ public class SceneTools {
     public static int indexActiveLight = -1;
     public static List<Integer> hideLights = new ArrayList<>();
 
-    public static void open(Canvas canvas) throws IOException {
+    public static void open(Canvas canvas, ProgressBar progressBar) throws IOException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         fileChooser.setTitle("Load Model");
@@ -45,15 +47,22 @@ public class SceneTools {
         if (file == null) {
             throw new RuntimeException("не открыли файл!");
         }
+        Task<Void> task = new Task<>() {
+            @Override
+            public Void call() throws IOException, InterruptedException {
+                Path fileName = Path.of(file.getAbsolutePath());
 
-        Path fileName = Path.of(file.getAbsolutePath());
+                String fileContent = Files.readString(fileName);
+                Model mesh = ObjReader.read(fileContent, progressBar);
+                mesh.triangulate();
+                mesh.normalize();
+                meshes.add(mesh);
+                activeMeshes.add(meshes.size() - 1);
+                return null ;
+            }
+        };
+        new Thread(task).start();
 
-        String fileContent = Files.readString(fileName);
-        Model mesh = ObjReader.read(fileContent);
-        mesh.triangulate();
-        mesh.normalize();
-        meshes.add(mesh);
-        activeMeshes.add(meshes.size() - 1);
     }
 
     public static String save(Canvas canvas, Boolean transform) {

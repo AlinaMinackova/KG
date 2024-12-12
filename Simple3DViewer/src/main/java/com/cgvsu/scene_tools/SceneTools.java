@@ -1,5 +1,6 @@
 package com.cgvsu.scene_tools;
 
+import com.cgvsu.ProgressBack;
 import com.cgvsu.light_texture_mesh.Light;
 import com.cgvsu.math.AffineTransformations;
 import com.cgvsu.math.TranslationModel;
@@ -8,6 +9,7 @@ import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.Camera;
+import javafx.concurrent.Task;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
@@ -36,7 +38,7 @@ public class SceneTools {
     public static int indexActiveLight = -1;
     public static List<Integer> hideLights = new ArrayList<>();
 
-    public static String open(Canvas canvas) throws IOException {
+    public static String open(Canvas canvas, ProgressBack progressBack){
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         fileChooser.setTitle("Load Model");
@@ -49,12 +51,19 @@ public class SceneTools {
         Path fileName = Path.of(file.getAbsolutePath());
         String name = fileName.getFileName().toString();
 
-        String fileContent = Files.readString(fileName);
-        Model mesh = ObjReader.read(fileContent);
-        mesh.triangulate();
-        mesh.normalize();
-        meshes.add(mesh);
-        activeMeshes.add(meshes.size() - 1);
+        Task<Void> task = new Task<>() {
+            @Override
+            public Void call() throws IOException, InterruptedException {
+                String fileContent = Files.readString(fileName);
+                Model mesh = ObjReader.read(fileContent, progressBack);
+                mesh.triangulate();
+                mesh.normalize();
+                meshes.add(mesh);
+                activeMeshes.add(meshes.size() - 1);
+                return null ;
+            }
+        };
+        new Thread(task).start();
         return name;
     }
 

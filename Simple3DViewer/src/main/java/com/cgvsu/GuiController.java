@@ -1,10 +1,12 @@
 package com.cgvsu;
 
+import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.render_engine.Camera;
 import com.cgvsu.render_engine.RenderEngine;
 import com.cgvsu.scene_tools.SceneTools;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -23,8 +25,6 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.io.File;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.*;
 import javax.vecmath.Vector3f;
 
@@ -114,6 +114,9 @@ public class GuiController {
     public Button hideLightButton;
     @FXML
     public ColorPicker chooseLightColor;
+    @FXML
+    public ProgressBack progressBack;
+
 
     private Timeline timeline;
 
@@ -131,6 +134,8 @@ public class GuiController {
         listCameras.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listLights.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listModels.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        progressBar.setStyle("-fx-accent: green;");
 
         ThemeSwitch buttonStyle = new ThemeSwitch();
         buttonStyle.setLayoutY(20);
@@ -151,6 +156,8 @@ public class GuiController {
         createCamera();
 
         baseModelColor.setValue(Color.GRAY);
+
+        progressBack = new ProgressBack(progressBar);
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
@@ -173,16 +180,13 @@ public class GuiController {
     @FXML
     public void open(ActionEvent actionEvent) {
         try {
-            String fileName = SceneTools.open(canvas);
-            SceneTools.meshes.get(SceneTools.meshes.size() - 1).color = baseModelColor.getValue();
-            listModels.getItems().add(fileName);
+            SceneTools.open(canvas);
+            listModels.getItems().add("Модель " + SceneTools.meshes.size());
             listModels.getSelectionModel().select(listModels.getItems().size() - 1);
             texture.setSelected(false);
             light.setSelected(false);
             grid.setSelected(false);
 
-        } catch (IOException e) {
-            showMessage("Ошибка", "Неудалось найти файл!");
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
         }
@@ -209,7 +213,6 @@ public class GuiController {
         message.setContentText(messageText);
         message.showAndWait();
     }
-
 
     @FXML
     public void moveCamera(KeyEvent keyEvent) {
@@ -462,7 +465,6 @@ public class GuiController {
     public void createLight(MouseEvent mouseEvent) {
         if (!Objects.equals(eyeXLight.getText(), "") && !Objects.equals(eyeYLight.getText(), "") && !Objects.equals(eyeZLight.getText(), "")) {
             SceneTools.createLight(eyeXLight, eyeYLight, eyeZLight, chooseLightColor.getValue());
-            //String v = String.valueOf(chooseLightColor.);
             listLights.getItems().add(getColorHex(chooseLightColor.getValue()));
             listLights.getSelectionModel().select(listLights.getItems().size() - 1);
         } else {

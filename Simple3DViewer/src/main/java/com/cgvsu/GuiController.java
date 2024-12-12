@@ -23,6 +23,8 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.io.File;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 import javax.vecmath.Vector3f;
 
@@ -467,11 +469,19 @@ public class GuiController {
     public void createLight(MouseEvent mouseEvent) {
         if (!Objects.equals(eyeXLight.getText(), "") && !Objects.equals(eyeYLight.getText(), "") && !Objects.equals(eyeZLight.getText(), "")) {
             SceneTools.createLight(eyeXLight, eyeYLight, eyeZLight, chooseLightColor.getValue());
-            listLights.getItems().add(String.valueOf(chooseLightColor.getValue()));
+            //String v = String.valueOf(chooseLightColor.);
+            listLights.getItems().add(getColorHex(chooseLightColor.getValue()));
             listLights.getSelectionModel().select(listLights.getItems().size() - 1);
         } else {
             showMessage("Предупреждение", "Введите необходимые данные!");
         }
+    }
+
+    public String getColorHex(Color color) {
+        int r = (int)(color.getRed() * 255);
+        int g = (int)(color.getGreen() * 255);
+        int b = (int)(color.getBlue() * 255);
+        return String.format("#%02X%02X%02X", r, g, b).toLowerCase(Locale.ROOT);
     }
 
     @FXML

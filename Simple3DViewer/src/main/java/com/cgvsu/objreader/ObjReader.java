@@ -1,6 +1,6 @@
 package com.cgvsu.objreader;
 
-import com.cgvsu.ProgressBack;
+import com.cgvsu.ProgressCallBack;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.model.Model;
@@ -18,7 +18,7 @@ public class ObjReader {
     private static final String OBJ_FACE_TOKEN = "f";
 
 
-    public static Model read(String fileContent, ProgressBack progressBack) throws InterruptedException {
+    public static Model read(String fileContent, ProgressCallBack progressBack) throws InterruptedException {
         double progress = 0;
         Model result = new Model();
         int lineCount = 0;
@@ -60,9 +60,7 @@ public class ObjReader {
             progress = (double) lineInd / (double) lineCount;
             progressBack.doSomething(progress);
         }
-
-        progress = 1;
-        progressBack.doSomething(progress);
+        progressBack.doSomething(1.0);
         return result;
     }
 

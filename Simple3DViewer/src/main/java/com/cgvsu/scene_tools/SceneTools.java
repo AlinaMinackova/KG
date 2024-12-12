@@ -1,6 +1,5 @@
 package com.cgvsu.scene_tools;
-
-import com.cgvsu.ProgressBack;
+import com.cgvsu.ProgressCallBack;
 import com.cgvsu.light_texture_mesh.Light;
 import com.cgvsu.math.AffineTransformations;
 import com.cgvsu.math.TranslationModel;
@@ -38,14 +37,14 @@ public class SceneTools {
     public static int indexActiveLight = -1;
     public static List<Integer> hideLights = new ArrayList<>();
 
-    public static String open(Canvas canvas, ProgressBack progressBack){
+    public static String open(Canvas canvas, ProgressCallBack progressBack){
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Model (*.obj)", "*.obj"));
         fileChooser.setTitle("Load Model");
 
         File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
         if (file == null) {
-            throw new RuntimeException("не открыли файл!");
+            throw new RuntimeException("path is not selected!");
         }
 
         Path fileName = Path.of(file.getAbsolutePath());

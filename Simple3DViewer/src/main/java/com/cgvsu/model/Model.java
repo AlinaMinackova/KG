@@ -28,7 +28,7 @@ public class Model {
 
     public void triangulate(){
         for (Vector3f vertex : vertices){
-            verticesTransform.add(vertex.clone());
+            verticesTransform.add(new Vector3f(vertex.x, vertex.y, vertex.z));
         }
         polygonsWithoutTriangulation = polygons;
         polygons = (ArrayList<Polygon>) Triangulation.triangulate(polygons);

@@ -3,11 +3,11 @@ package com.cgvsu;
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressBar;
 
-public class ProgressBack {
+public class ProgressCallBack {
 
     public final ProgressBar progressBar;
 
-    public ProgressBack(ProgressBar progressBar) {
+    public ProgressCallBack(ProgressBar progressBar) {
         this.progressBar = progressBar;
     }
 

@@ -1,12 +1,9 @@
 package com.cgvsu;
 
-import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.render_engine.Camera;
 import com.cgvsu.render_engine.RenderEngine;
 import com.cgvsu.scene_tools.SceneTools;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -64,6 +61,7 @@ public class GuiController {
     public TextField tx;
     @FXML
     public Button convertButton;
+    int countModels = 0;
     @FXML
     public CheckBox texture;
     @FXML
@@ -115,7 +113,7 @@ public class GuiController {
     @FXML
     public ColorPicker chooseLightColor;
     @FXML
-    public ProgressBack progressBack;
+    public ProgressCallBack progressBack;
 
 
     private Timeline timeline;
@@ -157,7 +155,7 @@ public class GuiController {
 
         baseModelColor.setValue(Color.GRAY);
 
-        progressBack = new ProgressBack(progressBar);
+        progressBack = new ProgressCallBack(progressBar);
 
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
@@ -170,6 +168,9 @@ public class GuiController {
 
             if (SceneTools.meshes.size() != 0) {
                 RenderEngine.prepareToRender(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.drawMeshes(), (int) width, (int) height, SceneTools.activeLights()); //создаем отрисовку модели
+            if (SceneTools.meshes.size() == countModels){
+                progressBar.setProgress(0.0);
+            }
             }
         });
 
@@ -180,15 +181,16 @@ public class GuiController {
     @FXML
     public void open(ActionEvent actionEvent) {
         try {
-            SceneTools.open(canvas);
-            listModels.getItems().add("Модель " + SceneTools.meshes.size());
+            countModels++;
+            String nameFile = SceneTools.open(canvas, progressBack);
+            listModels.getItems().add(nameFile);
             listModels.getSelectionModel().select(listModels.getItems().size() - 1);
             texture.setSelected(false);
             light.setSelected(false);
             grid.setSelected(false);
 
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            countModels--;
         }
     }
 

@@ -349,7 +349,7 @@
             </ScrollPane>
          </items>
       </SplitPane>
-      <MenuBar layoutX="20.0" layoutY="20.0" AnchorPane.leftAnchor="0.0">
+      <MenuBar layoutX="20.0" layoutY="20.0" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="16.0">
          <menus>
             <Menu mnemonicParsing="false" text="Модель">
                <items>

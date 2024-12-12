@@ -174,7 +174,7 @@ public class GuiController {
     public void open(ActionEvent actionEvent) {
         try {
             String fileName = SceneTools.open(canvas);
-            SceneTools.meshes.get(SceneTools.meshes.size()-1).color = baseModelColor.getValue();
+            SceneTools.meshes.get(SceneTools.meshes.size() - 1).color = baseModelColor.getValue();
             listModels.getItems().add(fileName);
             listModels.getSelectionModel().select(listModels.getItems().size() - 1);
             texture.setSelected(false);
@@ -283,7 +283,6 @@ public class GuiController {
 
     @FXML
     public void choiceModel(MouseEvent mouseEvent) {
-        List<Integer> selectedModels = new ArrayList<>();
         SceneTools.choiceModels(listModels.getSelectionModel().getSelectedIndices());
         baseModelColor.setValue(SceneTools.activeModels().get(0).color);
         //при выборе моделей, в панельке Вид модели менять чекбоксы
@@ -472,9 +471,9 @@ public class GuiController {
     }
 
     public String getColorHex(Color color) {
-        int r = (int)(color.getRed() * 255);
-        int g = (int)(color.getGreen() * 255);
-        int b = (int)(color.getBlue() * 255);
+        int r = (int) (color.getRed() * 255);
+        int g = (int) (color.getGreen() * 255);
+        int b = (int) (color.getBlue() * 255);
         return String.format("#%02X%02X%02X", r, g, b).toLowerCase(Locale.ROOT);
     }
 
@@ -486,10 +485,6 @@ public class GuiController {
             } else {
                 listLights.getItems().remove(SceneTools.indexActiveLight);
                 SceneTools.deleteLight();
-
-                for (int i = SceneTools.indexActiveLight; i < listLights.getItems().size() - 1; i++) {
-                    listLights.getItems().set(i, listLights.getItems().get(i + 1));
-                }
             }
         } else {
             showMessage("Ошибка", "Нет света для удаления");
@@ -501,31 +496,34 @@ public class GuiController {
     public void hideLight(MouseEvent mouseEvent) {
         if (SceneTools.indexActiveLight != -1) {
             if (SceneTools.lights.size() > 1) {
-                SceneTools.hideLights();
+                if ((SceneTools.lights.size() - SceneTools.hideLights.size()) > 1 || SceneTools.hideLights.contains(SceneTools.indexActiveLight)) {
+                    SceneTools.hideLights();
 
-                // Устанавливаем CellFactory для кастомизации отображения элементов
-                listLights.setCellFactory(list -> new ListCell<String>() {
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
+                    // Устанавливаем CellFactory для кастомизации отображения элементов
+                    listLights.setCellFactory(list -> new ListCell<String>() {
+                        @Override
+                        protected void updateItem(String item, boolean empty) {
 
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setText(null);
-                            setStyle("");
-                        } else {
-                            setText(item);
-                            int index = getIndex();
-                            // Меняем цвет текста для определенного элемента
-                            if (SceneTools.hideLights.contains(index)) {
-                                setTextFill(Color.GRAY);  // Изменить цвет текста
+                            super.updateItem(item, empty);
+                            if (empty) {
+                                setText(null);
+                                setStyle("");
                             } else {
-                                setTextFill(Color.BLACK);  // Для остальных элементов
+                                setText(item);
+                                int index = getIndex();
+                                // Меняем цвет текста для определенного элемента
+                                if (SceneTools.hideLights.contains(index)) {
+                                    setTextFill(Color.GRAY);  // Изменить цвет текста
+                                } else {
+                                    setTextFill(Color.BLACK);  // Для остальных элементов
+                                }
                             }
                         }
-                    }
-                });
-            }
-            else {
+                    });
+                } else {
+                    showMessage("Ошибка", "Нельзя скрыть единственный источник света");
+                }
+            } else {
                 showMessage("Ошибка", "Нельзя скрыть единственный источник света");
             }
         } else {

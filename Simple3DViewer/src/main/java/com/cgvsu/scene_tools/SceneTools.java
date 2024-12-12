@@ -68,10 +68,14 @@ public class SceneTools {
                 return "Ошибка сохранения! Файл не найден.";
             }
             String fileName = String.valueOf(Path.of(file.getAbsolutePath()));
-            int index = 1;
-            for (Model model : activeModels()) {
-                ObjWriter.write(model, fileName + index + ".obj", transform);
-                index++;
+            if (activeModels().size() == 1) {
+                ObjWriter.write(activeModels().get(0), fileName + ".obj", transform);
+            } else {
+                int index = 1;
+                for (Model model : activeModels()) {
+                    ObjWriter.write(model, fileName + index + ".obj", transform);
+                    index++;
+                }
             }
             return "Модель успешно сохранёна!";
         } else {
@@ -297,6 +301,17 @@ public class SceneTools {
 
     public static void deleteLight() {
         lights.remove(indexActiveLight);
+        for (int i = 0; i < hideLights.size(); i++) {
+            if (hideLights.get(i) == indexActiveLight) {
+                hideLights.remove(i);
+                break;
+            }
+        }
+        for (int i = 0; i < hideLights.size(); i++) {
+            if (hideLights.get(i) > indexActiveLight) {
+                hideLights.set(i, hideLights.get(i) - 1);
+            }
+        }
         indexActiveLight = -1;
     }
 
@@ -311,7 +326,6 @@ public class SceneTools {
         }
         if (flag) {
             hideLights.add(indexActiveLight);
-            int v = 0;
         }
     }
 
@@ -326,7 +340,6 @@ public class SceneTools {
                 light.add(lights.get(i));
             }
         }
-        int v = 0;
         return light;
     }
 }

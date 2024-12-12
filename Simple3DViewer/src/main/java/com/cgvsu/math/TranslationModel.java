@@ -1,5 +1,7 @@
 package com.cgvsu.math;
 
+import com.cgvsu.math.vector.Vector3f;
+import com.cgvsu.math.vector.Vector4f;
 import com.cgvsu.model.Model;
 
 import javax.vecmath.Matrix4f;

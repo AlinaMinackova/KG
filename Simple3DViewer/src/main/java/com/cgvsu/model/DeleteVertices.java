@@ -1,6 +1,6 @@
 package com.cgvsu.model;
 
-import com.cgvsu.math.Vector3f;
+import com.cgvsu.math.vector.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Comparator;

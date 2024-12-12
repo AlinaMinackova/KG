@@ -1,12 +1,11 @@
 package com.cgvsu.render_engine;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.cgvsu.light_texture_mesh.Mesh;
-import com.cgvsu.math.Vector3f;
-import com.cgvsu.math.Vector2f;
+import com.cgvsu.math.vector.Vector3f;
+import com.cgvsu.math.vector.Vector2f;
 import com.cgvsu.model.Polygon;
 import com.cgvsu.rasterization.TriangleRasterization;
 import com.cgvsu.texture.ImageToTexture;

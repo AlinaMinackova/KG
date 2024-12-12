@@ -1,7 +1,6 @@
 package com.cgvsu.render_engine;
 
-import com.cgvsu.math.Vector2f;
-import com.cgvsu.math.Vector3f;
+import com.cgvsu.math.vector.Vector3f;
 
 import javax.vecmath.Point2f;
 

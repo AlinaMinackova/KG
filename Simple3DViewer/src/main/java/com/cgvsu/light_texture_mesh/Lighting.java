@@ -1,6 +1,6 @@
 package com.cgvsu.light_texture_mesh;
 
-import com.cgvsu.math.Vector3f;
+import com.cgvsu.math.vector.Vector3f;
 import javafx.scene.paint.Color;
 
 public class Lighting {

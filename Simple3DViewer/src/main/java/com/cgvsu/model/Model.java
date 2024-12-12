@@ -1,6 +1,6 @@
 package com.cgvsu.model;
-import com.cgvsu.math.Vector2f;
-import com.cgvsu.math.Vector3f;
+import com.cgvsu.math.vector.Vector2f;
+import com.cgvsu.math.vector.Vector3f;
 import com.cgvsu.normalize.Normalize;
 import com.cgvsu.texture.ImageToTexture;
 import com.cgvsu.triangulation.Triangulation;
@@ -28,7 +28,7 @@ public class Model {
 
     public void triangulate(){
         for (Vector3f vertex : vertices){
-            verticesTransform.add(vertex.clone());
+            verticesTransform.add(new Vector3f(vertex.x, vertex.y, vertex.z));
         }
         polygonsWithoutTriangulation = polygons;
         polygons = (ArrayList<Polygon>) Triangulation.triangulate(polygons);

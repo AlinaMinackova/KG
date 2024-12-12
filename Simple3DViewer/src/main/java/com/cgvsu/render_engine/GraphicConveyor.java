@@ -62,7 +62,7 @@ public class GraphicConveyor {
         return new Vector3f(x / w, y / w, z / w);
     }
 
-    public static void multiplyMatrix4ByVector(final Matrix4f matrix, final com.cgvsu.math.Vector3f vertex) {
+    public static void multiplyMatrix4ByVector(final Matrix4f matrix, final com.cgvsu.math.vector.Vector3f vertex) {
         final float w = (vertex.x * matrix.m30) + (vertex.y * matrix.m31) + (vertex.z * matrix.m32) + matrix.m33;
         vertex.x = ((vertex.x * matrix.m00) + (vertex.y * matrix.m01) + (vertex.z * matrix.m02) + matrix.m03) / w;
         vertex.y = ((vertex.x * matrix.m10) + (vertex.y * matrix.m11) + (vertex.z * matrix.m12) + matrix.m13) / w;

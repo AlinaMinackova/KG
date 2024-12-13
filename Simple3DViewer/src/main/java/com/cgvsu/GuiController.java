@@ -3,6 +3,9 @@ package com.cgvsu;
 import com.cgvsu.render_engine.Camera;
 import com.cgvsu.render_engine.RenderEngine;
 import com.cgvsu.scene_tools.SceneTools;
+import com.cgvsu.theme.ItemColor;
+import com.cgvsu.theme.ProgressCallBack;
+import com.cgvsu.theme.ThemeSwitch;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +21,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -95,7 +99,7 @@ public class GuiController {
     @FXML
     public Button deleteVertexButton;
     @FXML
-    public ListView<String> listLights;
+    public ListView<ItemColor> listLights;
     @FXML
     public ProgressBar progressBar;
     @FXML
@@ -133,6 +137,31 @@ public class GuiController {
         listLights.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listModels.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+        listLights.setCellFactory(list -> new ListCell<ItemColor>() {
+            @Override
+            protected void updateItem(ItemColor item, boolean empty) {
+
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("");
+                } else {
+                    Rectangle colorSquare = new Rectangle(20, 20);
+                    colorSquare.setFill(item.getColor());
+                    setText(item.getText());
+                    setGraphic(colorSquare);
+                    int index = getIndex();
+                    // Меняем цвет текста для определенного элемента
+                    if (SceneTools.hideLights.contains(index)) {
+                        setTextFill(Color.GRAY);  // Изменить цвет текста
+                    } else {
+                        setTextFill(Color.BLACK);  // Для остальных элементов
+                    }
+                }
+            }
+        });
+
         progressBar.setStyle("-fx-accent: green;");
 
         ThemeSwitch buttonStyle = new ThemeSwitch();
@@ -168,9 +197,9 @@ public class GuiController {
 
             if (SceneTools.meshes.size() != 0) {
                 RenderEngine.prepareToRender(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.drawMeshes(), (int) width, (int) height, SceneTools.activeLights()); //создаем отрисовку модели
-            if (SceneTools.meshes.size() == countModels){
-                progressBar.setProgress(0.0);
-            }
+                if (SceneTools.meshes.size() == countModels) {
+                    progressBar.setProgress(0.0);
+                }
             }
         });
 
@@ -246,7 +275,7 @@ public class GuiController {
             listCameras.getItems().add("Камера " + SceneTools.cameras.size());
             listCameras.getSelectionModel().select(listCameras.getItems().size() - 1);
             if (listLights.getItems().size() == 0) {
-                listLights.getItems().add("Свет камеры");
+                listLights.getItems().add(new ItemColor("Свет камеры", null));
                 listLights.getSelectionModel().select(listLights.getItems().size() - 1);
             }
         } else {
@@ -269,13 +298,13 @@ public class GuiController {
         //нахлжу свет удаляемой камеры и удаляю его
         List<Integer> indexesLightCamera = new ArrayList<>();
         for (int i = 0; i < listLights.getItems().size(); i++) {
-            String[] lightId = listLights.getItems().get(i).split(" ");
+            String[] lightId = listLights.getItems().get(i).getText().split(" ");
             if (lightId.length == 3 && Integer.parseInt(lightId[lightId.length - 1]) == cameraId) {
                 listLights.getItems().remove(cameraId);
             }
         }
         for (int i = 0; i < listLights.getItems().size(); i++) {
-            String[] lightId = listLights.getItems().get(i).split(" ");
+            String[] lightId = listLights.getItems().get(i).getText().split(" ");
             if (lightId.length == 3) {
                 listLights.getItems().remove(cameraId);
             }
@@ -467,7 +496,7 @@ public class GuiController {
     public void createLight(MouseEvent mouseEvent) {
         if (!Objects.equals(eyeXLight.getText(), "") && !Objects.equals(eyeYLight.getText(), "") && !Objects.equals(eyeZLight.getText(), "")) {
             SceneTools.createLight(eyeXLight, eyeYLight, eyeZLight, chooseLightColor.getValue());
-            listLights.getItems().add(getColorHex(chooseLightColor.getValue()));
+            listLights.getItems().add(new ItemColor(getColorHex(chooseLightColor.getValue()), chooseLightColor.getValue()));
             listLights.getSelectionModel().select(listLights.getItems().size() - 1);
         } else {
             showMessage("Предупреждение", "Введите необходимые данные!");
@@ -484,7 +513,7 @@ public class GuiController {
     @FXML
     public void deleteLight(MouseEvent mouseEvent) {
         if (SceneTools.indexActiveLight != -1) {
-            if (listLights.getSelectionModel().getSelectedItem().split(" ").length == 2) {
+            if (listLights.getSelectionModel().getSelectedItem().getText().split(" ").length == 2) {
                 showMessage("Ошибка", "Нельзя удалить свет камеры");
             } else {
                 listLights.getItems().remove(SceneTools.indexActiveLight);
@@ -504,16 +533,20 @@ public class GuiController {
                     SceneTools.hideLights();
 
                     // Устанавливаем CellFactory для кастомизации отображения элементов
-                    listLights.setCellFactory(list -> new ListCell<String>() {
+                    listLights.setCellFactory(list -> new ListCell<ItemColor>() {
                         @Override
-                        protected void updateItem(String item, boolean empty) {
+                        protected void updateItem(ItemColor item, boolean empty) {
 
                             super.updateItem(item, empty);
-                            if (empty) {
+                            if (empty || item == null) {
                                 setText(null);
+                                setGraphic(null);
                                 setStyle("");
                             } else {
-                                setText(item);
+                                Rectangle colorSquare = new Rectangle(20, 20);
+                                colorSquare.setFill(item.getColor());
+                                setText(item.getText());
+                                setGraphic(colorSquare);
                                 int index = getIndex();
                                 // Меняем цвет текста для определенного элемента
                                 if (SceneTools.hideLights.contains(index)) {

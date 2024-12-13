@@ -277,8 +277,8 @@
                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
                                           <TextField fx:id="eyeXLight" layoutX="65.0" layoutY="60.0" prefHeight="27.0" prefWidth="90.0" text="0" />
-                                          <TextField fx:id="eyeYLight" layoutX="65.0" layoutY="107.0" prefHeight="27.0" prefWidth="90.0" text="0" />
-                                          <TextField fx:id="eyeZLight" layoutX="65.0" layoutY="158.0" prefHeight="27.0" prefWidth="91.0" text="100" />
+                                          <TextField fx:id="eyeYLight" layoutX="65.0" layoutY="107.0" prefHeight="27.0" prefWidth="90.0" text="-1" />
+                                          <TextField fx:id="eyeZLight" layoutX="65.0" layoutY="158.0" prefHeight="27.0" prefWidth="91.0" text="0" />
                                           <Text layoutX="80.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Позиция" wrappingWidth="83.71875">
                                              <font>
                                                 <Font size="14.0" />

@@ -1,5 +1,5 @@
 package com.cgvsu.scene_tools;
-import com.cgvsu.ProgressCallBack;
+import com.cgvsu.theme.ProgressCallBack;
 import com.cgvsu.light_texture_mesh.Light;
 import com.cgvsu.math.AffineTransformations;
 import com.cgvsu.math.TranslationModel;
@@ -304,7 +304,6 @@ public class SceneTools {
                 Double.parseDouble(eyeZLight.getText()),
                 value));
         indexActiveLight = lights.size() - 1;
-        int v = 0;
     }
 
     public static void deleteLight() {

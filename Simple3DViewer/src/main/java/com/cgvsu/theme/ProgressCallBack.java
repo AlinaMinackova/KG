@@ -1,4 +1,4 @@
-package com.cgvsu;
+package com.cgvsu.theme;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.ProgressBar;

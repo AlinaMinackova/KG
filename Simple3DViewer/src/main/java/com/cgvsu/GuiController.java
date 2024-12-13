@@ -513,11 +513,15 @@ public class GuiController {
     @FXML
     public void deleteLight(MouseEvent mouseEvent) {
         if (SceneTools.indexActiveLight != -1) {
+
             if (listLights.getSelectionModel().getSelectedItem().getText().split(" ").length == 2) {
                 showMessage("Ошибка", "Нельзя удалить свет камеры");
             } else {
-                listLights.getItems().remove(SceneTools.indexActiveLight);
-                SceneTools.deleteLight();
+                if ((SceneTools.lights.size() - SceneTools.hideLights.size()) < 2 && !SceneTools.hideLights.contains(SceneTools.indexActiveLight)) {
+                    showMessage("Ошибка", "Нельзя удалить единственный не скрытый источник света");
+                } else {
+                    listLights.getItems().remove(SceneTools.indexActiveLight);
+                    SceneTools.deleteLight();}
             }
         } else {
             showMessage("Ошибка", "Нет света для удаления");

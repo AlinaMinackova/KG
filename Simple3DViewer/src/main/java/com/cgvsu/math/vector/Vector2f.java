@@ -11,17 +11,17 @@ public class Vector2f implements Vector<Vector2f> {
 
     public float x, y;
 
-    public static Vector2f addition(final Vector2f v1, final Vector2f v2) {
+    public static Vector2f addition(final Vector2f v1, final Vector2f v2) { //сложение двух векторов
         return new Vector2f(v1.x + v2.x, v1.y + v2.y);
     }
 
     @Override
-    public void add(final Vector2f v) {
+    public void add(final Vector2f v) { //добавление
         x += v.x;
         y += v.y;
     }
 
-    public static Vector2f subtraction(final Vector2f v1, final Vector2f v2) {
+    public static Vector2f subtraction(final Vector2f v1, final Vector2f v2) { //вычитание двух векторов
         return new Vector2f(v1.x - v2.x, v1.y - v2.y);
     }
 
@@ -78,7 +78,7 @@ public class Vector2f implements Vector<Vector2f> {
     }
     //eigen посмотреть библиотеку для названий
 
-    public static float dotProduct(final Vector2f v1, final Vector2f v2) {
+    public static float dotProduct(final Vector2f v1, final Vector2f v2) { //скалярное произведение
         return v1.x * v2.x + v1.y * v2.y;
     }
 

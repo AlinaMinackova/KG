@@ -11,12 +11,16 @@ import com.cgvsu.rasterization.TriangleRasterization;
 import com.cgvsu.texture.ImageToTexture;
 import javafx.scene.canvas.GraphicsContext;
 
-import javax.vecmath.*;
-
+import  com.cgvsu.math.matrix.Matrix4f;
 import com.cgvsu.model.Model;
 import javafx.scene.paint.Color;
 
+
+import javax.vecmath.Point2f;
+
+
 import static com.cgvsu.render_engine.GraphicConveyor.*;
+import static com.cgvsu.render_engine.GraphicConveyor.rotateScaleTranslate;
 
 public class RenderEngine {
 
@@ -34,9 +38,10 @@ public class RenderEngine {
         Matrix4f viewMatrix = camera.getViewMatrix(); //видовая матрица
         Matrix4f projectionMatrix = camera.getProjectionMatrix(); //проекционная матрица
 
-        Matrix4f modelViewProjectionMatrix = new Matrix4f(modelMatrix);
-        modelViewProjectionMatrix.mul(viewMatrix);
-        modelViewProjectionMatrix.mul(projectionMatrix);
+
+        Matrix4f modelViewProjectionMatrix = new Matrix4f(modelMatrix.getMatrix());
+        modelViewProjectionMatrix = Matrix4f.multiplication(modelViewProjectionMatrix, viewMatrix);
+        modelViewProjectionMatrix = Matrix4f.multiplication(modelViewProjectionMatrix, projectionMatrix);
 
         RenderAttributes renderAttributes = new RenderAttributes(models, graphicsContext, width, height, ZBuffer, viewMatrix, modelViewProjectionMatrix);
         render(renderAttributes);
@@ -54,8 +59,8 @@ public class RenderEngine {
             VertexAttributes vertex = new VertexAttributes();
             vertex.setCoorVertex(model.verticesTransform.get(i));
             vertex.setNormal(model.normals.get(i));
-            javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.coorVertex.x, vertex.coorVertex.y, vertex.coorVertex.z); //делаем вектор строку
-            javax.vecmath.Vector3f v = multiplyMatrix4ByVector3(renderAttributes.modelViewProjectionMatrix, vertexVecmath);
+            Vector3f vertexVecmath = new Vector3f(vertex.coorVertex.x, vertex.coorVertex.y, vertex.coorVertex.z); //делаем вектор строку
+            Vector3f v = multiplyMatrix4ByVector3(renderAttributes.getModelViewProjectionMatrix(), vertexVecmath);
             vertex.setZ(v.z);
             Point2f resultPoint = vertexToPoint(v, renderAttributes.width, renderAttributes.height); //преобразуем координаты в систему координат монитора
             vertex.setResultPoint(resultPoint);
@@ -88,7 +93,7 @@ public class RenderEngine {
                         coorY,
                         new Color[]{model.color, model.color, model.color},
                         renderAttributes.ZBuffer,
-                        vz, normals, textures, new double[]{renderAttributes.viewMatrix.m02, renderAttributes.viewMatrix.m12, renderAttributes.viewMatrix.m22}, model);
+                        vz, normals, textures, new double[]{renderAttributes.viewMatrix.getMatrix(0, 2), renderAttributes.viewMatrix.getMatrix(1, 2), renderAttributes.viewMatrix.getMatrix(2, 2)}, model);
 
                 if(model.isActiveGrid){
                     Mesh.drawLine(coorX[0], coorY[0], coorX[1], coorY[1], renderAttributes.ZBuffer, vz, coorX, coorY, renderAttributes.graphicsContext);

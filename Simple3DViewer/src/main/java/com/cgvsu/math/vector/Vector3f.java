@@ -17,6 +17,18 @@ public class Vector3f implements Vector<Vector3f> {
 
     public float x, y, z;
 
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getZ() {
+        return z;
+    }
+
     public static Vector3f addition(final Vector3f v1, final Vector3f v2) {
         return new Vector3f(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
     }
@@ -55,7 +67,7 @@ public class Vector3f implements Vector<Vector3f> {
         z *= c;
     }
 
-    public final void mul(Vector3f var1, Vector3f var2) {
+    public final void mul(Vector3f var1, Vector3f var2) { //векторное произведение
         this.x = var1.y * var2.z - var1.z * var2.y;
         this.y = -(var1.x * var2.z - var1.z * var2.x);
         this.z = var1.x * var2.y - var1.y * var2.x;

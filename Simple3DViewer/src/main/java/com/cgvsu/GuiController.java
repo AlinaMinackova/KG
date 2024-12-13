@@ -23,7 +23,7 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.io.File;
 import java.util.*;
-import javax.vecmath.Vector3f;
+
 
 import com.cgvsu.model.Model;
 
@@ -191,22 +191,22 @@ public class GuiController {
     @FXML
     public void moveCamera(KeyEvent keyEvent) {
         if (Objects.equals(keyEvent.getText(), "w")) {
-            SceneTools.activeCamera().movePosition(new Vector3f(0, 0, -TRANSLATION));
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "s")) {
-            SceneTools.activeCamera().movePosition(new Vector3f(0, 0, TRANSLATION));
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "a")) {
-            SceneTools.activeCamera().movePosition(new Vector3f(TRANSLATION, 0, 0));
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "d")) {
-            SceneTools.activeCamera().movePosition(new Vector3f(-TRANSLATION, 0, 0));
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "r")) {
-            SceneTools.activeCamera().movePosition(new Vector3f(0, TRANSLATION, 0));
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "f")) {
-            SceneTools.activeCamera().movePosition(new Vector3f(0, -TRANSLATION, 0));
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
         }
     }
 
@@ -394,7 +394,7 @@ public class GuiController {
             showMessage("Ошибка", "Введите необходимые данные!");
         } else {
             //TODO: ЗДЕСЬ ИСПОЛЬЗУЕТСЯ МОЙ МЕТОД ПРИМЕНЕНИЯ АФФИННЫХ ПРЕОБРАЗОВАНИЙ, КОГДА БУДЕШЬ ДЕЛАТЬ, ЗАМЕНИ НА СВОЙ
-            SceneTools.convert(sx, sy, sz, rx, ry, rz, tx, ty, tz);
+            //SceneTools.convert(sx, sy, sz, rx, ry, rz, tx, ty, tz);
             //обновляю поля пребразований
             sx.setText("1");
             sy.setText("1");

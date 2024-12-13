@@ -353,9 +353,9 @@ public class GuiController {
             Collections.sort(modelsId);
             for (int i = modelsId.size() - 1; i >= 0; i--) {
                 listModels.getItems().remove((int) modelsId.get(i));
+                countModels--;
             }
             SceneTools.deleteModel();
-            countModels--;
         } else {
             showMessage("Ошибка", "Нет моделей для удаления");
         }

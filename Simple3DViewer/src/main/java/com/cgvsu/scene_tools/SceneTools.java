@@ -133,7 +133,6 @@ public class SceneTools {
         for (int i = modelsId.size() - 1; i >= 0; i--) {
             meshes.remove((int) modelsId.get(i));
             hideMeshes.remove(modelsId.get(i));
-
         }
         activeMeshes.clear();
     }

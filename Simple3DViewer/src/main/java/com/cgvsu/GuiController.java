@@ -3,6 +3,9 @@ package com.cgvsu;
 import com.cgvsu.render_engine.Camera;
 import com.cgvsu.render_engine.RenderEngine;
 import com.cgvsu.scene_tools.SceneTools;
+import com.cgvsu.theme.ItemColor;
+import com.cgvsu.theme.ProgressCallBack;
+import com.cgvsu.theme.ThemeSwitch;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +21,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -61,6 +65,7 @@ public class GuiController {
     public TextField tx;
     @FXML
     public Button convertButton;
+    int countModels = 0;
     @FXML
     public CheckBox texture;
     @FXML
@@ -93,6 +98,27 @@ public class GuiController {
     public TextField deleteVertexField;
     @FXML
     public Button deleteVertexButton;
+    @FXML
+    public ListView<ItemColor> listLights;
+    @FXML
+    public ProgressBar progressBar;
+    @FXML
+    public TextField eyeXLight;
+    @FXML
+    public TextField eyeYLight;
+    @FXML
+    public TextField eyeZLight;
+    @FXML
+    public Button createLightButton;
+    @FXML
+    public Button deleteLightButton;
+    @FXML
+    public Button hideLightButton;
+    @FXML
+    public ColorPicker chooseLightColor;
+    @FXML
+    public ProgressCallBack progressBack;
+
 
     private Timeline timeline;
 
@@ -108,7 +134,35 @@ public class GuiController {
         timeline.setCycleCount(Animation.INDEFINITE);
 
         listCameras.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        listLights.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         listModels.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        listLights.setCellFactory(list -> new ListCell<ItemColor>() {
+            @Override
+            protected void updateItem(ItemColor item, boolean empty) {
+
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("");
+                } else {
+                    Rectangle colorSquare = new Rectangle(20, 20);
+                    colorSquare.setFill(item.getColor());
+                    setText(item.getText());
+                    setGraphic(colorSquare);
+                    int index = getIndex();
+                    // Меняем цвет текста для определенного элемента
+                    if (SceneTools.hideLights.contains(index)) {
+                        setTextFill(Color.GRAY);  // Изменить цвет текста
+                    } else {
+                        setTextFill(Color.BLACK);  // Для остальных элементов
+                    }
+                }
+            }
+        });
+
+        progressBar.setStyle("-fx-accent: green;");
 
         ThemeSwitch buttonStyle = new ThemeSwitch();
         buttonStyle.setLayoutY(20);
@@ -130,6 +184,8 @@ public class GuiController {
 
         baseModelColor.setValue(Color.GRAY);
 
+        progressBack = new ProgressCallBack(progressBar);
+
         KeyFrame frame = new KeyFrame(Duration.millis(50), event -> {
             double width = canvas.getWidth();
             double height = canvas.getHeight();
@@ -140,7 +196,10 @@ public class GuiController {
             }
 
             if (SceneTools.meshes.size() != 0) {
-                RenderEngine.prepareToRender(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.drawMeshes(), (int) width, (int) height); //создаем отрисовку модели
+                RenderEngine.prepareToRender(canvas.getGraphicsContext2D(), SceneTools.activeCamera(), SceneTools.drawMeshes(), (int) width, (int) height, SceneTools.activeLights()); //создаем отрисовку модели
+                if (SceneTools.meshes.size() == countModels) {
+                    progressBar.setProgress(0.0);
+                }
             }
         });
 
@@ -151,18 +210,16 @@ public class GuiController {
     @FXML
     public void open(ActionEvent actionEvent) {
         try {
-            SceneTools.open(canvas);
-            listModels.getItems().add("Модель " + SceneTools.meshes.size());
-            SceneTools.meshes.get(SceneTools.meshes.size()-1).color = baseModelColor.getValue();
+            countModels++;
+            String nameFile = SceneTools.open(canvas, progressBack);
+            listModels.getItems().add(nameFile);
             listModels.getSelectionModel().select(listModels.getItems().size() - 1);
             texture.setSelected(false);
             light.setSelected(false);
             grid.setSelected(false);
 
-        } catch (IOException e) {
-            showMessage("Ошибка", "Неудалось найти файл!");
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            countModels--;
         }
     }
 
@@ -217,6 +274,10 @@ public class GuiController {
             SceneTools.createCamera(eyeX, eyeY, eyeZ, targetX, targetY, targetZ);
             listCameras.getItems().add("Камера " + SceneTools.cameras.size());
             listCameras.getSelectionModel().select(listCameras.getItems().size() - 1);
+            if (listLights.getItems().size() == 0) {
+                listLights.getItems().add(new ItemColor("Свет камеры", null));
+                listLights.getSelectionModel().select(listLights.getItems().size() - 1);
+            }
         } else {
             showMessage("Предупреждение", "Введите необходимые данные!");
         }
@@ -234,6 +295,20 @@ public class GuiController {
         int cameraId = SceneTools.indexActiveCamera;
         SceneTools.deleteCamera();
         listCameras.getItems().remove(cameraId);
+        //нахлжу свет удаляемой камеры и удаляю его
+        List<Integer> indexesLightCamera = new ArrayList<>();
+        for (int i = 0; i < listLights.getItems().size(); i++) {
+            String[] lightId = listLights.getItems().get(i).getText().split(" ");
+            if (lightId.length == 3 && Integer.parseInt(lightId[lightId.length - 1]) == cameraId) {
+                listLights.getItems().remove(cameraId);
+            }
+        }
+        for (int i = 0; i < listLights.getItems().size(); i++) {
+            String[] lightId = listLights.getItems().get(i).getText().split(" ");
+            if (lightId.length == 3) {
+                listLights.getItems().remove(cameraId);
+            }
+        }
         for (int i = 0; i < listCameras.getItems().size(); i++) {
             listCameras.getItems().set(i, "Камера " + (i + 1));
         }
@@ -242,14 +317,7 @@ public class GuiController {
 
     @FXML
     public void choiceModel(MouseEvent mouseEvent) {
-        List<Integer> selectedModels = new ArrayList<>();
-        for (String modelName : listModels.getSelectionModel().getSelectedItems()) {
-            String[] modelId = modelName.split(" ");
-            //int modelId = Integer.parseInt(modelName.substring(modelName.length() - 1)) - 1;
-            listModels.getSelectionModel().select(Integer.parseInt(modelId[modelId.length - 1]) - 1);
-            selectedModels.add(Integer.parseInt(modelId[modelId.length - 1]) - 1);
-        }
-        SceneTools.choiceModels(selectedModels);
+        SceneTools.choiceModels(listModels.getSelectionModel().getSelectedIndices());
         baseModelColor.setValue(SceneTools.activeModels().get(0).color);
         //при выборе моделей, в панельке Вид модели менять чекбоксы
         if (SceneTools.activeModels().size() == 1) {
@@ -285,12 +353,9 @@ public class GuiController {
             Collections.sort(modelsId);
             for (int i = modelsId.size() - 1; i >= 0; i--) {
                 listModels.getItems().remove((int) modelsId.get(i));
+                countModels--;
             }
             SceneTools.deleteModel();
-
-            for (int i = 0; i < listModels.getItems().size(); i++) {
-                listModels.getItems().set(i, "Модель " + (i + 1));
-            }
         } else {
             showMessage("Ошибка", "Нет моделей для удаления");
         }
@@ -311,8 +376,9 @@ public class GuiController {
                         setStyle("");
                     } else {
                         setText(item);
+                        int index = getIndex();
                         // Меняем цвет текста для определенного элемента
-                        if (SceneTools.hideMeshes.contains(Integer.parseInt(item.substring(item.length() - 1)) - 1)) {
+                        if (SceneTools.hideMeshes.contains(index)) {
                             setTextFill(Color.GRAY);  // Изменить цвет текста
                         } else {
                             setTextFill(Color.BLACK);  // Для остальных элементов
@@ -367,6 +433,7 @@ public class GuiController {
     @FXML
     public void showTexture(MouseEvent mouseEvent) {
         if (SceneTools.activeMeshes.size() > 1) {
+            texture.setSelected(false);
             showMessage("Предупреждение", "Выберите одну модель");
         } else {
             boolean action = SceneTools.showTexture(canvas);
@@ -424,5 +491,92 @@ public class GuiController {
             vertexIndexes.add(Integer.valueOf(index));
         }
         return new ArrayList<Integer>(vertexIndexes);
+    }
+
+    @FXML
+    public void createLight(MouseEvent mouseEvent) {
+        if (!Objects.equals(eyeXLight.getText(), "") && !Objects.equals(eyeYLight.getText(), "") && !Objects.equals(eyeZLight.getText(), "")) {
+            SceneTools.createLight(eyeXLight, eyeYLight, eyeZLight, chooseLightColor.getValue());
+            listLights.getItems().add(new ItemColor(getColorHex(chooseLightColor.getValue()), chooseLightColor.getValue()));
+            listLights.getSelectionModel().select(listLights.getItems().size() - 1);
+        } else {
+            showMessage("Предупреждение", "Введите необходимые данные!");
+        }
+    }
+
+    public String getColorHex(Color color) {
+        int r = (int) (color.getRed() * 255);
+        int g = (int) (color.getGreen() * 255);
+        int b = (int) (color.getBlue() * 255);
+        return String.format("#%02X%02X%02X", r, g, b).toLowerCase(Locale.ROOT);
+    }
+
+    @FXML
+    public void deleteLight(MouseEvent mouseEvent) {
+        if (SceneTools.indexActiveLight != -1) {
+
+            if (listLights.getSelectionModel().getSelectedItem().getText().split(" ").length == 2) {
+                showMessage("Ошибка", "Нельзя удалить свет камеры");
+            } else {
+                if ((SceneTools.lights.size() - SceneTools.hideLights.size()) < 2 && !SceneTools.hideLights.contains(SceneTools.indexActiveLight)) {
+                    showMessage("Ошибка", "Нельзя удалить единственный не скрытый источник света");
+                } else {
+                    listLights.getItems().remove(SceneTools.indexActiveLight);
+                    SceneTools.deleteLight();}
+            }
+        } else {
+            showMessage("Ошибка", "Нет света для удаления");
+        }
+
+    }
+
+    @FXML
+    public void hideLight(MouseEvent mouseEvent) {
+        if (SceneTools.indexActiveLight != -1) {
+            if (SceneTools.lights.size() > 1) {
+                if ((SceneTools.lights.size() - SceneTools.hideLights.size()) > 1 || SceneTools.hideLights.contains(SceneTools.indexActiveLight)) {
+                    SceneTools.hideLights();
+
+                    // Устанавливаем CellFactory для кастомизации отображения элементов
+                    listLights.setCellFactory(list -> new ListCell<ItemColor>() {
+                        @Override
+                        protected void updateItem(ItemColor item, boolean empty) {
+
+                            super.updateItem(item, empty);
+                            if (empty || item == null) {
+                                setText(null);
+                                setGraphic(null);
+                                setStyle("");
+                            } else {
+                                Rectangle colorSquare = new Rectangle(20, 20);
+                                colorSquare.setFill(item.getColor());
+                                setText(item.getText());
+                                setGraphic(colorSquare);
+                                int index = getIndex();
+                                // Меняем цвет текста для определенного элемента
+                                if (SceneTools.hideLights.contains(index)) {
+                                    setTextFill(Color.GRAY);  // Изменить цвет текста
+                                } else {
+                                    setTextFill(Color.BLACK);  // Для остальных элементов
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    showMessage("Ошибка", "Нельзя скрыть единственный источник света");
+                }
+            } else {
+                showMessage("Ошибка", "Нельзя скрыть единственный источник света");
+            }
+        } else {
+            showMessage("Ошибка", "Нет света для скрытия");
+        }
+    }
+
+    @FXML
+    public void chooseLights(MouseEvent mouseEvent) {
+        int lightId = listLights.getSelectionModel().getSelectedIndex();
+        SceneTools.chooseLight(lightId);
+        listLights.getSelectionModel().select(lightId);
     }
 }

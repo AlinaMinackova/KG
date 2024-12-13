@@ -1,4 +1,4 @@
-package com.cgvsu;
+package com.cgvsu.theme;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;

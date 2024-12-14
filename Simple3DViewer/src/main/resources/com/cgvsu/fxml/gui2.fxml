@@ -31,7 +31,7 @@
          <items>
             <ScrollPane onKeyPressed="#moveCamera" onKeyReleased="#moveCamera" onKeyTyped="#moveCamera" prefHeight="854.0" prefWidth="772.0">
                <content>
-                  <AnchorPane prefHeight="0.0" prefWidth="0.0">
+                  <AnchorPane maxHeight="300.0" minHeight="300.0" prefHeight="300.0" prefWidth="0.0">
                      <children>
                         <Canvas fx:id="canvas" height="120.0" onKeyPressed="#moveCamera" onKeyReleased="#moveCamera" onKeyTyped="#moveCamera" width="663.0" />
                      </children>
@@ -359,14 +359,8 @@
             <Menu mnemonicParsing="false" text="Сохранить модель">
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#saveWithTransform" text="Учитывать трансформацию">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="UP" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false" onAction="#saveWithoutTransform" text="Без трансформации">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="DOWN" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
                   </MenuItem>
                </items>
             </Menu>

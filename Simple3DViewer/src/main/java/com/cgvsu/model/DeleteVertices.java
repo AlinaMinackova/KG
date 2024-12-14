@@ -2,9 +2,7 @@ package com.cgvsu.model;
 
 import com.cgvsu.math.Vector3f;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class DeleteVertices {
 
@@ -19,7 +17,7 @@ public class DeleteVertices {
         deleteDanglingPolygons(model.polygons, vertexIndices);
 
         // Смещение вершинных индексов внутри полигона
-        shiftIndicesInPolygons(model.polygons, vertexIndices);
+        shiftIndicesInPolygons(model.polygons, vertexIndices, model);
 
         return model;
     }
@@ -43,32 +41,19 @@ public class DeleteVertices {
     }
 
 
-    private static void shiftIndicesInPolygons(List<Polygon> modelPolygons, List<Integer> vertexIndicesToDelete) {
-        List<Integer> sortedVertexIndicesToDelete = new ArrayList<>(vertexIndicesToDelete);
-        sortedVertexIndicesToDelete.sort(Comparator.reverseOrder());
-        for (Polygon polygon : modelPolygons) {
-            // Список новых вершинных индексов
-            ArrayList<Integer> newVertexIndices = new ArrayList<>();
-            for (int polygonVertexIndex : polygon.getVertexIndices()) {
-                // Смещение в отрицательную сторону = число вершинных индексов на удаление, больше которых вершинный индекс полигона.
-                int offset = countLessThan(polygonVertexIndex, sortedVertexIndicesToDelete);
-                // Добавляем вершину с отрицательным смещением
-                newVertexIndices.add(polygonVertexIndex - offset);
-            }
-            // Устанавливаем у модели список новых вершинных индексов
-            polygon.setVertexIndices(newVertexIndices);
+    private static void shiftIndicesInPolygons(List<Polygon> modelPolygons, List<Integer> vertexIndicesToDelete, Model model) {
+        for (Integer i : vertexIndicesToDelete) {
+            model.normals.remove((int)i);
         }
-    }
-
-    private static int countLessThan(int polygonVertexIndex, List<Integer> sortedVertexIndicesToDelete) {
-        int result = 0;
-        while (result < sortedVertexIndicesToDelete.size()) {
-            if (polygonVertexIndex >= sortedVertexIndicesToDelete.get(result)) {
-                result++;
-            } else {
-                break;
+        vertexIndicesToDelete.sort(Collections.reverseOrder());
+        for (Integer vertex: vertexIndicesToDelete) {
+            for (Polygon polygon : modelPolygons) {
+                for (int i = 0; i < polygon.getVertexIndices().size(); i++) {
+                    if (polygon.getVertexIndices().get(i) > vertex) {
+                        polygon.getVertexIndices().set(i, polygon.getVertexIndices().get(i) - 1);
+                    }
+                }
             }
         }
-        return result;
     }
 }

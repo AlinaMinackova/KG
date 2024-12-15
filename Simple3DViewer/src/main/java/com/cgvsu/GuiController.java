@@ -393,8 +393,7 @@ public class GuiController {
                 || Objects.equals(rx.getText(), "") || Objects.equals(ry.getText(), "") || Objects.equals(rz.getText(), "")) {
             showMessage("Ошибка", "Введите необходимые данные!");
         } else {
-            //TODO: ЗДЕСЬ ИСПОЛЬЗУЕТСЯ МОЙ МЕТОД ПРИМЕНЕНИЯ АФФИННЫХ ПРЕОБРАЗОВАНИЙ, КОГДА БУДЕШЬ ДЕЛАТЬ, ЗАМЕНИ НА СВОЙ
-            //SceneTools.convert(sx, sy, sz, rx, ry, rz, tx, ty, tz);
+            SceneTools.convert(sx, sy, sz, rx, ry, rz, tx, ty, tz);
             //обновляю поля пребразований
             sx.setText("1");
             sy.setText("1");

@@ -1,13 +1,105 @@
 package com.cgvsu.math;
 
-import com.cgvsu.math.matrix.Matrix3f;
-
-import javax.vecmath.*;
-
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
+import com.cgvsu.math.matrix.Matrix4f;
 
 public class AffineTransformations {
+
+    //Параметры масштабирования
+    private float Sx = 1;
+    private float Sy = 1;
+    private float Sz = 1;
+    //Параметры поворота
+    //УГЛЫ ПОВОРОТА ЗАДАЮТСЯ ПО ЧАСОВОЙ СРЕЛКЕ В ГРАДУСАХ
+    private float Rx;
+    private float Ry;
+    private float Rz;
+    //Параметры переноса
+    private float Tx;
+    private float Ty;
+    private float Tz;
+
+    private Matrix4f R = Matrix4f.unitMatrix();
+    private Matrix4f S;
+    private Matrix4f T;
+    private Matrix4f A = Matrix4f.unitMatrix();
+
+    private final Matrix4f U = Matrix4f.unitMatrix();
+
+    public AffineTransformations() {
+    }
+
+    public AffineTransformations(float sx, float sy, float sz, float rx, float ry, float rz, float tx, float ty, float tz) {
+        Sx = sx;
+        Sy = sy;
+        Sz = sz;
+        Rx = rx;
+        Ry = ry;
+        Rz = rz;
+        Tx = tx;
+        Ty = ty;
+        Tz = tz;
+
+        calculateA();
+    }
+
+    private void calculateA() {
+        //Матрица поворота задается единичной
+        R = Matrix4f.unitMatrix();
+
+        //Вычисление матрицы переноса
+        T = new Matrix4f(new float[][]{{1, 0, 0, Tx},
+                {0, 1, 0, Ty},
+                {0, 0, 1, Tz},
+                {0, 0, 0, 1}});
+        //Вычисление матрицы масштабирования
+        S = new Matrix4f(new float[][]{{Sx, 0, 0, 0},
+                {0, Sy, 0, 0},
+                {0, 0, Sz, 0},
+                {0, 0, 0, 1}});
+
+        //Вычисление тригонометрических функций
+        float sinA = (float) Math.sin(Rx * Math.PI / 180);
+        float cosA = (float) Math.cos(Rx * Math.PI / 180);
+
+        float sinB = (float) Math.sin(Ry * Math.PI / 180);
+        float cosB = (float) Math.cos(Ry * Math.PI / 180);
+
+        float sinY = (float) Math.sin(Rz * Math.PI / 180);
+        float cosY = (float) Math.cos(Rz * Math.PI / 180);
+
+        //Матрицы поворота в каждой из плоскостей
+        Matrix4f Z = new Matrix4f(new float[][]{{cosY, sinY, 0, 0},
+                {-sinY, cosY, 0, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, 1}});
+
+        Matrix4f Y = new Matrix4f(new float[][]{{cosB, 0, sinB, 0},
+                {0, 1, 0, 0},
+                {-sinB, 0, cosB, 0},
+                {0, 0, 0, 1}});
+
+        Matrix4f X = new Matrix4f(new float[][]{{1, 0, 0, 0},
+                {0, cosA, sinA, 0},
+                {0, -sinA, cosA, 0},
+                {0, 0, 0, 1}});
+
+        //Матрица аффинных преобразований принимается равной единице
+        A = new Matrix4f(T.getMatrix());
+
+        //Перемножение матриц поворота согласно их порядку
+        R = Matrix4f.multiplication(R, X);
+        R = Matrix4f.multiplication(R, Y);
+        R = Matrix4f.multiplication(R, Z);
+
+
+        //Вычисление матрицы аффинных преобразований
+        A = Matrix4f.multiplication(A, R);
+        A = Matrix4f.multiplication(A, S);
+    }
+
+    public Matrix4f getA() {
+        return A;
+    }
 
     /*public static Matrix4f modelMatrix(int tx, int ty, int tz,
                                        double alpha, double beta, double gamma,

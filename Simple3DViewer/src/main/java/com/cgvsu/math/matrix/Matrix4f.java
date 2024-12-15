@@ -71,10 +71,10 @@ public class Matrix4f {
     }
 
     public static Matrix4f multiplication(Matrix4f matrix1, Matrix4f matrix2) {
-        float[][] res = new float[4][4];
+        float[][] res = new float[SIZE][SIZE];
         for (int i = 0; i < res.length; i++) {
             for (int j = 0; j < res.length; j++) {
-                for (int k = 0; k < 4; k++) {
+                for (int k = 0; k < SIZE; k++) {
                     res[i][j] += matrix1.getMatrix(i, k) * matrix2.getMatrix(k, j);
                 }
             }
@@ -138,5 +138,19 @@ public class Matrix4f {
             }
         }
         return true;
+    }
+
+    public static Matrix4f unitMatrix() {
+        float[][] res = new float[4][4];
+        for (int i = 0; i < res.length; i++) {
+            for (int j = 0; j < res.length; j++) {
+                if (i == j) {
+                    res[i][j] = 1;
+                } else {
+                    res[i][j] = 0;
+                }
+            }
+        }
+        return new Matrix4f(res);
     }
 }

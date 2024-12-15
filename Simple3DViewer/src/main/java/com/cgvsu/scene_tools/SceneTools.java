@@ -2,6 +2,7 @@ package com.cgvsu.scene_tools;
 
 import com.cgvsu.math.AffineTransformations;
 import com.cgvsu.math.TranslationModel;
+import com.cgvsu.math.matrix.Matrix4f;
 import com.cgvsu.model.DeleteVertices;
 import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
@@ -12,8 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -241,16 +240,17 @@ public class SceneTools {
         }
     }
 
-    /*public static void convert(TextField sx, TextField sy, TextField sz, TextField rx, TextField ry, TextField rz, TextField tx, TextField ty, TextField tz) {
+    public static void convert(TextField sx, TextField sy, TextField sz, TextField rx, TextField ry, TextField rz, TextField tx, TextField ty, TextField tz) {
         for (Model model : activeModels()) {
-            Matrix4f transposeMatrix = AffineTransformations.modelMatrix(
-                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()),
+            AffineTransformations transformations = new AffineTransformations(
+                    Integer.parseInt(sx.getText()), Integer.parseInt(sy.getText()), Integer.parseInt(sz.getText()),
                     Float.parseFloat(rx.getText()), Float.parseFloat(ry.getText()), Float.parseFloat(rz.getText()),
-                    Integer.parseInt(sx.getText()), Integer.parseInt(sy.getText()), Integer.parseInt(sz.getText()));
-            //TODO: ЭТО МОЙ МЕТОД ПРИМЕНЕНИЯ АФФИННЫХ ПРЕОБРАЗОВАНИЙ, КОГДА БУДЕШЬ ДЕЛАТЬ, ЗАМЕНИ НА СВОЙ
+                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
+            Matrix4f transposeMatrix = transformations.getA();
+
             TranslationModel.move(transposeMatrix, model);
         }
-    }*/
+    }
 
     public static void deleteVertexes(List<Integer> indexes) {
         activeModels().get(0).deletedVertexes.addAll(indexes);

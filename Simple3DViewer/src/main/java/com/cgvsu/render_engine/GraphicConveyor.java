@@ -71,12 +71,14 @@ public class GraphicConveyor {
         return new Vector3f(x / w, y / w, z / w);
     }
 
-    public static Vector3f multMatrix4OnVector3f(Matrix4f matrix, Vector3f vertex) {
-        float x = matrix.getMatrix(0, 0) * vertex.getX() + matrix.getMatrix(0, 1) * vertex.getY() + matrix.getMatrix(0, 2) * vertex.getZ() + matrix.getMatrix(0, 3);
-        float y = matrix.getMatrix(1, 0) * vertex.getX() + matrix.getMatrix(1, 1) * vertex.getY() + matrix.getMatrix(1, 2) * vertex.getZ() + matrix.getMatrix(1, 3);
-        float z = matrix.getMatrix(2, 0) * vertex.getX() + matrix.getMatrix(2, 1) * vertex.getY() + matrix.getMatrix(2, 2) * vertex.getZ() + matrix.getMatrix(2, 3);
+    public static Vector3f multMatrix4OnVector3f(final Matrix4f matrix, final Vector3f vertex) {
+        final float x = matrix.getMatrix(0, 0) * vertex.getX() + matrix.getMatrix(0, 1) * vertex.getY() + matrix.getMatrix(0, 2) * vertex.getZ() + matrix.getMatrix(0, 3);
+        final float y = matrix.getMatrix(1, 0) * vertex.getX() + matrix.getMatrix(1, 1) * vertex.getY() + matrix.getMatrix(1, 2) * vertex.getZ() + matrix.getMatrix(1, 3);
+        final float z = matrix.getMatrix(2, 0) * vertex.getX() + matrix.getMatrix(2, 1) * vertex.getY() + matrix.getMatrix(2, 2) * vertex.getZ() + matrix.getMatrix(2, 3);
+        final float w = matrix.getMatrix(3, 0) * vertex.getX() + matrix.getMatrix(3, 1) * vertex.getY() + matrix.getMatrix(3, 2) * vertex.getZ() + matrix.getMatrix(3, 3);
 
-        return new Vector3f(x, y, z);
+
+        return new Vector3f(x / w, y / w, z / w);
     }
 
     public static void multiplyMatrix4ByVector(final Matrix4f matrix, final com.cgvsu.math.vector.Vector3f vertex) {

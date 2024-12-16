@@ -193,20 +193,74 @@ public class GuiController {
         if (Objects.equals(keyEvent.getText(), "w")) {
             SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
         }
-        if (Objects.equals(keyEvent.getText(), "s")) {
+        if (Objects.equals(keyEvent.getText(), "W")) {
             SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
+        }
+        if (Objects.equals(keyEvent.getText(), "s")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(TRANSLATION, 0, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "S")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(TRANSLATION, 0, 0));
         }
         if (Objects.equals(keyEvent.getText(), "a")) {
-            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(-TRANSLATION, 0, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "A")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(-TRANSLATION, 0, 0));
         }
         if (Objects.equals(keyEvent.getText(), "d")) {
-            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, TRANSLATION, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "D")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, TRANSLATION, 0));
         }
         if (Objects.equals(keyEvent.getText(), "r")) {
-            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, TRANSLATION));
+        }
+        if (Objects.equals(keyEvent.getText(), "R")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, TRANSLATION));
         }
         if (Objects.equals(keyEvent.getText(), "f")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, -TRANSLATION, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "F")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, -TRANSLATION, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "ц")) {
             SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
+        }
+        if (Objects.equals(keyEvent.getText(), "Ц")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, -TRANSLATION));
+        }
+        if (Objects.equals(keyEvent.getText(), "ы")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(TRANSLATION, 0, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "Ы")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(TRANSLATION, 0, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "ф")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(-TRANSLATION, 0, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "Ф")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(-TRANSLATION, 0, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "в")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, TRANSLATION, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "В")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, TRANSLATION, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "к")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, TRANSLATION));
+        }
+        if (Objects.equals(keyEvent.getText(), "К")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, 0, TRANSLATION));
+        }
+        if (Objects.equals(keyEvent.getText(), "а")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, -TRANSLATION, 0));
+        }
+        if (Objects.equals(keyEvent.getText(), "А")) {
+            SceneTools.activeCamera().movePosition(new com.cgvsu.math.vector.Vector3f(0, -TRANSLATION, 0));
         }
     }
 

@@ -1,24 +1,27 @@
 package com.cgvsu.render_engine;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.cgvsu.light_texture_mesh.Light;
 import com.cgvsu.light_texture_mesh.Mesh;
-import com.cgvsu.math.Vector3f;
-import com.cgvsu.math.Vector2f;
+import com.cgvsu.math.vector.Vector3f;
+import com.cgvsu.math.vector.Vector2f;
 import com.cgvsu.model.Polygon;
 import com.cgvsu.rasterization.TriangleRasterization;
 import com.cgvsu.texture.ImageToTexture;
 import javafx.scene.canvas.GraphicsContext;
 
-import javax.vecmath.*;
-
+import  com.cgvsu.math.matrix.Matrix4f;
 import com.cgvsu.model.Model;
 import javafx.scene.paint.Color;
 
+
+import javax.vecmath.Point2f;
+
+
 import static com.cgvsu.render_engine.GraphicConveyor.*;
+import static com.cgvsu.render_engine.GraphicConveyor.rotateScaleTranslate;
 
 public class RenderEngine {
 
@@ -37,9 +40,10 @@ public class RenderEngine {
         Matrix4f viewMatrix = camera.getViewMatrix(); //видовая матрица
         Matrix4f projectionMatrix = camera.getProjectionMatrix(); //проекционная матрица
 
-        Matrix4f modelViewProjectionMatrix = new Matrix4f(modelMatrix);
-        modelViewProjectionMatrix.mul(viewMatrix);
-        modelViewProjectionMatrix.mul(projectionMatrix);
+
+        Matrix4f modelViewProjectionMatrix = new Matrix4f(modelMatrix.getMatrix());
+        modelViewProjectionMatrix = Matrix4f.multiplication(modelViewProjectionMatrix, viewMatrix);
+        modelViewProjectionMatrix = Matrix4f.multiplication(modelViewProjectionMatrix, projectionMatrix);
 
         RenderAttributes renderAttributes = new RenderAttributes(models, graphicsContext, width, height, ZBuffer, viewMatrix, modelViewProjectionMatrix, lights);
         render(renderAttributes);
@@ -52,16 +56,16 @@ public class RenderEngine {
                 model.imageToTexture.loadImage(model.pathTexture);
             }
 
-            VertexAttributes[] vertexAttributes = new VertexAttributes[model.verticesTransform.size()]; //массив с данными вершин
-            for (int i = 0; i < model.verticesTransform.size(); i++) {
-                VertexAttributes vertex = new VertexAttributes();
-                vertex.setCoorVertex(model.verticesTransform.get(i));
-                vertex.setNormal(model.normals.get(i));
-                javax.vecmath.Vector3f vertexVecmath = new javax.vecmath.Vector3f(vertex.coorVertex.x, vertex.coorVertex.y, vertex.coorVertex.z); //делаем вектор строку
-                javax.vecmath.Vector3f v = multiplyMatrix4ByVector3(renderAttributes.modelViewProjectionMatrix, vertexVecmath);
-                vertex.setZ(v.z);
-                Point2f resultPoint = vertexToPoint(v, renderAttributes.width, renderAttributes.height); //преобразуем координаты в систему координат монитора
-                vertex.setResultPoint(resultPoint);
+        VertexAttributes[] vertexAttributes = new VertexAttributes[model.verticesTransform.size()]; //массив с данными вершин
+        for (int i = 0; i < model.verticesTransform.size(); i++) {
+            VertexAttributes vertex = new VertexAttributes();
+            vertex.setCoorVertex(model.verticesTransform.get(i));
+            vertex.setNormal(model.normals.get(i));
+            Vector3f vertexVecmath = new Vector3f(vertex.coorVertex.x, vertex.coorVertex.y, vertex.coorVertex.z); //делаем вектор строку
+            Vector3f v = multiplyMatrix4ByVector3(renderAttributes.getModelViewProjectionMatrix(), vertexVecmath);
+            vertex.setZ(v.z);
+            Point2f resultPoint = vertexToPoint(v, renderAttributes.width, renderAttributes.height); //преобразуем координаты в систему координат монитора
+            vertex.setResultPoint(resultPoint);
 
                 vertexAttributes[i] = vertex;
             }

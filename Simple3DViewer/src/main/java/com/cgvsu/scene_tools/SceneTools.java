@@ -3,6 +3,7 @@ import com.cgvsu.theme.ProgressCallBack;
 import com.cgvsu.light_texture_mesh.Light;
 import com.cgvsu.math.AffineTransformations;
 import com.cgvsu.math.TranslationModel;
+import com.cgvsu.math.matrix.Matrix4f;
 import com.cgvsu.model.DeleteVertices;
 import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
@@ -15,8 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -93,8 +92,8 @@ public class SceneTools {
 
     public static void createCamera(TextField eyeX, TextField eyeY, TextField eyeZ, TextField tx, TextField ty, TextField tz) {
         cameras.add(new Camera(
-                new Vector3f(Float.parseFloat(eyeX.getText()), Float.parseFloat(eyeY.getText()), Float.parseFloat(eyeZ.getText())),
-                new Vector3f(Float.parseFloat(tx.getText()), Float.parseFloat(ty.getText()), Float.parseFloat(tz.getText())),
+                new com.cgvsu.math.vector.Vector3f(Float.parseFloat(eyeX.getText()), Float.parseFloat(eyeY.getText()), Float.parseFloat(eyeZ.getText())),
+                new com.cgvsu.math.vector.Vector3f(Float.parseFloat(tx.getText()), Float.parseFloat(ty.getText()), Float.parseFloat(tz.getText())),
                 1.0F, 1, 0.01F, 100));
         indexActiveCamera = cameras.size() - 1;
 
@@ -271,11 +270,12 @@ public class SceneTools {
 
     public static void convert(TextField sx, TextField sy, TextField sz, TextField rx, TextField ry, TextField rz, TextField tx, TextField ty, TextField tz) {
         for (Model model : activeModels()) {
-            Matrix4f transposeMatrix = AffineTransformations.modelMatrix(
-                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()),
+            AffineTransformations transformations = new AffineTransformations(
+                    Integer.parseInt(sx.getText()), Integer.parseInt(sy.getText()), Integer.parseInt(sz.getText()),
                     Float.parseFloat(rx.getText()), Float.parseFloat(ry.getText()), Float.parseFloat(rz.getText()),
-                    Integer.parseInt(sx.getText()), Integer.parseInt(sy.getText()), Integer.parseInt(sz.getText()));
-            //TODO: ЭТО МОЙ МЕТОД ПРИМЕНЕНИЯ АФФИННЫХ ПРЕОБРАЗОВАНИЙ, КОГДА БУДЕШЬ ДЕЛАТЬ, ЗАМЕНИ НА СВОЙ
+                    Integer.parseInt(tx.getText()), Integer.parseInt(ty.getText()), Integer.parseInt(tz.getText()));
+            Matrix4f transposeMatrix = transformations.getA();
+
             TranslationModel.move(transposeMatrix, model);
         }
     }

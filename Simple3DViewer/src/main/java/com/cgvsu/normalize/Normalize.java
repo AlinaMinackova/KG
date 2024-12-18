@@ -1,6 +1,6 @@
 package com.cgvsu.normalize;
 
-import com.cgvsu.math.Vector3f;
+import com.cgvsu.math.vector.Vector3f;
 import com.cgvsu.model.Polygon;
 
 import java.util.ArrayList;

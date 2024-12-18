@@ -1,13 +1,15 @@
 package com.cgvsu.render_engine;
 
+import com.cgvsu.math.matrix.Matrix4f;
 import com.cgvsu.light_texture_mesh.Light;
 import com.cgvsu.model.Model;
 import javafx.scene.canvas.GraphicsContext;
 
-import javax.vecmath.Matrix4f;
+
 import java.util.List;
 
 public class RenderAttributes {
+    private final Matrix4f modelViewProjectionMatrix;
     public List<Model> models;
     public GraphicsContext graphicsContext;
     public int width;
@@ -26,5 +28,33 @@ public class RenderAttributes {
         this.viewMatrix = viewMatrix;
         this.modelViewProjectionMatrix = modelViewProjectionMatrix;
         this.lights = lights;
+    }
+
+    public Matrix4f getModelViewProjectionMatrix() {
+        return modelViewProjectionMatrix;
+    }
+
+    public List<Model> getModels() {
+        return models;
+    }
+
+    public GraphicsContext getGraphicsContext() {
+        return graphicsContext;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public double[][] getZBuffer() {
+        return ZBuffer;
+    }
+
+    public Matrix4f getViewMatrix() {
+        return viewMatrix;
     }
 }

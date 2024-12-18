@@ -462,16 +462,6 @@ public class GuiController {
         } else {
             //TODO: ЗДЕСЬ ИСПОЛЬЗУЕТСЯ МОЙ МЕТОД ПРИМЕНЕНИЯ АФФИННЫХ ПРЕОБРАЗОВАНИЙ, КОГДА БУДЕШЬ ДЕЛАТЬ, ЗАМЕНИ НА СВОЙ
             SceneTools.convert(sx, sy, sz, rx, ry, rz, tx, ty, tz);
-            //обновляю поля пребразований
-            sx.setText("1");
-            sy.setText("1");
-            sz.setText("1");
-            rx.setText("0");
-            ry.setText("0");
-            rz.setText("0");
-            tx.setText("0");
-            ty.setText("0");
-            tz.setText("0");
         }
     }
 

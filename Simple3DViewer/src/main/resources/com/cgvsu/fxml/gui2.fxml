@@ -15,7 +15,6 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -196,7 +195,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Text>
-                                          <TextField fx:id="deleteVertexField" layoutX="52.0" layoutY="218.0" prefHeight="27.0" prefWidth="239.0" text="0" />
+                                          <TextField fx:id="deleteVertexField" layoutX="52.0" layoutY="218.0" prefHeight="27.0" prefWidth="239.0" text="0, 1, 2, 3, 4" />
                                           <Button fx:id="deleteVertexButton" layoutX="316.0" layoutY="218.0" mnemonicParsing="false" onMouseClicked="#deleteVertexAction" text="Удалить" />
                                        </children>
                                     </AnchorPane>
@@ -214,7 +213,7 @@
                                           <TextField fx:id="targetX" layoutX="305.0" layoutY="61.0" text="0" />
                                           <TextField fx:id="eyeX" layoutX="65.0" layoutY="60.0" text="0" />
                                           <TextField fx:id="eyeY" layoutX="65.0" layoutY="107.0" text="0" />
-                                          <TextField fx:id="eyeZ" layoutX="65.0" layoutY="158.0" text="100" />
+                                          <TextField fx:id="eyeZ" layoutX="65.0" layoutY="158.0" text="50" />
                                           <Text layoutX="99.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Позиция" wrappingWidth="83.71875">
                                              <font>
                                                 <Font size="14.0" />

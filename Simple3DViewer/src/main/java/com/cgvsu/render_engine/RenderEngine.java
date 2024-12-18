@@ -83,8 +83,8 @@ public class RenderEngine {
                 }
 
                 if (renderAttributes.lights.get(0).color == null) {
-                    renderAttributes.lights.set(0, new Light((double) renderAttributes.viewMatrix.m02,
-                            (double) renderAttributes.viewMatrix.m12, (double) renderAttributes.viewMatrix.m22, null));
+                    renderAttributes.lights.set(0, new Light((double) renderAttributes.viewMatrix.getMatrix(0, 2),
+                            (double) renderAttributes.viewMatrix.getMatrix(1, 2), (double) renderAttributes.viewMatrix.getMatrix(2, 2), null));
                 }
 
                 int[] coorX = new int[]{(int) vertexAttributes[polygon.getVertexIndices().get(0)].resultPoint.x,

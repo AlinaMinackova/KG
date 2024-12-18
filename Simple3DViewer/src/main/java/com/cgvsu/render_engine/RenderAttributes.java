@@ -16,7 +16,6 @@ public class RenderAttributes {
     public int height;
     public double[][] ZBuffer;
     public Matrix4f viewMatrix;
-    public Matrix4f modelViewProjectionMatrix;
     public List<Light> lights;
 
     public RenderAttributes(List<Model> models, GraphicsContext graphicsContext, int width, int height, double[][] ZBuffer, Matrix4f viewMatrix, Matrix4f modelViewProjectionMatrix, List<Light> lights) {
